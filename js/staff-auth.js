@@ -44,6 +44,9 @@ let _currentStaffSession = null;
 // /sessions/{anonUid} write). auth.js's onAuthStateChanged checks this so it
 // doesn't race ahead and try to load a /sessions/ doc that doesn't exist yet.
 let _staffLoginInProgress = false;
+
+// Demo copy: one shop, so staff log in with just a name and PIN.
+const DEMO_BUSINESS_CODE = '8U36R9';
 export function isStaffLoginInProgress() { return _staffLoginInProgress; }
 
 // ── Hash PIN — PBKDF2 with per-user random salt ──────────────
@@ -1106,7 +1109,7 @@ window.staffLogin = async function() {
   const codeFieldHidden = document.getElementById('slBizCodeField')?.style.display === 'none';
   const code  = (codeFieldHidden && remembered)
     ? remembered
-    : document.getElementById('slBusinessCode')?.value.trim().toUpperCase();
+    : (document.getElementById('slBusinessCode')?.value.trim().toUpperCase() || DEMO_BUSINESS_CODE);
   const user  = document.getElementById('slUsername')?.value.trim().toLowerCase();
   const pin   = ['slPinD1','slPinD2','slPinD3','slPinD4']
     .map(id => document.getElementById(id)?.value || '').join('');

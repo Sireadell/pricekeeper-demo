@@ -8,7 +8,7 @@
 // connection takes longer than NET_WAIT_MS. Files not listed below are saved
 // the first time the app loads them, so new files are covered too.
 
-const CACHE = 'pk-app-v1';
+const CACHE = 'pk-app-v2';
 const NET_WAIT_MS = 4000;
 
 const APP_FILES = [
