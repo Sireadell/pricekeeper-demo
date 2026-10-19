@@ -2,7 +2,7 @@
   "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
   "hosting": {
     "public": ".",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "README.md", "firestore.rules", "firestore.indexes.json", "_headers", "_redirects"],
+    "ignore": ["firebase.json", "**/.*", ".git/**", ".git", "**/node_modules/**", "README.md", "firestore.rules", "firestore.indexes.json", "_headers", "_redirects"],
     "rewrites": [{ "source": "/shop/**", "destination": "/shop.html" }],
     "headers": [
       { "source": "**", "headers": [
