@@ -1,0 +1,5 @@
+# Clean storefront URLs: /shop/<slug> serves shop.html (URL stays clean — 200 rewrite).
+# shop.html reads the slug from the path, resolves it to a shop, and renders.
+# Does NOT match /shop.html itself (that path has no trailing slash), so the
+# legacy ?u=<uid> / ?s=<slug> links keep working too.
+/shop/*    /shop.html    200

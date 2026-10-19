@@ -1,0 +1,232 @@
+@import url('tokens.css');
+/* ============================================================
+   PROFIT SUB-TAB — add these to the bottom of pages.css
+   ============================================================ */
+
+/* Period selector */
+.profit-period-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.profit-period-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--s2);
+  color: var(--muted);
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+.profit-period-btn.active {
+  background: var(--accent);
+  color: #080a0f;
+  border-color: var(--accent);
+}
+.profit-period-btn:hover:not(.active) {
+  background: var(--s3);
+  border-color: var(--accent);
+  color: var(--text2);
+}
+
+/* Hero card */
+.profit-hero-card {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
+  padding: 20px 16px 16px;
+  text-align: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.profit-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: .5;
+}
+.profit-hero-label {
+  font-size: .58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  font-family: var(--fb);
+}
+.profit-hero-amount {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--green);
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+.profit-hero-sub {
+  font-size: .68rem;
+  color: var(--muted);
+  font-family: var(--fb);
+}
+
+/* Metrics grid */
+.profit-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.profit-metric {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.pm-label {
+  font-size: .56rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 5px;
+  font-family: var(--fb);
+}
+.pm-val {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .95rem;
+}
+
+/* Sparkline */
+.profit-spark-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.profit-spark-title {
+  font-size: .6rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 10px;
+  font-family: var(--fb);
+}
+.profit-spark-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 64px;
+}
+.profit-spark-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 4px;
+}
+.profit-spark-bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: opacity .2s;
+  cursor: pointer;
+}
+.profit-spark-bar:hover { opacity: .7; }
+.profit-spark-lbl {
+  font-size: .55rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  text-align: center;
+}
+
+/* Top items */
+.profit-top-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.profit-top-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 13px;
+}
+.profit-top-rank {
+  font-size: .65rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  font-weight: 700;
+  min-width: 22px;
+}
+.profit-top-name {
+  flex: 1;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text);
+  text-transform: capitalize;
+}
+.profit-top-profit {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .88rem;
+  color: var(--green);
+}
+.profit-top-margin {
+  font-size: .6rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  text-align: right;
+}
+
+/* ============================================================
+   BORROWER SORT TOGGLE — add after .borrower-filter-tabs in pages.css
+   ============================================================ */
+.borrower-sort-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.borrower-sort-label {
+  font-size: .6rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--fb);
+  white-space: nowrap;
+}
+.bsort-btn {
+  padding: 5px 11px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--s2);
+  color: var(--muted);
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .7rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.bsort-btn.active {
+  background: var(--s3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.bsort-btn:hover:not(.active) {
+  background: var(--s3);
+  color: var(--text2);
+}

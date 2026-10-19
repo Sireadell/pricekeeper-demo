@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#0a0c10">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com; frame-src https://accounts.google.com https://*.firebaseapp.com;">
+  <meta name="description" content="The smart POS built for Nigerian small businesses.">
+  <meta name="ory-verify" content="orynth-3e334c4b580343d49021427f39773557">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <title>PriceKeeper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/business.css">
+  <link rel="stylesheet" href="css/trade.css">
+  <link rel="stylesheet" href="css/mobile-fix.css">
+  <link rel="stylesheet" href="css/inventory-d33.css">
+  <link rel="stylesheet" href="css/trade-d34b.css">
+  <link rel="stylesheet" href="css/trade-d34a.css">
+  <link rel="stylesheet" href="css/offline-banner.css">
+  <link rel="stylesheet" href="css/restock-modal.css">
+  <link rel="stylesheet" href="css/suppliers-d9.css">
+  <link rel="stylesheet" href="css/pk-select.css">
+  <link rel="stylesheet" href="css/barcode-scanner.css">
+
+  <!-- ── Theme (D.3.theme) — dark default, light opt-in per device ──
+       Applied here BEFORE first paint to avoid a dark→light flash.
+       Source of truth: localStorage.pkTheme ('light' | 'dark' | unset).
+       Unset or anything but 'light' = dark (the default). OS
+       prefers-color-scheme is deliberately NOT consulted — theme is an
+       explicit per-device choice, never auto-detected. -->
+  <script>
+    (function() {
+      try {
+        if (localStorage.getItem('pkTheme') === 'light')
+          document.documentElement.setAttribute('data-theme', 'light');
+        else
+          document.documentElement.removeAttribute('data-theme');
+      } catch (_) {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    })();
+  </script>
+
+  <script>
+    window.PK = new Proxy({}, {
+      get(_, prop) { return (...args) => window.__PK ? window.__PK[prop]?.(...args) : null; }
+    });
+    window.switchTab    = (...a) => window.__switchTab?.(...a);
+    window.switchSubTab = (...a) => window.__switchSubTab?.(...a);
+
+    // Safe wrapper — staff-auth.js is a module and loads async.
+    // This wrapper waits until window.showStaffLogin is ready before calling it.
+    window._safeShowStaffLogin = function() {
+      if (typeof window.showStaffLogin === 'function') {
+        window.showStaffLogin();
+      } else {
+        const modal = document.getElementById('staffLoginModal');
+        if (modal) modal.style.display = 'flex';
+        setTimeout(() => document.getElementById('slBusinessCode')?.focus(), 100);
+      }
+    };
+  </script>
+
+  <style>
+    /* ── Staff Login Button (Phase D.3.1 — gold outline) ── */
+    .pk-staff-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent);
+      font-family: var(--fh);
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .pk-staff-btn:hover {
+      background: rgba(212, 165, 55, 0.1);
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    /* ── Buy Unit Selector ── */
+    .buy-unit-group {
+      display: flex;
+      gap: 8px;
+      background: var(--s2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 6px;
+    }
+    .buy-unit-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .buy-unit-btn input[type="radio"] { display: none; }
+    .buy-unit-btn.active {
+      background: var(--accent);
+      color: #080a0f;
+      border-color: var(--accent);
+    }
+    .buy-unit-btn:hover:not(.active) {
+      background: var(--s3);
+      border-color: var(--accent);
+    }
+
+    /* ── Borrower filter tabs ── */
+    .borrower-filter-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .bfilter-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--s2);
+      color: var(--muted);
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .bfilter-btn.active {
+      background: var(--accent);
+      color: #080a0f;
+      border-color: var(--accent);
+    }
+
+    /* ── Header — Bold Command Center (Phase D.3.1) ── */
+    .pk-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 53px;            /* == --pk-top; full-height page calcs depend on it */
+      padding: 0 20px;
+      background: #000;
+      border-bottom: 1px solid #1F1F1F;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pk-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .pk-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pk-logo-icon {
+      display: block;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    .pk-logo-text {
+      font-family: var(--fh);
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .pk-header-tagline {
+      font-size: 0.625rem;
+      font-family: var(--fb);
+      color: #8C7B5C;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .pk-header-right {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    /* One-line header: the wordmark + tabs + chip share a row. On narrow
+       screens drop the tagline (and tighten padding) so the tabs keep room. */
+    @media (max-width: 720px) {
+      .pk-header { padding: 0 12px; gap: 8px; }
+      .pk-header-tagline { display: none; }
+      .pk-header-left { gap: 8px; }
+    }
+    /* Narrow phones: wordmark + Staff Login + Sign in did not fit, which
+       pushed Sign in off the right edge. Tighter wordmark, then icon only. */
+    @media (max-width: 400px) {
+      .pk-logo-text { font-size: 13px; letter-spacing: 1.5px; }
+      .pk-header-right { gap: 6px; }
+    }
+    @media (max-width: 350px) {
+      .pk-logo-text { display: none; }
+    }
+    /* Header theme toggle — always visible (works signed in or out, on or
+       offline; pure localStorage + DOM, no network). */
+    .pk-theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      transition: color .15s ease, border-color .15s ease;
+    }
+    .pk-theme-toggle:hover { color: var(--accent); border-color: var(--border2); }
+    .pk-auth-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent);
+      font-family: var(--fh);
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .pk-auth-btn:hover {
+      background: rgba(212, 165, 55, 0.1);
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+    .pk-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: none;
+      border: 1.5px solid var(--accent);
+    }
+    .pk-avatar[src]:not([src=""]) { display: block; }
+
+    /* D.3.2b user-chip — colored avatar circle + role tag. Color
+       signals role: gold = owner/admin/manager, green = cashier. */
+    .pk-avatar-circle {
+      display: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: #D4A537;
+      color: #0A0A0A;
+      font-family: var(--fh);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0;
+      flex-shrink: 0;
+    }
+    #authBtn[data-role="cashier"] .pk-avatar-circle {
+      background: #5DCAA5;
+      color: #0A0A0A;
+    }
+    .pk-role-tag {
+      display: none;
+      font-size: 9px;
+      color: #888;
+      margin-left: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: var(--fb);
+      font-weight: 500;
+    }
+    /* When the avatar circle is visible (i.e. signed in), recolor the
+       auth button to a neutral chip style instead of the gold-outline
+       sign-in look. The data-role attribute toggles the chip look. */
+    #authBtn[data-role="owner"],
+    #authBtn[data-role="admin"],
+    #authBtn[data-role="manager"],
+    #authBtn[data-role="cashier"] {
+      background: transparent;
+      border-color: #222;
+      color: #E8E8E8;
+      padding: 4px 12px 4px 4px;
+    }
+    #authBtn[data-role="owner"]:hover,
+    #authBtn[data-role="admin"]:hover,
+    #authBtn[data-role="manager"]:hover,
+    #authBtn[data-role="cashier"]:hover {
+      border-color: #333;
+      background: rgba(255,255,255,0.03);
+      color: #F5F5F5;
+    }
+
+    /* ── User-chip dropdown menu (replaces #staffModeBar) ─────
+       Anchored under #authBtn via the .pk-user-chip-wrap relative
+       container. Header + Sign Out only — PIN + Edit Name moved
+       out of nav. Same dropdown shape for owner / admin / manager
+       / cashier; the Sign Out action routes by session type. */
+    .pk-user-chip-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .pk-user-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 220px;
+      background: #141414;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+      z-index: 1000;
+      font-family: var(--fb), system-ui;
+    }
+    .pk-user-menu[hidden] { display: none; }
+    .pk-user-menu-head { padding-bottom: 12px; }
+    .pk-user-menu-name {
+      font-size: 11px;
+      color: #888;
+    }
+    .pk-user-menu-role {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .pk-user-menu-divider {
+      height: 1px;
+      background: #1f1f1f;
+      margin: 0 -16px 12px;
+    }
+    .pk-user-menu-action {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: calc(100% + 20px);
+      margin: 0 -10px;
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: #E8E8E8;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .pk-user-menu-action:hover {
+      background: rgba(255,255,255,0.04);
+    }
+    .pk-user-menu-action--danger:hover {
+      background: rgba(240,149,149,0.08);
+      color: #F09595;
+    }
+    .pk-user-menu-icon {
+      font-size: 14px;
+      width: 16px;
+      display: inline-flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<header class="pk-header">
+  <div class="pk-header-left">
+    <div class="pk-logo">
+      <img class="pk-logo-icon" src="icons/pricekeeper-logo-v2.png" alt="PriceKeeper logo">
+      <span class="pk-logo-text app-name-label">PriceKeeper</span>
+    </div>
+    <div class="pk-header-tagline">Market Intelligence</div>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard', this)"><span class="tab-ico" aria-hidden="true">📊</span><span class="tab-lbl">Dashboard</span></button>
+    <button class="tab-btn"         data-tab="inventory" onclick="switchTab('inventory', this)"><span class="tab-ico" aria-hidden="true">🛒</span><span class="tab-lbl">Inventory</span></button>
+    <button class="tab-btn"         data-tab="trade"     onclick="switchTab('trade',     this)"><span class="tab-ico" aria-hidden="true">💼</span><span class="tab-lbl">Trade</span></button>
+    <button class="tab-btn"         data-tab="business"  onclick="switchTab('business',  this)"><span class="tab-ico" aria-hidden="true">⊟</span><span class="tab-lbl">Business</span></button>
+  </nav>
+  <div class="pk-header-right">
+    <!-- Theme also lives in the owner-chip dropdown (#pkUserMenu).
+         Privacy stays here as a quick always-visible toggle.
+         Staff Login is a standalone button (restored — D.3.2b moved it into
+         the dropdown, but a signed-out click on the chip routes straight to
+         Google sign-in and never opens the dropdown, leaving staff with no
+         way in on a fresh device). Visibility: shown by default, hidden by
+         updateAuthUI() when an owner is signed in and by applyStaffMode()
+         once a staff session is active. -->
+    <button class="pk-staff-btn" id="staffLoginBtn" type="button" onclick="window.showStaffLogin()">Staff Login</button>
+    <button class="pk-privacy-toggle" id="pkPrivacyToggle" onclick="PK.togglePrivacyMode()" type="button" aria-pressed="false" title="Hide cost &amp; profit numbers" style="display:none;">
+      <span class="pk-privacy-track"><span class="pk-privacy-thumb"></span></span>
+      <span class="pk-privacy-label">PRIVACY</span>
+    </button>
+    <!-- D.3.2b user chip + user-menu dropdown.
+         Signed-out state: chip says "Sign in" and click routes straight to
+         handleAuth (no dropdown). Signed-in state: chip click opens the
+         dropdown with current name/role and a Sign Out action. -->
+    <div class="pk-user-chip-wrap">
+      <button class="pk-auth-btn" onclick="PK.toggleUserMenu(event)" id="authBtn" data-role=""
+              aria-haspopup="menu" aria-expanded="false">
+        <span class="pk-avatar-circle" id="userAvatarCircle" aria-hidden="true"></span>
+        <img id="userAvatar" class="pk-avatar" src="" alt="">
+        <span id="authLabel">Sign in</span>
+        <span id="authRoleTag" class="pk-role-tag" aria-hidden="true"></span>
+      </button>
+      <div id="pkUserMenu" class="pk-user-menu" role="menu" hidden>
+        <div class="pk-user-menu-head">
+          <div class="pk-user-menu-name"></div>
+          <div class="pk-user-menu-role"></div>
+        </div>
+        <div class="pk-user-menu-divider" aria-hidden="true"></div>
+        <button type="button" class="pk-user-menu-action" onclick="window.bizToggleTheme();PK.refreshThemeMenuLabel&amp;&amp;PK.refreshThemeMenuLabel();" role="menuitem">
+          <span class="pk-user-menu-icon" aria-hidden="true">◐</span>
+          <span id="pkThemeMenuLabel">Switch to light</span>
+        </button>
+        <button type="button" class="pk-user-menu-action" id="pkMenuStorefront" onclick="document.getElementById('pkUserMenu').hidden=true;window.switchTab('storefront');" role="menuitem">
+          <span class="pk-user-menu-icon" aria-hidden="true">🛍</span>
+          <span>Storefront</span>
+        </button>
+        <button type="button" class="pk-user-menu-action" id="pkMenuSettings" onclick="document.getElementById('pkUserMenu').hidden=true;window.switchTab('settings');" role="menuitem">
+          <span class="pk-user-menu-icon" aria-hidden="true">⚙</span>
+          <span>Settings</span>
+        </button>
+        <button type="button" class="pk-user-menu-action" id="pkMenuStaffLogin" onclick="document.getElementById('pkUserMenu').hidden=true;window._safeShowStaffLogin();" role="menuitem">
+          <span class="pk-user-menu-icon" aria-hidden="true">👤</span>
+          <span>Staff Login</span>
+        </button>
+        <div class="pk-user-menu-divider" aria-hidden="true"></div>
+        <button type="button" class="pk-user-menu-action pk-user-menu-action--danger"
+                onclick="PK.userMenuSignOut()" role="menuitem">
+          <span class="pk-user-menu-icon" aria-hidden="true">⏻</span>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ DASHBOARD ═════════════════════════════════════ -->
+<div class="page active" id="page-dashboard"></div>
+
+<!-- ══════════ INVENTORY ══════════════════════════════════════ -->
+<div class="page" id="page-inventory">
+  <div class="wrap">
+    <!-- ── D.3.5.1 Slim inventory bar — single row:
+         Items tab: segmented switcher LEFT · actions RIGHT (no centre strip).
+         Suppliers tab: segmented LEFT · supplier metric strip · actions in-body.
+         No big headlines. Built to docs/mockups/D.3.5-inventory-slim-header.html,
+         with the items metric strip removed per later founder directive. ── -->
+    <div class="pk-inv-bar">
+      <div class="pk-inv-segmented" role="tablist" aria-label="Inventory sections">
+        <button class="pk-inv-seg active" id="invSegItems" role="tab" aria-selected="true" onclick="PK.switchInvSubtab('items')">
+          <span aria-hidden="true">📦</span> Items <span class="pk-inv-seg-count" id="invSegItemsCount">0</span>
+        </button>
+        <button class="pk-inv-seg" id="invSegSuppliers" role="tab" aria-selected="false" onclick="PK.switchInvSubtab('suppliers')">
+          <span aria-hidden="true">★</span> Suppliers <span class="pk-inv-seg-count" id="invSegSuppliersCount">0</span>
+        </button>
+      </div>
+
+      <!-- Items tab carries NO metric strip — switcher LEFT, actions RIGHT,
+           nothing in the middle (founder directive, supersedes the mockup's
+           items metric row). Only the Suppliers strip remains. -->
+
+      <!-- Suppliers metric strip -->
+      <div class="pk-inv-metrics" id="invMetricsSuppliers" hidden>
+        <b id="invSupCountMeta">0</b> suppliers
+        <span class="pk-inv-msep">·</span>
+        <b id="invSupQuotesMeta">0</b> quotes
+      </div>
+
+      <!-- Items actions (Suppliers actions stay inside the D.9.3 view bodies) -->
+      <div class="pk-inv-actions" id="invActionsItems">
+        <button class="pk-inv-btn pk-inv-btn--success-ghost" onclick="window.shareWhatsAppPriceList()">
+          <span aria-hidden="true">⤴</span><span>Price List</span>
+        </button>
+        <button class="pk-inv-btn pk-inv-btn--danger-ghost" onclick="window.shareWhatsAppRestockList()">
+          <span aria-hidden="true">↻</span><span>Restock List</span>
+        </button>
+        <button class="pk-inv-btn pk-inv-btn--primary" onclick="window.openAddItemDrawer()">
+          <span aria-hidden="true">＋</span><span>Add Item</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Add Item — compact wide modal (was a slide-in drawer) ──────────
+         Built to docs/mockups/add-item-layout-options.html. All field IDs +
+         oninput handlers are preserved so the pricing/calcCarton wiring is
+         unchanged; only the layout/container changed. -->
+    <div id="addItemOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:900;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;" onclick="if(event.target===this)window.closeAddItemDrawer()">
+      <div id="addItemDrawer" class="pk-ai-modal">
+
+        <!-- Header -->
+        <div class="pk-ai-head">
+          <div>
+            <div id="drawerTitle" style="font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--text);">＋ Add New Item</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Set any sell price — the others follow, markup is worked out for you</div>
+          </div>
+          <button onclick="window.closeAddItemDrawer()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;">✕</button>
+        </div>
+
+        <!-- Body -->
+        <div class="pk-ai-body" id="drawerBody">
+
+          <!-- shortened Name shares its row with Buy price -->
+          <div class="pk-ai-namerow">
+            <div class="field" style="margin-bottom:0;">
+              <label class="lbl">Item Name *</label>
+              <input type="text" id="iName" placeholder="e.g. Jumbo Waffers">
+            </div>
+            <div class="field pk-cost-entry" style="margin-bottom:0;">
+              <label class="lbl" id="buyPriceLabel">Carton Buy Price (<span class="currency">₦</span>) *</label>
+              <input type="number" id="iBuyPrice" placeholder="e.g. 3750" min="0" oninput="PK.calcCarton();">
+            </div>
+          </div>
+
+          <!-- Barcode — optional, scan to fill or type by hand -->
+          <div class="field">
+            <label class="lbl">Barcode (optional)</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="iBarcode" placeholder="Scan or type a barcode" style="flex:1;">
+              <button type="button" class="bcs-scan-btn" onclick="PK.scanItemBarcode()" aria-label="Scan barcode">📷</button>
+            </div>
+          </div>
+
+          <!-- two-column core: left = unit + packaging, right = pricing & profit -->
+          <div class="pk-ai-core">
+            <div>
+              <div class="field" style="margin-bottom:10px;">
+                <label class="lbl" style="margin-bottom:7px;display:block;">Bought by the…</label>
+                <div class="buy-unit-group">
+                  <label class="buy-unit-btn" data-unit="piece">
+                    <input type="radio" name="buyUnit" value="piece" onchange="PK.changeBuyUnit()">
+                    <span>Piece</span>
+                  </label>
+                  <label class="buy-unit-btn" data-unit="row">
+                    <input type="radio" name="buyUnit" value="row" onchange="PK.changeBuyUnit()">
+                    <span>Row</span>
+                  </label>
+                  <label class="buy-unit-btn active" data-unit="carton">
+                    <input type="radio" name="buyUnit" value="carton" checked onchange="PK.changeBuyUnit()">
+                    <span>Carton</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- carton breakdown (shown for carton) -->
+              <div class="fg4" id="cartonFields">
+                <div class="field"><label class="lbl">Qty / Carton</label><input type="number" id="iCartonQty" placeholder="e.g. 80" min="1" oninput="PK.calcCarton();"></div>
+                <div class="field"><label class="lbl">Rows / Carton</label><input type="number" id="iRowsPerCarton" placeholder="e.g. 4" min="1" oninput="PK.calcCarton();"></div>
+                <div class="field"><label class="lbl">Pieces / Row</label><input type="number" id="iPiecesPerRow" placeholder="e.g. 24" min="1" oninput="PK.calcCarton();"></div>
+                <div class="field pk-cost-entry"><label class="lbl">Effective markup</label><div id="markupDisplay" class="pk-markup-display is-empty" title="Sell vs buy for this unit">—</div></div>
+              </div>
+
+              <!-- row-mode pieces per row -->
+              <div class="field" id="rowSpecificFields" style="display:none;">
+                <label class="lbl">Pieces per Row <span style="font-size:.72rem;color:var(--muted);">(in one row)</span></label>
+                <input type="number" id="iPiecesPerRowRowMode" placeholder="e.g. 24" min="1" oninput="PK.calcCarton();">
+              </div>
+            </div>
+
+            <!-- Pricing & profit: the Sell for each unit lives in its row.
+                 Editing one cascades (carton → row → piece) via calcCarton. -->
+            <div>
+              <label class="lbl" style="margin-bottom:6px;display:block;">Pricing &amp; profit <span style="color:var(--dim);font-size:10px;">— edit any Sell, the rest follow</span></label>
+              <div class="pk-inv-profit-preview pk-cost-entry" id="profitPreview">
+                <div class="pk-inv-pp-head">Set price · see profit</div>
+                <div class="pk-inv-pp-row" id="ppRowPcs">
+                  <span class="pk-inv-pp-unit">PCS</span>
+                  <span class="pk-inv-pp-flow"><span class="b">Buy</span> <span class="currency">₦</span><span id="ppPcsBuy">—</span> <span class="arrow">→</span></span>
+                  <span class="pk-pp-sellwrap"><span class="currency">₦</span><input type="number" id="iSell" class="pk-pp-sell" placeholder="sell" min="0" step="0.0001" oninput="PK.onSellManualInput();PK.calcCarton();"></span>
+                  <span class="pk-inv-pp-margin dash" id="ppPcsMargin">—</span>
+                </div>
+                <div class="pk-inv-pp-row" id="ppRowRow">
+                  <span class="pk-inv-pp-unit">ROW</span>
+                  <span class="pk-inv-pp-flow"><span class="b">Buy</span> <span class="currency">₦</span><span id="ppRowBuy">—</span> <span class="arrow">→</span></span>
+                  <span class="pk-pp-sellwrap"><span class="currency">₦</span><input type="number" id="iRowSell" class="pk-pp-sell" placeholder="sell" min="0" step="0.01" oninput="PK.onRowManualInput()"></span>
+                  <span class="pk-inv-pp-margin dash" id="ppRowMargin">—</span>
+                </div>
+                <div class="pk-inv-pp-row" id="ppRowCtn">
+                  <span class="pk-inv-pp-unit">CTN</span>
+                  <span class="pk-inv-pp-flow"><span class="b">Buy</span> <span class="currency">₦</span><span id="ppCtnBuy">—</span> <span class="arrow">→</span></span>
+                  <span class="pk-pp-sellwrap"><span class="currency">₦</span><input type="number" id="iCartonSell" class="pk-pp-sell" placeholder="sell" min="0" oninput="PK.onCartonSellInput();"></span>
+                  <span class="pk-inv-pp-margin dash" id="ppCtnMargin">—</span>
+                </div>
+              </div>
+              <input type="hidden" id="cartonPreview">
+              <div id="preview" hidden></div>
+            </div>
+          </div>
+
+          <!-- Stock & sourcing umbrella (open by default — stock is set most adds) -->
+          <div class="pk-ai-acc open" id="accStock">
+            <div class="pk-ai-acc-h" onclick="this.parentElement.classList.toggle('open')"><span class="ic">▸</span><span class="t">Stock &amp; sourcing</span><span class="sub">track stock · supplier</span></div>
+            <div class="pk-ai-acc-b">
+              <div class="toggle-row" style="margin-bottom:12px;">
+                <div>
+                  <label class="lbl" style="margin-bottom:2px;display:block;">📦 Track stock for this item</label>
+                  <span style="font-size:.72rem;color:var(--muted);">Warns when running low · decrements on sale</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="iTrackStock" checked onchange="PK.onTrackStockToggle()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div id="stockQtyFields">
+                <div class="pk-ai-grid2" style="margin-bottom:10px;">
+                  <div class="field" style="margin-bottom:0;">
+                    <label class="lbl">Current stock *</label>
+                    <input type="number" id="iStockQty" placeholder="e.g. 22" min="0" oninput="window._updateThresholdHint()">
+                  </div>
+                  <div class="field" style="margin-bottom:0;">
+                    <label class="lbl">Count in</label>
+                    <select id="iStockUnit" onchange="window._syncThresholdUnit&&window._syncThresholdUnit();window._updateThresholdHint()">
+                      <option value="carton">Cartons</option>
+                      <option value="row">Rows</option>
+                      <option value="piece">Pieces</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom:6px;">
+                  <label class="lbl">⚠ Warn when stock drops below</label>
+                  <input type="number" id="iLowThreshold" placeholder="auto (15% of stock)" min="0" oninput="window._updateThresholdHint()">
+                  <!-- threshold is counted in the same unit as stock (synced) -->
+                  <input type="hidden" id="iLowThresholdUnit" value="carton">
+                </div>
+                <div id="thresholdHint" style="font-size:.7rem;color:var(--muted);padding:7px 10px;background:rgba(245,200,66,.04);border:1px solid rgba(245,200,66,.1);border-radius:7px;display:none;"></div>
+              </div>
+
+              <!-- D.9.2 supplier -->
+              <div id="itemSupplierSection" style="margin-top:14px;">
+                <div id="itemSupplierEyebrow" style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⊞ Where you bought it · New</div>
+                <div class="field" style="margin-bottom:0;">
+                  <label class="lbl" id="itemSupplierLabel">Supplier (optional)</label>
+                  <select id="iSupplier" onchange="PK.itemSupplierChanged()">
+                    <option value="">— Select supplier —</option>
+                  </select>
+                </div>
+                <div id="itemSupplierInfo" style="display:none;margin-top:8px;font-size:.72rem;color:var(--muted);line-height:1.6;background:rgba(133,183,235,.05);border:1px solid rgba(133,183,235,.2);border-radius:7px;padding:7px 10px;">
+                  Saved as this supplier's quote.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details (collapsed, at the bottom — rarely used) -->
+          <div class="pk-ai-acc" id="accDetails">
+            <div class="pk-ai-acc-h" onclick="this.parentElement.classList.toggle('open')"><span class="ic">▸</span><span class="t">Details</span><span class="sub">category · notes</span></div>
+            <div class="pk-ai-acc-b">
+              <div class="field">
+                <label class="lbl">Category</label>
+                <select id="iCat">
+                  <option value="">— Select —</option>
+                  <option>Food &amp; Grains</option>
+                  <option>Beverages</option>
+                  <option>Household</option>
+                  <option>Electronics</option>
+                  <option>Clothing</option>
+                  <option>Toiletries</option>
+                  <option>Vegetables</option>
+                  <option>Frozen Foods</option>
+                  <option>Building Materials</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label class="lbl">Notes (optional)</label>
+                <textarea id="iNote" placeholder="e.g. Buy from Alhaji only. Price rises in December."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- hidden legacy fields -->
+          <input type="hidden" id="iQty">
+          <input type="hidden" id="iLow">
+
+        </div><!-- /body -->
+
+        <!-- Footer -->
+        <div class="pk-ai-foot">
+          <button onclick="PK.clearAddForm()" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border2);background:var(--s2);color:var(--muted);font-family:var(--fh);font-weight:700;font-size:.82rem;cursor:pointer;">Clear</button>
+          <button id="drawerSaveBtn" onclick="PK.addItem()" style="flex:2;padding:11px;border-radius:10px;border:none;background:var(--accent);color:#0e1117;font-family:var(--fh);font-weight:800;font-size:.82rem;cursor:pointer;">＋ Save to Inventory</button>
+        </div>
+
+      </div><!-- /modal -->
+    </div><!-- /overlay -->
+
+    <!-- Barcode scanner — shared full-screen camera overlay, used by both
+         Add Item (single-shot) and New Trade search (continuous). -->
+    <div id="barcodeScannerOverlay">
+      <div class="bcs-video-wrap">
+        <video id="bcsVideo" autoplay playsinline muted></video>
+        <div class="bcs-viewfinder"></div>
+        <div class="bcs-hint">Point the camera at a barcode</div>
+        <div id="bcsFlash"></div>
+        <button type="button" class="bcs-close" onclick="PK.closeBarcodeScanner()" aria-label="Close scanner">✕</button>
+      </div>
+    </div>
+
+    <!-- D.3.5: Items/Suppliers underline subtabs removed — promoted to
+         the segmented switcher above (.pk-inv-segmented). -->
+
+    <div id="invSubItems">
+    <!-- ── D.3.3 Toolbar ──────────────────────────────────── -->
+    <div class="pk-inv-toolbar">
+      <div class="pk-inv-search">
+        <svg class="pk-inv-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" class="pk-inv-search-input"
+          placeholder="Search items, category…"
+          oninput="window._inventoryPage=0;PK.renderItems();window._toggleSearchClear('searchInput','invSearchClear')">
+        <button type="button" class="pk-inv-search-clear" id="invSearchClear"
+          onclick="window._clearSearchBox('searchInput',()=>{window._inventoryPage=0;PK.renderItems();},'invSearchClear')"
+          aria-label="Clear search" hidden>✕</button>
+      </div>
+      <button class="pk-inv-chip pk-inv-chip--all active" id="pkInvAllChip"
+        onclick="PK.clearInventoryFilters()" type="button">
+        All <span class="pk-inv-chip-count" id="pkInvAllCount">0</span>
+      </button>
+      <!-- Stock-state filters: In stock · Low · Out · Untracked. Single-select;
+           click the active chip to clear back to All. Visible to all roles (stock
+           state is not cost data). Counts set by _refreshStockChips(). -->
+      <button class="pk-inv-chip pk-inv-chip--stock pk-inv-chip--instock" id="pkInvInStockChip"
+        onclick="PK.setStockFilter('ok')" type="button">
+        <span class="pk-inv-chip-ic" aria-hidden="true">✓</span> In stock <span class="pk-inv-chip-count" id="pkInvInStockCount">0</span>
+      </button>
+      <button class="pk-inv-chip pk-inv-chip--stock pk-inv-chip--low" id="pkInvLowChip"
+        onclick="PK.setStockFilter('low')" type="button">
+        <span class="pk-inv-chip-ic" aria-hidden="true">⚠</span> Low <span class="pk-inv-chip-count" id="pkInvLowCount">0</span>
+      </button>
+      <button class="pk-inv-chip pk-inv-chip--stock pk-inv-chip--out" id="pkInvOutChip"
+        onclick="PK.setStockFilter('out')" type="button">
+        <span class="pk-inv-chip-ic" aria-hidden="true">⛔</span> Out <span class="pk-inv-chip-count" id="pkInvOutCount">0</span>
+      </button>
+      <button class="pk-inv-chip pk-inv-chip--stock pk-inv-chip--untracked" id="pkInvUntrackedChip"
+        onclick="PK.setStockFilter('untracked')" type="button">
+        <span class="pk-inv-chip-ic" aria-hidden="true">⊘</span> Untracked <span class="pk-inv-chip-count" id="pkInvUntrackedCount">0</span>
+      </button>
+      <!-- Bundle 3 · Stage 6: owner/admin-only "needs cost" filter chip.
+           Shown by _refreshNeedsCostChip() only when costless items exist. -->
+      <button class="pk-inv-chip pk-inv-needscost-chip" id="pkNeedsCostChip"
+        style="display:none;" onclick="PK.toggleNeedsCostFilter()" type="button">
+        <span aria-hidden="true">⚠</span> Needs cost <span class="pk-inv-chip-count" id="pkNeedsCostChipCount">0</span>
+      </button>
+      <!-- v1.0 stock-tracking: owner/admin-only "needs stock" filter chip.
+           Shown by _refreshNeedsStockChip() only when unset-stock items exist. -->
+      <button class="pk-inv-chip pk-inv-needscost-chip" id="pkNeedsStockChip"
+        style="display:none;" onclick="PK.toggleNeedsStockFilter()" type="button">
+        <span aria-hidden="true">▤</span> Needs stock <span class="pk-inv-chip-count" id="pkNeedsStockChipCount">0</span>
+      </button>
+      <span class="pk-inv-cat-wrap">
+        <span class="pk-inv-chip pk-inv-cat-chip" id="pkInvCatChip" aria-hidden="true">
+          <span aria-hidden="true">⊞</span><span id="pkInvCatLabel">Category</span>
+        </span>
+        <select class="pk-inv-cat-select" id="catFilter" data-no-pk-select
+          onchange="window._inventoryPage=0;PK.renderItems()">
+          <option value="">All Categories</option>
+          <option>Food &amp; Grains</option>
+          <option>Beverages</option>
+          <option>Household</option>
+          <option>Electronics</option>
+          <option>Clothing</option>
+          <option>Toiletries</option>
+          <option>Vegetables</option>
+          <option>Frozen Foods</option>
+          <option>Building Materials</option>
+          <option>Other</option>
+        </select>
+      </span>
+      <select class="pk-inv-sort" id="inventorySort" data-no-pk-select
+        onchange="window._inventoryPage=0;PK.renderItems()" aria-label="Sort items">
+        <option value="name">Name (A–Z)</option>
+        <option value="stock-asc">Stock (low to high)</option>
+        <option value="price-desc">Price (high to low)</option>
+        <option value="recent">Recently added</option>
+        <option value="last-sold">Last sold</option>
+      </select>
+      <button class="pk-inv-select-toggle" id="pkInvSelectToggle"
+        onclick="PK.toggleSelectMode()" type="button" aria-pressed="false">
+        <span class="pk-inv-select-icon" aria-hidden="true">☐</span>
+        <span>Select</span>
+      </button>
+    </div>
+
+    <!-- ── D.3.3 Items grid (cards rendered by JS) ────────── -->
+    <div class="pk-inv-grid" id="itemsList"></div>
+
+    <!-- Hidden legacy count node (some code paths still write here) -->
+    <span id="listCount" hidden></span>
+
+    <!-- ── D.3.3 Bulk action bar (shown in select mode) ───── -->
+    <div class="pk-inv-bulk-bar" id="pkInvBulkBar" role="region" aria-label="Bulk actions" hidden>
+      <span class="pk-inv-bulk-count">
+        <span id="pkInvBulkCount">0</span><span class="pk-inv-bulk-sep">·</span>selected
+      </span>
+      <button type="button" class="pk-inv-bulk-action" onclick="PK.bulkExportSelected()">
+        <span aria-hidden="true">↧</span> Export
+      </button>
+      <button type="button" class="pk-inv-bulk-action pk-inv-bulk-action--danger" onclick="PK.bulkDeleteSelected()">
+        <span aria-hidden="true">⌫</span> Delete
+      </button>
+      <button type="button" class="pk-inv-bulk-x" onclick="PK.toggleSelectMode()" title="Exit select mode" aria-label="Exit select mode">✕</button>
+    </div>
+
+    <!-- Item action popover (one shared, positioned per-click) -->
+    <div class="pk-inv-popover" id="pkInvCardPopover" role="menu" hidden></div>
+    </div><!-- /invSubItems -->
+
+    <!-- ── D.9.3 Suppliers sub-view (Directory | Best Prices | Shopping) ── -->
+    <div id="invSubSuppliers" hidden>
+      <div class="pk-sup-seg" role="tablist" aria-label="Supplier views">
+        <button class="pk-sup-seg-btn active" data-supview="directory" role="tab" aria-selected="true" onclick="PK.switchSupView('directory')">Directory <span class="pk-sup-seg-count"></span></button>
+        <button class="pk-sup-seg-btn" data-supview="prices" role="tab" aria-selected="false" onclick="PK.switchSupView('prices')">Best Prices <span class="pk-sup-seg-count"></span></button>
+        <button class="pk-sup-seg-btn" data-supview="shopping" role="tab" aria-selected="false" onclick="PK.switchSupView('shopping')">Shopping List <span class="pk-sup-seg-count"></span></button>
+      </div>
+      <!-- D.3.5: one-liner help per inner view, set by _pkOnSupViewRender -->
+      <div class="pk-inv-innerhelp" id="invInnerHelp">Your stores · click any supplier to see all prices from them</div>
+      <div id="supViewBody"><!-- rendered by suppliers-view.js --></div>
+    </div>
+
+  </div><!-- /wrap -->
+</div><!-- /page-inventory -->
+
+<!-- ══════════ TRADE TAB ══════════════════════════════════════ -->
+<div class="page" id="page-trade">
+  <div class="pk-tr-wrap">
+
+    <!-- D.3.4b Page Header -->
+    <div class="pk-tr-header">
+      <div class="pk-tr-head-l">
+        <div class="pk-tr-eyebrow">Trade</div>
+        <div class="pk-tr-h1"><span id="trHeadCount">0</span> trades · <span id="trHeadTimeLabel">all time</span></div>
+        <!-- The Revenue/Profit/Outstanding meta line was removed per Task
+             5g of the overnight package — it duplicated the summary tiles
+             one row below. Page header is now eyebrow + headline + actions
+             only. Setters in _renderHeaderSummary for trHeadRevenue /
+             trHeadProfit / trHeadOutstanding still run safely as no-ops. -->
+      </div>
+      <div class="pk-tr-actions">
+        <button class="pk-tr-btn pk-tr-btn--success-ghost" id="pkTrExportBtn" onclick="PK.exportTradesSmart()">
+          <span aria-hidden="true">↧</span><span>Export</span>
+        </button>
+        <button class="pk-tr-btn pk-tr-btn--ghost pk-tr-mobile-only" onclick="window._refreshTrades(this)" title="Refresh trades">
+          <span aria-hidden="true">↻</span><span>Refresh</span>
+        </button>
+        <button class="pk-tr-btn pk-tr-btn--ghost pk-tr-desktop-only" onclick="window._refreshTrades(this)" title="Refresh trades">
+          <span aria-hidden="true">↻</span>
+        </button>
+        <button class="pk-tr-btn pk-tr-btn--primary" onclick="PK.openNewTradeModal()">
+          <span aria-hidden="true">＋</span><span>New Trade</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- D.3.4b Toolbar -->
+    <div class="pk-tr-toolbar">
+      <div class="pk-tr-search">
+        <svg class="pk-tr-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="tradeSearchInput" class="pk-tr-search-input"
+          placeholder="Search trade ID, customer, item…"
+          autocomplete="off" spellcheck="false"
+          oninput="window.tradeTableSearch(this.value);window._toggleSearchClear('tradeSearchInput','tradeSearchClear')">
+        <button type="button" class="pk-tr-search-clear" id="tradeSearchClear"
+          onclick="window.clearTradeSearchBox()" aria-label="Clear search" hidden>✕</button>
+      </div>
+      <button class="pk-tr-chip pk-tr-chip--all is-active" data-status="all" onclick="PK.setTradeStatus('all')" type="button">
+        All <span class="pk-tr-chip-count" id="trChipAllCount">0</span>
+      </button>
+      <button class="pk-tr-chip pk-tr-chip--success" data-status="paid" onclick="PK.setTradeStatus('paid')" type="button">
+        Paid <span class="pk-tr-chip-count" id="trChipPaidCount">0</span>
+      </button>
+      <button class="pk-tr-chip pk-tr-chip--warn" data-status="partial" onclick="PK.setTradeStatus('partial')" type="button">
+        Partial <span class="pk-tr-chip-count" id="trChipPartialCount">0</span>
+      </button>
+      <button class="pk-tr-chip pk-tr-chip--danger" data-status="credit" onclick="PK.setTradeStatus('credit')" type="button">
+        Credit <span class="pk-tr-chip-count" id="trChipCreditCount">0</span>
+      </button>
+      <button class="pk-tr-chip pk-tr-chip--muted" data-status="voided" onclick="PK.setTradeStatus('voided')" type="button">
+        Voided <span class="pk-tr-chip-count" id="trChipVoidedCount">0</span>
+      </button>
+      <button class="pk-tr-picker-chip" id="pkTrTimeChip"
+        type="button" aria-haspopup="true" aria-expanded="false"
+        onclick="PK.openTradePicker('time', this)">
+        <span class="pk-tr-pc-prefix">Time:</span><span id="pkTrTimeLabel">All time</span>
+      </button>
+      <button class="pk-tr-picker-chip" id="pkTrStaffChip"
+        type="button" aria-haspopup="true" aria-expanded="false"
+        onclick="PK.openTradePicker('staff', this)">
+        <span class="pk-tr-pc-prefix">Staff:</span><span id="pkTrStaffLabel">All staff</span>
+      </button>
+      <button class="pk-tr-picker-chip" id="pkTrCustChip"
+        type="button" aria-haspopup="true" aria-expanded="false"
+        onclick="PK.openTradePicker('customer', this)">
+        <span class="pk-tr-pc-prefix">Customer:</span><span id="pkTrCustLabel">All</span>
+      </button>
+      <button class="pk-tr-select-toggle" id="pkTrSelectToggle"
+        type="button" aria-pressed="false" onclick="PK.toggleTradeSelectMode()">
+        <span class="pk-tr-select-icon" aria-hidden="true"></span><span>Select</span>
+      </button>
+      <div class="pk-tr-dates" id="tfbDates" style="display:none;">
+        <input type="date" id="tradeFromDate" class="pk-tr-date" onchange="PK.setTradeTimeRange('custom')">
+        <span class="pk-tr-date-sep" aria-hidden="true">→</span>
+        <input type="date" id="tradeToDate" class="pk-tr-date" onchange="PK.setTradeTimeRange('custom')">
+      </div>
+    </div>
+    <!-- Picker popovers (positioned via JS) -->
+    <div class="pk-tr-picker-pop" id="pkTrPickerPop" role="menu" hidden></div>
+
+    <!-- D.3.4b Summary tiles -->
+    <div class="pk-tr-sum-row" id="trSumRow">
+      <div class="pk-tr-tile">
+        <div class="pk-tr-tile-lbl">Trades</div>
+        <div class="pk-tr-tile-val" id="tStatCount">0</div>
+      </div>
+      <div class="pk-tr-tile">
+        <div class="pk-tr-tile-lbl">Revenue</div>
+        <div class="pk-tr-tile-val pk-tr-tile-val--gold" id="tStatRevenue"><span class="currency">₦</span>0</div>
+      </div>
+      <div class="pk-tr-tile pk-tr-tile--profit">
+        <div class="pk-tr-tile-lbl">Profit</div>
+        <div class="pk-tr-tile-val pk-tr-tile-val--success" id="tStatProfit"><span class="currency">₦</span>0</div>
+      </div>
+      <div class="pk-tr-tile">
+        <div class="pk-tr-tile-lbl">Discounts</div>
+        <div class="pk-tr-tile-val" id="tStatDiscount"><span class="currency">₦</span>0</div>
+      </div>
+      <div class="pk-tr-tile">
+        <div class="pk-tr-tile-lbl">Outstanding</div>
+        <div class="pk-tr-tile-val" id="tStatBalance"><span class="currency">₦</span>0</div>
+      </div>
+    </div>
+
+    <!-- Hidden sub-label kept for backward compat -->
+    <span id="tradeTableSub" hidden></span>
+
+    <!-- Table / card-stack target (rendered by trade-table.js) -->
+    <div class="pk-tr-table-wrap" id="tradeTableWrap">
+      <div class="pk-tr-loading">Loading trades…</div>
+    </div>
+
+    <!-- D.3.4b Bulk action bar -->
+    <div class="pk-tr-bulk-bar" id="pkTrBulkBar" role="region" aria-label="Bulk trade actions" hidden>
+      <span class="pk-tr-bulk-count">
+        <span id="pkTrBulkCount">0</span><span class="pk-tr-bulk-sep">·</span>selected
+      </span>
+      <button type="button" class="pk-tr-bulk-btn" onclick="PK.bulkExportTrades()">
+        <span aria-hidden="true">↧</span> Export
+      </button>
+      <button type="button" class="pk-tr-bulk-btn pk-tr-bulk-btn--warn" onclick="PK.bulkVoidTrades()">
+        <span aria-hidden="true">⊘</span> Void
+      </button>
+      <button type="button" class="pk-tr-bulk-btn pk-tr-bulk-btn--danger" onclick="PK.bulkDeleteTrades()">
+        <span aria-hidden="true">⌫</span> Delete
+      </button>
+      <button type="button" class="pk-tr-bulk-x" onclick="PK.toggleTradeSelectMode()" title="Exit select mode" aria-label="Exit select mode">✕</button>
+    </div>
+
+    <!-- Row action popover (one shared, positioned per-click) -->
+    <div class="pk-tr-popover" id="pkTrRowPopover" role="menu" hidden></div>
+
+    <!-- Mobile FAB -->
+    <button class="new-trade-fab" onclick="PK.openNewTradeModal()">＋ Trade</button>
+  </div>
+</div>
+
+<!-- ══════════ BUSINESS TAB ══════════════════════════════════ -->
+<div class="page" id="page-business">
+</div>
+
+<!-- ════════ SETTINGS — own top-level page (no longer a Business sub-tab) ═════ -->
+<div class="page" id="page-settings">
+  <div class="biz-page-head">
+    <div>
+      <div class="biz-eyebrow">Account</div>
+      <div class="biz-page-title">Settings</div>
+    </div>
+  </div>
+  <div id="settingsArea" class="biz-panel-area"></div>
+</div>
+
+<!-- ════════ STOREFRONT — own top-level page (public WhatsApp shop link) ═══ -->
+<div class="page" id="page-storefront">
+  <div class="biz-page-head">
+    <div>
+      <div class="biz-eyebrow">Sell &amp; share</div>
+      <div class="biz-page-title">Storefront</div>
+    </div>
+  </div>
+  <div id="storefrontArea" class="biz-panel-area"></div>
+</div>
+
+<!-- ════════ MODALS ═══════════════════════════════════════════ -->
+
+<!-- ── D.9.1 Restock drawer ─────────────────────────────────── -->
+<div id="restockOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:905;justify-content:flex-end;" onclick="if(event.target===this)PK.closeRestockModal()">
+  <div id="restockDrawer" style="width:min(440px,100vw);height:100%;background:#0A0A0A;border-left:1px solid #2a2a2a;display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.5);transform:translateX(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);">
+    <div style="padding:18px 20px 14px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid #1a1a1a;flex-shrink:0;">
+      <div>
+        <div style="font-size:17px;font-weight:500;color:#F5F5F5;"><span style="color:#D4A537;margin-right:4px;">⬇</span><span id="rstTitle">Restock</span></div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">Add stock + capture supplier price</div>
+      </div>
+      <button onclick="PK.closeRestockModal()" style="width:30px;height:30px;background:transparent;border:1px solid #222;border-radius:6px;color:#888;cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <div class="rst-body">
+      <div class="rst-eyebrow">QUANTITY TO ADD</div>
+      <div class="rst-row two-col">
+        <div class="rst-field">
+          <span class="rst-lab">Add qty <span class="req">*</span></span>
+          <input class="rst-inp rst-num" id="rstQty" type="number" min="0" step="any" value="1" oninput="PK.rstRecalc()">
+        </div>
+        <div class="rst-field">
+          <span class="rst-lab">Unit</span>
+          <select class="rst-inp" id="rstUnit" onchange="PK.rstRecalc()"></select>
+        </div>
+      </div>
+      <div class="rst-infobox rst-infobox--success" id="rstStockPreview"></div>
+
+      <!-- Bundle 3: buy-cost + margin section. Hidden from cost-blind roles
+           (manager/cashier) via body.pk-cost-blind — they restock QTY only.
+           rstSave only logs a supplier price when price>0, so an empty/hidden
+           price simply skips the price write (stock-only restock). -->
+      <div id="rstWhereBought">
+      <div class="rst-eyebrow">⊞ WHERE YOU BOUGHT IT</div>
+      <div class="rst-row">
+        <div class="rst-field">
+          <span class="rst-lab">Supplier <span class="rst-badge" id="rstSupplierBadge">last used</span></span>
+          <select class="rst-inp" id="rstSupplier" onchange="PK.rstSupplierChanged()"></select>
+        </div>
+      </div>
+      <div class="rst-row two-col">
+        <div class="rst-field">
+          <span class="rst-lab" id="rstPriceLabel">Price paid per <span id="rstPriceUnit">ctn</span> (<span class="currency">₦</span>) <span class="rst-badge" id="rstPriceBadge" style="display:none;">last</span></span>
+          <input class="rst-inp rst-num" id="rstPrice" type="number" min="0" step="any" placeholder="0" oninput="PK.rstRecalc()">
+        </div>
+        <div class="rst-field">
+          <span class="rst-lab">Date</span>
+          <input class="rst-inp" id="rstDate" type="date" onchange="PK.rstRecalc()">
+        </div>
+      </div>
+      <div class="rst-infobox" id="rstChangeBox"></div>
+      <div class="rst-profit" id="rstProfitPreview">Enter price to see margin…</div>
+      </div><!-- /rstWhereBought -->
+    </div>
+    <div class="rst-foot">
+      <button class="rst-btn-cancel" onclick="PK.closeRestockModal()">Cancel</button>
+      <button class="rst-btn-primary" id="rstSaveBtn" onclick="PK.rstSave()">⬇ Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── D.9.1 Supplier-add modal ─────────────────────────────── -->
+<div class="overlay" id="supplierOverlay">
+  <div class="modal">
+    <div class="modal-title" id="supModalTitle">★ New Supplier</div>
+    <input type="hidden" id="supEditId">
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Supplier Name *</label>
+      <input type="text" id="supName" placeholder="e.g. Modibbo Wholesale">
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Location</label>
+      <input type="text" id="supLocation" placeholder="e.g. Saminaka Market">
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Contact</label>
+      <input type="text" id="supContact" placeholder="e.g. 08012345678">
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Notes (optional)</label>
+      <textarea id="supNotes" placeholder="e.g. Best prices on sugar & rice."></textarea>
+    </div>
+    <div id="supError" style="display:none;color:var(--red);font-size:.78rem;margin-bottom:10px;"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="PK.closeSupplierModal()">Cancel</button>
+      <button class="btn-save"   onclick="PK.saveSupplierRecord()">Save Supplier</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="custOverlay">
+  <div class="modal">
+    <div class="modal-title" id="custModalTitle">➕ New Customer</div>
+    <input type="hidden" id="custId">
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Customer Name *</label>
+      <input type="text" id="custName" placeholder="e.g. Alhaji Musa">
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label class="lbl">Phone / Contact</label>
+      <input type="text" id="custContact" placeholder="e.g. 08012345678">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="PK.closeModal('custOverlay')">Cancel</button>
+      <button class="btn-save"   onclick="PK.saveCustomerRecord()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="borrowerOverlay">
+  <div class="modal">
+    <div class="modal-title" id="bModalTitle">➕ New Borrower</div>
+    <input type="hidden" id="bId">
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Name *</label>
+      <input type="text" id="bName" placeholder="e.g. Emeka Okafor">
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Phone</label>
+      <input type="text" id="bPhone" placeholder="e.g. 08098765432">
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label class="lbl">Note (optional)</label>
+      <textarea id="bNote" placeholder="e.g. Regular customer, pays end of month"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="PK.closeModal('borrowerOverlay')">Cancel</button>
+      <button class="btn-save"   onclick="PK.saveBorrower()">Save Borrower</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="txOverlay">
+  <div class="modal">
+    <div class="modal-title" id="txModalTitle">➕ Add Transaction</div>
+    <input type="hidden" id="txBorrowerId">
+    <input type="hidden" id="txType">
+    <div id="txItemRow">
+      <div class="field" style="margin-bottom:10px;">
+        <label class="lbl">Pick from Inventory (optional)</label>
+        <select id="txItemPicker"><option value="">— Custom / type manually —</option></select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Item / Description *</label>
+      <input type="text" id="txName" placeholder="e.g. 2 bags of rice">
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Amount (<span class="currency">₦</span>) *</label>
+      <input type="number" id="txAmount" placeholder="0" min="0">
+    </div>
+    <div id="txPlan"></div>
+    <div class="field" style="margin-bottom:10px;">
+      <label class="lbl">Date</label>
+      <input type="date" id="txDate">
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label class="lbl">Note (optional)</label>
+      <textarea id="txNote" placeholder="Any extra info..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="PK.closeModal('txOverlay')">Cancel</button>
+      <button class="btn-save"   onclick="PK.saveBorrowerTx()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Login Modal (D.3.9) -->
+<div id="staffLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;">
+  <div class="sl2-inner">
+    <!-- Black header -->
+    <div class="sl2-head">
+      <div class="sl2-lock">🔒</div>
+      <div>
+        <div class="sl2-head-eyebrow" id="sl2ShopName">PriceKeeper</div>
+        <div class="sl2-head-title">Staff Login</div>
+      </div>
+      <button class="sl2-close" onclick="document.getElementById('staffLoginModal').style.display='none'">✕</button>
+    </div>
+    <!-- Body -->
+    <div class="sl2-body">
+      <!-- Business code (hidden when remembered) -->
+      <div id="slBizCodeField" style="margin-bottom:14px;">
+        <label class="sl2-field-lbl">Business Code</label>
+        <input type="text" id="slBusinessCode" placeholder="e.g. ASSAD7" class="sl2-text-input"
+          style="text-transform:uppercase;letter-spacing:.1em;font-weight:500;">
+      </div>
+      <div id="slSubtitle" style="display:none;"></div>
+      <div id="slRemembered" style="display:none;font-size:.72rem;color:var(--muted);margin-bottom:14px;">
+        Shop: <strong id="slRememberedCode" style="color:var(--text);letter-spacing:.06em;"></strong>
+        · <a href="#" onclick="window.slChangeShop();return false;" style="color:var(--accent);">change</a>
+      </div>
+      <!-- Username -->
+      <div style="margin-bottom:14px;">
+        <label class="sl2-field-lbl">Your name</label>
+        <input type="text" id="slUsername" placeholder="e.g. aminu" class="sl2-text-input">
+      </div>
+      <!-- 4 digit PIN boxes -->
+      <label class="sl2-field-lbl">PIN</label>
+      <div class="sl2-pin-grid">
+        <input class="sl2-digit" type="password" id="slPinD1" maxlength="1" inputmode="numeric" autocomplete="off">
+        <input class="sl2-digit" type="password" id="slPinD2" maxlength="1" inputmode="numeric" autocomplete="off">
+        <input class="sl2-digit" type="password" id="slPinD3" maxlength="1" inputmode="numeric" autocomplete="off">
+        <input class="sl2-digit" type="password" id="slPinD4" maxlength="1" inputmode="numeric" autocomplete="off">
+      </div>
+      <!-- Error -->
+      <div id="slError" class="sl2-error"></div>
+      <!-- Submit -->
+      <button class="sl2-submit" id="slSubmitBtn" onclick="window.staffLogin()">Log in →</button>
+      <div class="sl2-switch">Not a staff account? <a onclick="document.getElementById('staffLoginModal').style.display='none'">Sign in as owner →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Staff logout confirmation modal -->
+<div id="staffLogoutModal" style="display:none;">
+  <div class="pk-logout-dialog">
+    <div class="pk-logout-title">End shift and sign out?</div>
+    <div class="pk-logout-body">Your session will close. You'll need your business code and PIN to sign back in.</div>
+    <div class="pk-logout-actions">
+      <button class="pk-logout-cancel" onclick="window.closeStaffLogoutConfirm()">Cancel</button>
+      <button class="pk-logout-confirm" id="staffLogoutConfirmBtn" onclick="window.staffLogoutConfirm()">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast stack — populated dynamically by utils.js toast() (FEATURE-004) -->
+<div class="pk-toast-stack" id="pkToastStack"></div>
+<!-- D.8.1 offline foundation — load before app.js (offline-store is also
+     imported by app.js/db.js; write-gateway loads here for D.8.2 reroute) -->
+<script type="module" src="js/pk-select.js"></script>
+<script type="module" src="js/offline-store.js"></script>
+<script type="module" src="js/write-gateway.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

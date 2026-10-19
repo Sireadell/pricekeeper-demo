@@ -1,0 +1,761 @@
+@import url('tokens.css');
+/* ============================================================
+   pages.css — Reports, Trade Tab POS, Borrowers
+   ============================================================ */
+
+/* ── Reports ────────────────────────────────────────────────── */
+.report-filter { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; align-items:flex-end; }
+.report-filter input[type=date] { background:var(--s1); border:1px solid var(--border2); border-radius:10px; padding:9px 12px; font-family:var(--fb); font-size:.82rem; color:var(--text); outline:none; }
+.report-filter input[type=date]:focus { border-color:var(--accent); }
+.report-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+@media(max-width:480px){ .report-summary { grid-template-columns:1fr 1fr; } }
+.report-day { background:var(--s1); border:1px solid var(--border); border-radius:13px; margin-bottom:10px; overflow:hidden; transition:border-color .2s; }
+.report-day:hover { border-color:var(--border2); }
+.report-day-hdr { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; background:var(--s2); gap:10px; }
+.rdate  { font-family:var(--fh); font-weight:700; font-size:.86rem; }
+.rtotal { font-family:var(--fh); font-weight:800; font-size:.9rem; color:var(--green); }
+.report-day-body { display:none; padding:12px 16px; }
+.report-day.open .report-day-body { display:block; }
+.ritem-row { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:.74rem; color:var(--muted); padding:5px 0; border-bottom:1px dashed var(--border); flex-wrap:wrap; }
+.ritem-row:last-child { border-bottom:none; }
+.rname { color:var(--text2); font-family:var(--fh); font-weight:600; text-transform:capitalize; }
+.report-section-lbl { font-size:.6rem; font-family:var(--fb); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+.rsubrow { display:flex; justify-content:space-between; font-size:.71rem; color:var(--muted); padding:5px 0; margin-top:2px; border-top:1px dashed var(--border); }
+
+/* ── Trade History (Business tab) ───────────────────────────── */
+.ws-month-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+.ws-month-select { background:var(--s1); border:1px solid var(--border2); border-radius:10px; padding:9px 12px; font-family:var(--fb); font-size:.82rem; color:var(--text); outline:none; }
+.ws-month-select:focus { border-color:var(--accent); }
+.ws-total-card { background:var(--s2); border:1px solid var(--border2); border-radius:12px; padding:12px 16px; font-family:var(--fh); }
+.wtl { font-size:.59rem; color:var(--muted); letter-spacing:1.2px; text-transform:uppercase; margin-bottom:4px; font-family:var(--fb); }
+.wtv { font-weight:800; font-size:1.05rem; color:var(--green); }
+.ws-stats-toggle { display:flex; align-items:center; gap:8px; font-size:.74rem; color:var(--muted); cursor:pointer; padding:6px 0; user-select:none; transition:color .15s; }
+.ws-stats-toggle:hover { color:var(--text2); }
+.ws-stats-panel { display:none; }
+.ws-stats-panel.open { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.customer-card { background:var(--s1); border:1px solid var(--border); border-radius:13px; margin-bottom:10px; overflow:hidden; transition:border-color .2s; }
+.customer-card:hover { border-color:var(--border2); }
+.cust-hdr { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; gap:10px; }
+.cust-name { font-family:var(--fh); font-weight:700; font-size:.95rem; }
+.cust-contact { font-size:.71rem; color:var(--muted); margin-top:2px; }
+.cust-body { display:none; padding:12px 16px 14px; border-top:1px solid var(--border); }
+.customer-card.open .cust-body { display:block; }
+.sale-header-row { display:grid; grid-template-columns:2fr 1fr 1fr 30px; gap:6px; font-size:.59rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; padding:6px 0 4px; border-bottom:1px solid var(--border); margin-bottom:4px; font-family:var(--fb); }
+.sale-row { display:grid; grid-template-columns:2fr 1fr 1fr 30px; align-items:center; gap:6px; font-size:.72rem; color:var(--muted); padding:7px 0; border-bottom:1px dashed var(--border); }
+.sale-row:last-of-type { border-bottom:none; }
+.sale-subtotal { display:grid; grid-template-columns:2fr 1fr 1fr 30px; gap:6px; font-size:.73rem; padding:8px 0 4px; border-top:1.5px solid var(--border2); margin-top:4px; font-family:var(--fh); font-weight:700; color:var(--text); }
+.sname { color:var(--text2); font-family:var(--fh); font-weight:600; text-transform:capitalize; display:flex; flex-direction:column; gap:2px; }
+.sale-date-tag { font-size:.59rem; color:var(--muted); font-family:var(--fb); font-weight:400; }
+.scell { color:var(--muted); }
+.samount { color:var(--blue2); font-family:var(--fh); font-weight:700; }
+.sprofit { color:var(--green); font-family:var(--fh); font-weight:700; }
+.sale-group { border-bottom:1px dashed var(--border); padding:6px 0; }
+.sale-group:last-of-type { border-bottom:none; }
+.sale-group-hdr { display:flex; justify-content:space-between; align-items:center; cursor:pointer; gap:6px; }
+.sale-group-name { color:var(--text2); font-family:var(--fh); font-weight:600; font-size:.82rem; text-transform:capitalize; }
+.sale-group-meta { font-size:.69rem; color:var(--muted); }
+.sale-group-amt { color:var(--blue2); font-family:var(--fh); font-weight:700; font-size:.82rem; white-space:nowrap; }
+.sale-group-detail { display:none; padding:6px 0 2px 10px; }
+.sale-group.open .sale-group-detail { display:block; }
+.sale-detail-row { display:flex; justify-content:space-between; font-size:.69rem; color:var(--muted); padding:3px 0; border-bottom:1px dashed var(--border); }
+.sale-detail-row:last-child { border-bottom:none; }
+@media(max-width:520px) { .sale-header-row,.sale-row,.sale-subtotal { grid-template-columns:2fr 1fr 30px; } }
+
+/* ── Borrowers ─────────────────────────────────────────────── */
+.borrower-card { background:var(--s1); border:1px solid var(--border); border-radius:13px; margin-bottom:10px; overflow:hidden; transition:border-color .2s; }
+.borrower-card:hover { border-color:var(--border2); }
+.borrow-hdr { display:flex; justify-content:space-between; align-items:center; padding:13px 16px; cursor:pointer; gap:10px; }
+.borrow-name { font-family:var(--fh); font-weight:700; font-size:.95rem; }
+.borrow-phone { font-size:.71rem; color:var(--muted); margin-top:2px; }
+.borrow-balance { font-family:var(--fh); font-weight:800; font-size:.87rem; }
+.borrow-balance.owing { color:var(--red); }
+.borrow-balance.settled { color:var(--green); }
+.borrow-body { display:none; padding:12px 16px 14px; border-top:1px solid var(--border); }
+.borrower-card.open .borrow-body { display:block; }
+
+/* Borrower action buttons — now at TOP of card body */
+.borrow-top-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.borrow-top-actions .btn-secondary {
+  flex: 1;
+  text-align: center;
+  font-size: .76rem;
+  padding: 8px 6px;
+}
+.borrow-receipt-btn {
+  background: rgba(52,152,219,.08);
+  border: 1px solid rgba(52,152,219,.2);
+  color: var(--blue2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .76rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s;
+  flex-shrink: 0;
+}
+.borrow-receipt-btn:hover { opacity: .75; }
+
+.btx-header { display:grid; grid-template-columns:2fr 1fr 1fr 0.7fr 28px; gap:6px; font-size:.59rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; padding:5px 0 4px; border-bottom:1px solid var(--border); margin-bottom:4px; font-family:var(--fb); }
+.btx-row { display:grid; grid-template-columns:2fr 1fr 1fr 0.7fr 28px; align-items:center; gap:6px; font-size:.72rem; color:var(--muted); padding:6px 0; border-bottom:1px dashed var(--border); }
+.btx-row:last-of-type { border-bottom:none; }
+.btx-name { color:var(--text2); font-family:var(--fh); font-weight:600; }
+.btx-date { font-size:.67rem; }
+.btx-amount { font-family:var(--fh); font-weight:700; }
+.btx-type { font-size:.6rem; text-transform:uppercase; letter-spacing:.5px; padding:2px 6px; border-radius:4px; text-align:center; }
+.btx-pay  { background:rgba(46,204,113,.08); color:var(--green2); border:1px solid rgba(46,204,113,.2); }
+.btx-debt { background:rgba(255,71,87,.08);  color:var(--red);    border:1px solid rgba(255,71,87,.2); }
+.borrow-footer { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:.81rem; }
+@media(max-width:480px) {
+  .btx-header,.btx-row { grid-template-columns:1fr 1fr; }
+  .btx-header span:nth-child(n+3),.btx-row .btx-date,.btx-row .btx-type { display:none; }
+}
+
+/* ============================================================
+   TRADE TAB — Premium POS Terminal
+   ============================================================ */
+
+body:not(:has(#page-trade.active)) .trade-cart-panel-container,
+body:not(:has(#page-trade.active)) .mobile-cart-fab {
+  display: none !important;
+}
+
+#page-trade.active {
+  display: flex !important;
+  flex-direction: column;
+  height: calc(100dvh - var(--pk-top) - var(--pk-bottom));
+  overflow: hidden;
+}
+
+.trade-top-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  align-items: center;
+}
+.trade-top-bar select {
+  flex: 1;
+  min-width: 0;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .83rem;
+  color: var(--text);
+  outline: none;
+}
+.trade-top-bar select:focus { border-color: var(--accent); }
+.trade-top-bar input[type=date] {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 9px 11px;
+  font-family: var(--fb);
+  font-size: .8rem;
+  color: var(--text2);
+  outline: none;
+  width: 148px;
+  flex-shrink: 0;
+}
+.trade-top-bar input[type=date]:focus { border-color: var(--accent); }
+.trade-top-bar button {
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 9px 13px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .78rem;
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.trade-top-bar button:hover { background: rgba(245,200,66,.08); border-color: var(--accent); }
+
+.trade-search-bar {
+  padding: 8px 14px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.trade-search-bar input {
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 9px 13px;
+  font-family: var(--fb);
+  font-size: .84rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.trade-search-bar input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245,200,66,.06); }
+.trade-search-bar input::placeholder { color: var(--muted); }
+
+.trade-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+.trade-item-list { flex: 1; overflow-y: auto; padding: 10px 12px; min-width: 0; }
+
+.trade-item-row {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 7px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+  animation: fadeUp .18s ease both;
+}
+.trade-item-row:hover { border-color: var(--border2); }
+.trade-item-row.active { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(245,200,66,.1); }
+
+.trade-item-main { display: flex; justify-content: space-between; align-items: center; padding: 11px 13px; cursor: pointer; gap: 10px; }
+.trade-item-name { font-family: var(--fh); font-weight: 700; font-size: .88rem; text-transform: capitalize; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.trade-item-price { font-size: .74rem; color: var(--muted); margin-top: 3px; font-family: var(--fb); }
+.trade-item-price strong { color: var(--blue2); font-family: var(--fh); font-weight: 700; }
+
+.trade-add-btn {
+  background: var(--accent);
+  color: #080a0f;
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .15s, transform .1s;
+}
+.trade-add-btn:hover { opacity: .85; transform: scale(1.08); }
+.trade-add-btn:active { transform: scale(.96); }
+
+.trade-chip-row {
+  display: none;
+  padding: 8px 12px 12px;
+  gap: 7px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  background: var(--s2);
+  align-items: center;
+}
+.trade-item-row.active .trade-chip-row { display: flex; }
+
+.chip {
+  background: var(--s3);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 6px 13px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .74rem;
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.chip:hover, .chip.active { background: var(--accent); color: #080a0f; border-color: var(--accent); box-shadow: 0 2px 8px rgba(245,200,66,.2); }
+
+.flex-input { display: flex; align-items: center; gap: 5px; }
+.flex-input input { width: 58px; background: var(--s3); border: 1px solid var(--border2); border-radius: 7px; padding: 6px 8px; font-family: var(--fb); font-size: .8rem; color: var(--text); outline: none; }
+.flex-input input:focus { border-color: var(--accent); }
+.flex-input button, .chip-pcs-add { background: var(--s3); border: 1px solid var(--border2); border-radius: 7px; padding: 6px 11px; font-family: var(--fh); font-weight: 700; font-size: .72rem; color: var(--text2); cursor: pointer; white-space: nowrap; transition: all .15s; }
+.flex-input button:hover, .chip-pcs-add:hover { background: var(--accent); color: #080a0f; border-color: var(--accent); }
+.chip-pcs-wrap { display: flex; align-items: center; gap: 5px; }
+.chip-pcs-input { width: 65px; background: var(--s3); border: 1px solid var(--border2); border-radius: 7px; padding: 6px 8px; font-family: var(--fb); font-size: .8rem; color: var(--text); outline: none; }
+.chip-pcs-input:focus { border-color: var(--accent); }
+
+/* ── Cart panel ────────────────────────────────────────────── */
+.trade-cart-panel-container {
+  width: 380px;
+  min-width: 340px;
+  flex-shrink: 0;
+  background: var(--s2);
+  border-left: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.trade-cart-panel-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: .4;
+  z-index: 1;
+}
+
+.trade-cart-panel-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.trade-right-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.trade-cart-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .95rem;
+  color: var(--text);
+  letter-spacing: .3px;
+}
+
+.trade-cart-rows {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 2px 0;
+}
+
+.cart-empty-msg {
+  padding: 40px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.8;
+  font-family: var(--fb);
+}
+
+/* ── Cart row — FIXED layout so names always show ── */
+.cart-row {
+  display: grid;
+  /* SN | Name+qty | Amount+discount | Delete */
+  grid-template-columns: 16px minmax(0, 1fr) 80px 20px;
+  align-items: start;
+  gap: 6px;
+  padding: 9px 2px;
+  border-bottom: 1px dashed var(--border);
+  animation: slideIn .15s ease both;
+}
+.cart-row:last-child { border-bottom: none; }
+
+/* SN */
+.cart-row-sn {
+  font-size: .65rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  font-weight: 700;
+  padding-top: 3px;
+  text-align: right;
+}
+
+/* Name + qty stacked — THE FIX: minmax(0,1fr) + overflow-wrap */
+.cart-row-name {
+  font-family: var(--fh);
+  font-weight: 600;
+  font-size: .82rem;
+  color: var(--text);
+  text-transform: capitalize;
+  line-height: 1.35;
+  overflow-wrap: anywhere;   /* breaks long words/codes at any character */
+  word-break: break-word;
+  min-width: 0;
+  max-width: 100%;
+}
+.cart-row-qty {
+  display: block;
+  font-size: .63rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  margin-top: 2px;
+  white-space: nowrap;       /* qty label itself stays on one line */
+}
+
+/* Amount + discount stacked on right */
+.cart-row-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+.cart-row-amt {
+  color: var(--accent);
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .82rem;
+  white-space: nowrap;
+  text-align: right;
+}
+.cart-row-amt-original {
+  text-decoration: line-through;
+  color: var(--muted);
+  font-size: .68rem;
+  font-family: var(--fb);
+  white-space: nowrap;
+}
+.cart-row-amt-discounted {
+  color: var(--green);
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .82rem;
+  white-space: nowrap;
+}
+
+/* Discount row — ₦ only, compact */
+.cart-discount-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.cart-discount-label {
+  font-size: .6rem;
+  color: var(--muted);
+  font-family: var(--fb);
+  white-space: nowrap;
+}
+.cart-discount-input {
+  width: 58px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--s3);
+  color: var(--text);
+  font-size: .74rem;
+  font-family: var(--fb);
+  outline: none;
+  transition: border-color .15s;
+}
+.cart-discount-input:focus { border-color: var(--accent); }
+
+.cart-row-del {
+  background: none;
+  border: none;
+  color: var(--border2);
+  font-size: .85rem;
+  cursor: pointer;
+  padding: 2px 3px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  transition: color .15s, background .15s;
+  margin-top: 2px;
+}
+.cart-row-del:hover { color: var(--red); background: rgba(255,71,87,.08); }
+
+/* Total row */
+.trade-right-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0 11px;
+  border-top: 1px solid var(--border2);
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: var(--text2);
+}
+.big-total { color: var(--accent); font-size: 1.2rem; font-weight: 800; letter-spacing: -.3px; }
+
+.trade-save-btn-full {
+  background: var(--green);
+  color: #080a0f;
+  border: none;
+  border-radius: 11px;
+  padding: 14px;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .95rem;
+  width: 100%;
+  cursor: pointer;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+  transition: opacity .15s, transform .1s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(46,204,113,.25);
+}
+.trade-save-btn-full:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(46,204,113,.35); }
+.trade-save-btn-full:active { transform: translateY(0); }
+
+/* ── Recent trades — now lives in Business > Trade History tab ── */
+.recent-trades-body { padding: 0; }
+.recent-trades-body.open { display: block; }
+
+/* Collapsible trade card */
+.recent-sale-card {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.recent-sale-card:hover { border-color: var(--border2); }
+.recent-sale-card.open  { border-color: var(--accent); }
+
+.recent-sale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 11px 13px;
+  cursor: pointer;
+  gap: 10px;
+  user-select: none;
+}
+.recent-sale-header:hover { background: rgba(255,255,255,.02); }
+
+.rsh-left { flex: 1; min-width: 0; }
+.rsh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+
+.recent-trade-id { font-family: var(--fb); font-size: .67rem; color: var(--muted); letter-spacing: .5px; margin-bottom: 2px; }
+.recent-customer  { font-family: var(--fh); font-weight: 700; font-size: .88rem; color: var(--text); }
+.recent-date      { font-size: .7rem; color: var(--muted); margin-top: 2px; font-family: var(--fb); }
+.recent-total     { font-family: var(--fh); font-weight: 800; font-size: .98rem; color: var(--green2); }
+.recent-disc-tag  { font-size: .65rem; color: var(--muted); font-family: var(--fb); }
+.trade-card-chevron { font-size: .7rem; color: var(--muted); margin-top: 4px; }
+
+/* Card body — hidden unless .open */
+.recent-sale-body {
+  display: none;
+  padding: 0 13px 12px;
+  border-top: 1px solid var(--border);
+}
+.recent-sale-card.open .recent-sale-body { display: block; }
+
+.recent-discount-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: .74rem;
+  color: var(--green);
+  padding: 5px 0;
+  border-top: 1px dashed var(--border);
+  margin-top: 4px;
+}
+
+.recent-actions { display: flex; gap: 7px; margin-top: 9px; justify-content: flex-end; }
+.recent-btn { padding: 5px 11px; border-radius: 7px; font-size: .73rem; font-weight: 700; cursor: pointer; border: none; transition: opacity .15s; font-family: var(--fh); }
+.recent-btn.print  { background: rgba(46,204,113,.12); color: var(--green2); border: 1px solid rgba(46,204,113,.2); }
+.recent-btn.delete { background: rgba(255,71,87,.08);  color: var(--red);    border: 1px solid rgba(255,71,87,.2); }
+.recent-btn:hover  { opacity: .72; }
+
+/* Chip section label — separates Cartons / Rows / Pieces */
+.chip-section-label {
+  font-size: .6rem;
+  font-family: var(--fb);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+/* Row chips — tinted blue to distinguish from carton chips */
+.chip.chip-row {
+  background: rgba(52,152,219,.1);
+  border-color: rgba(52,152,219,.3);
+  color: var(--blue2);
+}
+.chip.chip-row:hover, .chip.chip-row.active {
+  background: var(--blue2);
+  color: #fff;
+  border-color: var(--blue2);
+}
+.recent-sale-card { background: var(--s2); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 8px; padding: 11px 13px; transition: border-color .2s; animation: fadeUp .15s ease both; }
+.recent-sale-card:hover { border-color: var(--border2); }
+.recent-sale-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 7px; }
+.recent-customer { font-family: var(--fh); font-weight: 700; font-size: .9rem; color: var(--text); }
+.recent-date { font-size: .7rem; color: var(--muted); margin-top: 2px; font-family: var(--fb); }
+.recent-total { font-family: var(--fh); font-weight: 800; font-size: .98rem; color: var(--green2); }
+
+/* Recent items — FIXED: was flex row, now stacked list */
+.recent-items {
+  font-size: .78rem;
+  color: var(--muted);
+  padding: 6px 0 2px;
+  border-top: 1px dashed var(--border);
+}
+.recent-item-line {
+  display: grid;
+  grid-template-columns: 16px 1fr auto auto;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: .75rem;
+}
+.recent-item-line:last-child { border-bottom: none; }
+.rsl-sn   { color: var(--muted); font-size: .65rem; font-family: var(--fb); font-weight: 700; }
+.rsl-name { color: var(--text2); font-family: var(--fh); font-weight: 600; text-transform: capitalize; }
+.rsl-qty  { color: var(--muted); font-size: .68rem; font-family: var(--fb); white-space: nowrap; }
+.rsl-amt  { color: var(--blue2); font-family: var(--fh); font-weight: 700; white-space: nowrap; text-align: right; }
+.rsl-disc { color: var(--green); font-size: .65rem; font-family: var(--fb); text-align: right; }
+
+.recent-qty { font-size: .71rem; color: var(--muted); font-family: var(--fb); }
+.recent-actions { display: flex; gap: 7px; margin-top: 9px; justify-content: flex-end; }
+.recent-btn { padding: 5px 11px; border-radius: 7px; font-size: .73rem; font-weight: 700; cursor: pointer; border: none; transition: opacity .15s; font-family: var(--fh); }
+.recent-btn.print  { background: rgba(46,204,113,.12); color: var(--green2); border: 1px solid rgba(46,204,113,.2); }
+.recent-btn.delete { background: rgba(255,71,87,.08);  color: var(--red);    border: 1px solid rgba(255,71,87,.2); }
+.recent-btn:hover  { opacity: .72; }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  #page-trade.active { height: auto; overflow: visible; }
+  .trade-body { flex-direction: column; overflow: visible; height: auto; }
+  .trade-item-list { overflow: visible; height: auto; padding-bottom: 90px; }
+  .trade-cart-panel-container {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    width: 100%;
+    height: 0;
+    border-left: none;
+    border-top: 2px solid var(--accent);
+    z-index: 500;
+    overflow: hidden;
+    transition: height 0.32s cubic-bezier(0.32,0.72,0,1);
+    background: var(--s2);
+  }
+  .trade-cart-panel-container.open { height: 62vh; }
+  .mobile-cart-fab { display: flex !important; }
+  .trade-top-bar { flex-wrap: wrap; }
+  .trade-top-bar input[type=date] { width: auto; flex: 1; min-width: 120px; }
+
+  /* Mobile cart row: tighter columns */
+  .cart-row { grid-template-columns: 14px minmax(0, 1fr) 72px 18px; gap: 4px; }
+  .cart-row-name { font-size: .78rem; }
+  .cart-discount-input { width: 46px; font-size: .7rem; }
+}
+
+.mobile-cart-fab {
+  display: none;
+  position: fixed;
+  bottom: 76px;
+  right: 16px;
+  background: var(--green);
+  color: #080a0f;
+  border: none;
+  border-radius: 50px;
+  padding: 11px 18px;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .86rem;
+  box-shadow: 0 4px 18px rgba(46,204,113,.4);
+  z-index: 501;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.mobile-cart-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(46,204,113,.5); }
+
+
+/* ============================================================
+   pages-session3.css
+   Add to bottom of pages.css or import separately.
+   Changes:
+   1. Cart row pulse animation (yellow highlight on add)
+   2. Trade filter bar (valid/voided/all dropdown)
+   3. Customer Intelligence styles
+   ============================================================ */
+
+/* ── Cart row pulse ──────────────────────────────────────────── */
+@keyframes cartPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(245,200,66,.6); background: rgba(245,200,66,.08); }
+  60%  { box-shadow: 0 0 0 6px rgba(245,200,66,0); background: rgba(245,200,66,.04); }
+  100% { box-shadow: none; background: transparent; }
+}
+.cart-row-pulse {
+  animation: cartPulse .7s ease-out forwards;
+  border-radius: 6px;
+}
+
+/* ── Trade filter bar ────────────────────────────────────────── */
+.trade-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.trade-filter-select {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .77rem;
+  color: var(--text2);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.trade-filter-select:focus { border-color: var(--accent); }
+
+/* ── Recent trade actions — make room for delete btn ────────── */
+.recent-btn.delete-btn {
+  background: rgba(255,71,87,.08);
+  color: var(--red);
+  border: 1px solid rgba(255,71,87,.2);
+}
+.recent-btn.delete-btn:hover { opacity: .72; }
+
+.recent-btn.download {
+  background: rgba(77,142,240,.08);
+  color: var(--blue2);
+  border: 1px solid rgba(77,142,240,.2);
+}
+.recent-btn.download:hover { opacity: .72; }
+
+/* ── Customer Intelligence ───────────────────────────────────── */
+.rfm-tag {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Customer card open state */
+.customer-card.open .cust-body { display: block; }
+
+/* Override cust-hdr to be clickable for the whole row */
+.customer-card .cust-hdr { cursor: pointer; user-select: none; }
+.customer-card .cust-hdr:hover { background: rgba(255,255,255,.02); }
+
+/* ── Profit tab download button ──────────────────────────────── */
+.profit-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .75rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+  margin-top: 12px;
+}
+.profit-export-btn:hover {
+  background: var(--s3);
+  border-color: var(--green);
+  color: var(--green);
+}

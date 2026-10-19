@@ -1,0 +1,117 @@
+/* ============================================================
+   barcode-scanner.css — full-screen camera overlay shared by
+   Add Item (single-shot) and New Trade cart (continuous).
+   Bold Command Center tokens (css/tokens.css).
+   ============================================================ */
+
+#barcodeScannerOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--pk-bg-page, #0A0A0A);
+  align-items: center;
+  justify-content: center;
+}
+
+.bcs-video-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#bcsVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.bcs-viewfinder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(78vw, 340px);
+  height: 160px;
+  border: 2px solid var(--pk-gold, #D4A537);
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+.bcs-hint {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 18%;
+  text-align: center;
+  color: var(--pk-text-primary, #F5F1E8);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  pointer-events: none;
+}
+
+.bcs-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--pk-border-strong, #333);
+  background: rgba(20, 20, 20, 0.75);
+  color: var(--pk-text-primary, #F5F1E8);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#bcsFlash {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  background: var(--pk-success-bg, rgba(93,202,165,.12));
+  color: var(--pk-success-strong, #9FE1CB);
+  border: 1px solid var(--pk-success-fg, #5DCAA5);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.bcs-flash-pop {
+  animation: bcsFlashPop 1.4s ease-out;
+}
+
+@keyframes bcsFlashPop {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── Scan-button trigger, reused in Add Item + New Trade search bar ── */
+.bcs-scan-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--pk-border-light, #222);
+  background: var(--pk-bg-card, #141414);
+  color: var(--pk-gold, #D4A537);
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bcs-scan-btn:hover {
+  background: var(--pk-bg-hover, rgba(212,165,55,.08));
+}

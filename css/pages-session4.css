@@ -1,0 +1,122 @@
+@import url('tokens.css');
+/* ============================================================
+   pages-session4.css
+   Add to bottom of pages.css / import separately.
+   New: Today Dashboard styles for Summary sub-tab
+   ============================================================ */
+
+/* ── Today hero card ─────────────────────────────────────────── */
+.today-hero-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
+  padding: 20px 18px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.today-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 15%; right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue2), transparent);
+  opacity: .4;
+}
+.today-hero-left { flex: 1; }
+.today-hero-label {
+  font-size: .58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+  font-family: var(--fb);
+}
+.today-hero-amount {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 1.9rem;
+  color: var(--blue2);
+  letter-spacing: -1px;
+  margin-bottom: 5px;
+}
+.today-trend {
+  font-size: .68rem;
+  font-family: var(--fh);
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  display: inline-block;
+}
+.today-trend.pos     { background: rgba(46,204,113,.1);  color: var(--green); }
+.today-trend.neg     { background: rgba(255,71,87,.08);  color: var(--red);   }
+.today-trend.neutral { background: var(--s2); color: var(--muted); font-weight: 400; }
+
+.today-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.today-mini-stat { text-align: right; }
+.tms-label {
+  font-size: .55rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+  font-family: var(--fb);
+}
+.tms-val {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .92rem;
+}
+
+/* ── KPI cards grid ─────────────────────────────────────────── */
+.summary-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+}
+@media(max-width: 480px) {
+  .summary-kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+.kpi-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.kpi-label {
+  font-size: .55rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 5px;
+  font-family: var(--fb);
+}
+.kpi-rev {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .95rem;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.kpi-sub {
+  font-size: .6rem;
+  color: var(--muted);
+  font-family: var(--fb);
+}
+
+/* ── Mobile hero adjustment ─────────────────────────────────── */
+@media(max-width: 480px) {
+  .today-hero-card { flex-direction: column; align-items: flex-start; }
+  .today-hero-right { flex-direction: row; align-items: flex-start; gap: 18px; }
+  .today-hero-amount { font-size: 1.5rem; }
+}

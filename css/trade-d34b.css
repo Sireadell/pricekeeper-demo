@@ -1,0 +1,1143 @@
+/* ============================================================
+   trade-d34b.css — Phase D.3.4b Trade history redesign
+   Bold Command Center · matches docs/mockups/D.3.4b-trade-history.html
+   ============================================================ */
+
+/* .currency hook moved to tokens.css (shared base, U+20A6 fallback). */
+
+/* Flex column so the table area can scroll internally while the
+   header/toolbar/summary stay pinned at the top and pagination stays
+   pinned at the bottom. page-trade.active is the height-constrained
+   parent (calc(100vh - 106px), overflow:hidden — pages.css §Trade).
+   The mobile media query (≤640px) loosens page-trade to height:auto,
+   at which point flex:1 + min-height:0 have no effect since the parent
+   has no constrained height to distribute — body scroll resumes. */
+.pk-tr-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.pk-tr-wrap > .pk-tr-header,
+.pk-tr-wrap > .pk-tr-toolbar,
+.pk-tr-wrap > .pk-tr-sum-row,
+.pk-tr-wrap > .pk-tr-pagination {
+  flex-shrink: 0;
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.pk-tr-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.pk-tr-head-l { min-width: 0; }
+.pk-tr-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.pk-tr-h1 {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-h1-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.pk-tr-h1-meta b {
+  color: var(--text);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-meta-sep { color: var(--muted); margin: 0 4px; }
+
+.pk-tr-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.pk-tr-btn {
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--s2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+  white-space: nowrap;
+}
+.pk-tr-btn:hover { border-color: var(--border2); background: var(--border); }
+.pk-tr-btn--primary {
+  background: var(--accent); color: #0A0A0A; border-color: var(--accent);
+}
+.pk-tr-btn--primary:hover { background: var(--accent2); border-color: var(--accent2); }
+.pk-tr-btn--success-ghost {
+  color: var(--green);
+  border-color: rgba(93,202,165,0.3);
+  background: transparent;
+}
+.pk-tr-btn--success-ghost:hover {
+  background: rgba(93,202,165,0.08);
+  border-color: rgba(93,202,165,0.5);
+}
+.pk-tr-btn--ghost {
+  color: var(--muted);
+  border-color: var(--border);
+  background: var(--s1);
+}
+.pk-tr-btn--ghost:hover { color: var(--accent); border-color: var(--border2); }
+.pk-tr-desktop-only { display: inline-flex; }
+.pk-tr-mobile-only  { display: none; }
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.pk-tr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.pk-tr-search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 320px;
+  position: relative;
+}
+.pk-tr-search-icon {
+  position: absolute; left: 11px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+.pk-tr-search-input {
+  width: 100%;
+  padding: 8px 30px 8px 32px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.pk-tr-search-input::placeholder { color: var(--muted); }
+.pk-tr-search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212,165,55,0.18);
+}
+.pk-tr-search-clear:not([hidden]) {
+  position: absolute; right: 8px; top: 50%;
+  transform: translateY(-50%);
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: 50%;
+  color: var(--red);
+  font-size: 12px; line-height: 1; cursor: pointer; padding: 0;
+}
+.pk-tr-search-clear:hover { background: rgba(240,149,149,0.14); }
+
+.pk-tr-chip {
+  padding: 7px 11px;
+  font-size: 11px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-tr-chip:hover { color: var(--text2); border-color: var(--border2); }
+.pk-tr-chip.is-active {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+  font-weight: 500;
+}
+.pk-tr-chip-count {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-chip.is-active .pk-tr-chip-count {
+  background: rgba(212,165,55,0.2);
+  color: var(--accent);
+}
+.pk-tr-chip--success.is-active {
+  color: var(--green);
+  border-color: rgba(93,202,165,0.35);
+  background: rgba(93,202,165,0.06);
+}
+.pk-tr-chip--success.is-active .pk-tr-chip-count {
+  background: rgba(93,202,165,0.2); color: var(--green);
+}
+.pk-tr-chip--warn.is-active {
+  color: var(--a2);
+  border-color: rgba(239,159,39,0.35);
+  background: rgba(239,159,39,0.06);
+}
+.pk-tr-chip--warn.is-active .pk-tr-chip-count {
+  background: rgba(239,159,39,0.2); color: var(--a2);
+}
+.pk-tr-chip--danger.is-active {
+  color: var(--red);
+  border-color: rgba(240,149,149,0.35);
+  background: rgba(240,149,149,0.06);
+}
+.pk-tr-chip--danger.is-active .pk-tr-chip-count {
+  background: rgba(240,149,149,0.2); color: var(--red);
+}
+
+.pk-tr-dropdown {
+  padding: 7px 22px 7px 11px;
+  font-size: 11px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+.pk-tr-dropdown:hover { border-color: var(--border2); }
+.pk-tr-dropdown:focus { border-color: var(--accent); }
+.pk-tr-dates {
+  display: inline-flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+  flex-basis: 100%;
+  margin-top: 4px;
+}
+.pk-tr-date {
+  padding: 6px 10px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+}
+.pk-tr-date:focus { border-color: var(--accent); }
+.pk-tr-date-sep { color: var(--muted); }
+
+.pk-tr-cust-select { /* keep customer filter visible but compact */ }
+
+/* ── Picker chips + popovers (Time / Staff / Customer) ──── */
+.pk-tr-picker-chip {
+  padding: 7px 28px 7px 11px;
+  font-size: 11px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-tr-picker-chip::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 9px;
+}
+.pk-tr-picker-chip:hover { border-color: var(--border2); }
+.pk-tr-picker-chip.is-active {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+  font-weight: 500;
+}
+.pk-tr-picker-chip .pk-tr-pc-prefix {
+  color: var(--muted);
+  font-weight: 400;
+}
+.pk-tr-picker-chip.is-active .pk-tr-pc-prefix {
+  color: rgba(212,165,55,0.6);
+}
+
+.pk-tr-picker-pop {
+  position: fixed;
+  z-index: 70;
+  min-width: 220px;
+  max-width: 320px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 6px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  font-size: 12px;
+}
+.pk-tr-picker-pop[hidden] { display: none; }
+.pk-tr-picker-pop::-webkit-scrollbar { width: 6px; }
+.pk-tr-picker-pop::-webkit-scrollbar-track { background: transparent; }
+.pk-tr-picker-pop::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.pk-tr-pp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  transition: background .12s ease, color .12s ease;
+}
+.pk-tr-pp-item:hover { background: rgba(212,165,55,0.06); }
+.pk-tr-pp-item.is-active {
+  color: var(--accent);
+  background: rgba(212,165,55,0.10);
+}
+.pk-tr-pp-item.is-active::after {
+  content: "✓";
+  color: var(--accent);
+  margin-left: 8px;
+}
+.pk-tr-pp-item--gold { color: var(--accent); }
+.pk-tr-pp-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+.pk-tr-pp-search-wrap { position: relative; margin-bottom: 6px; }
+.pk-tr-pp-search {
+  width: 100%;
+  padding: 7px 28px 7px 10px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+.pk-tr-pp-search:focus { border-color: rgba(212,165,55,0.5); }
+.pk-tr-pp-search-clear:not([hidden]) {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: 50%; color: var(--red);
+  font-size: 11px; line-height: 1; cursor: pointer; padding: 0;
+}
+.pk-tr-pp-search-clear:hover { background: rgba(240,149,149,.14); }
+.pk-tr-pp-empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pk-tr-select-toggle {
+  padding: 7px 11px;
+  font-size: 11px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  flex-shrink: 0;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-tr-select-toggle:hover { color: var(--text2); border-color: var(--border2); }
+.pk-tr-select-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+  font-weight: 500;
+}
+.pk-tr-select-toggle .pk-tr-select-icon::before { content: "☐"; font-size: 12px; }
+.pk-tr-select-toggle[aria-pressed="true"] .pk-tr-select-icon::before { content: "✓"; }
+
+/* ── Summary tiles ───────────────────────────────────────── */
+.pk-tr-sum-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pk-tr-tile {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.pk-tr-tile-lbl {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.pk-tr-tile-val {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-tile-val--gold    { color: var(--accent); }
+.pk-tr-tile-val--success { color: var(--green); }
+.pk-tr-tile-val--danger  { color: var(--red); }
+
+/* ── Desktop / mobile view swap ──────────────────────────── */
+.pk-tr-desktop-view { display: block; }
+.pk-tr-mobile-view  { display: none; }
+@media (max-width: 768px) {
+  .pk-tr-desktop-view { display: none; }
+  .pk-tr-mobile-view  { display: block; }
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+/* flex:1 + min-height:0 lets this fill remaining vertical space inside
+   .pk-tr-wrap; overflow:auto scrolls the table internally so the rest
+   of the trade page (header, toolbar, summary, pagination) stays put.
+   Mobile (≤768px) override below reverts to overflow:visible since the
+   cards layout flows in the document. */
+.pk-tr-table-wrap {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.pk-tr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.pk-tr-table thead th {
+  text-align: left;
+  padding: 11px 14px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  background: var(--s1);
+  white-space: nowrap;
+}
+.pk-tr-table thead th:last-child { border-right: 0; }
+.pk-tr-table thead th.num { text-align: right; }
+.pk-tr-table thead th.actions { width: 170px; text-align: right; }
+.pk-tr-table thead th.checkbox { width: 36px; }
+
+/* Sticky thead so column headers stay visible when the body of the
+   table scrolls internally inside .pk-tr-table-wrap. z-index keeps
+   the th cells above the scrolling tbody. */
+.pk-tr-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Serial column (#) — newest trade = #1, continues across pages.
+   Subtle muted color (it's metadata, not data); tabular-nums so the
+   numbers align as page index grows from 1 → 110+. */
+.pk-tr-table thead th.pk-tr-serial,
+.pk-tr-table tbody td.pk-tr-serial {
+  width: 50px;
+  max-width: 50px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+}
+
+.pk-tr-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.pk-tr-table tbody tr:last-child { border-bottom: 0; }
+.pk-tr-table tbody tr:hover { background: rgba(212,165,55,0.055); box-shadow: inset 2px 0 0 rgba(212,165,55,0.35); }
+.pk-tr-table tbody tr.is-selected { background: rgba(212,165,55,0.08); }
+.pk-tr-table tbody tr.is-voided { opacity: 0.55; }
+/* On row hover, lift action buttons from muted to readable */
+.pk-tr-table tbody tr:hover .pk-tr-act-btn { color: var(--text2); border-color: var(--border2); }
+.pk-tr-table tbody tr:hover .pk-tr-act-btn--pay { color: var(--green); border-color: rgba(93,202,165,0.4); }
+.pk-tr-table tbody tr:hover .pk-tr-more { color: var(--text2); border-color: var(--border2); }
+
+.pk-tr-table tbody td {
+  padding: 12px 14px;
+  color: var(--text);
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+}
+.pk-tr-table tbody td:last-child { border-right: 0; }
+.pk-tr-table tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.pk-tr-table tbody td.name { font-weight: 500; color: var(--text); }
+.pk-tr-visitor {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.pk-tr-table tbody td.gold {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.pk-tr-table tbody td.green {
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.pk-tr-table tbody td.red {
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.pk-tr-id {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  word-break: break-all;
+}
+.pk-tr-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.pk-tr-status--paid    { background: rgba(93,202,165,0.12); color: var(--green); border: 1px solid rgba(93,202,165,0.22); }
+.pk-tr-status--partial { background: rgba(239,159,39,0.12); color: var(--a2); border: 1px solid rgba(239,159,39,0.25); }
+.pk-tr-status--credit  { background: rgba(240,149,149,0.12); color: var(--red); border: 1px solid rgba(240,149,149,0.25); }
+.pk-tr-status--voided  { background: rgba(120,120,120,0.1);  color: var(--muted);    border: 1px solid var(--border2); }
+
+.pk-tr-by {
+  font-size: 11px; color: var(--muted); letter-spacing: 0.04em;
+}
+.pk-tr-date {
+  font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pk-tr-more {
+  width: 28px; height: 28px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-tr-more:hover {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.3);
+  background: rgba(212,165,55,0.04);
+}
+
+/* ── Balance cell ────────────────────────────────────────── */
+/* Task 5i — the modifier classes alone (specificity 0,0,1,0) are
+   beaten by `.pk-tr-table tbody td` (specificity 0,0,1,2) which
+   set color:var(--text), so the balance was rendering white instead of
+   amber/red. Scoping the modifier rules under `.pk-tr-table tbody
+   td.pk-tr-bal--…` lifts specificity to 0,0,3,2 so the semantic
+   colors win. */
+.pk-tr-bal {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
+}
+.pk-tr-table tbody td.pk-tr-bal--zero    { color: var(--muted); }
+.pk-tr-table tbody td.pk-tr-bal--partial { color: var(--a2); }
+.pk-tr-table tbody td.pk-tr-bal--credit  { color: var(--red); }
+
+/* ── Inline action set (Edit / Pay / ⋯) per row ──────────── */
+.pk-tr-actions-cell {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.pk-tr-act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-tr-act-btn:hover {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.3);
+  background: rgba(212,165,55,0.04);
+}
+.pk-tr-act-btn--pay {
+  color: var(--green);
+  border-color: rgba(93,202,165,0.3);
+}
+/* MISSION §3.5 locked Pay icon — sits inline-left of the "Pay" word,
+   inherits currentColor so it matches the success-green token. */
+.pk-tr-pay-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.pk-tr-act-btn--pay:hover {
+  color: var(--green);
+  border-color: rgba(93,202,165,0.5);
+  background: rgba(93,202,165,0.08);
+}
+.pk-tr-act-btn--danger:hover {
+  color: var(--red);
+  border-color: rgba(240,149,149,0.4);
+  background: rgba(240,149,149,0.08);
+}
+/* Icon-only buttons (print / void / delete / unvoid / view-payments) —
+   square like .pk-tr-more instead of the text-button's wide padding,
+   since the row now carries more buttons at once and needs to stay compact. */
+.pk-tr-act-btn--icon {
+  width: 28px; height: 28px;
+  padding: 0;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.pk-tr-rowcheck {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  background: var(--bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition: background .12s ease, border-color .12s ease;
+}
+tr.is-selected .pk-tr-rowcheck {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+tr.is-selected .pk-tr-rowcheck::after {
+  content: "✓";
+  color: #0A0A0A;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+/* Always rendered when there's at least one trade so the count is
+   visible at a glance — see _renderPagination in trade-table.js.
+   Top border + larger vertical breathing room so the band reads as
+   a distinct footer below the table rather than blending in.
+   Sticky bottom-0 keeps Prev/Next reachable without scrolling on
+   long trade histories (110+ rows). Solid page-bg + top border keep
+   scrolling rows from bleeding through; z-index 5 stays below the
+   bulk-bar (z-index 60) so multi-select actions overlay cleanly. */
+.pk-tr-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px 0 6px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 5;
+}
+.pk-tr-pag-btn {
+  padding: 5px 12px;
+  background: var(--s1);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  transition: border-color .15s ease, color .15s ease;
+}
+.pk-tr-pag-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--border2); }
+.pk-tr-pag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pk-tr-pag-info { font-variant-numeric: tabular-nums; }
+
+/* ── Loading skeleton ────────────────────────────────────── */
+.pk-tr-skel-line {
+  background: linear-gradient(90deg, var(--border) 0%, var(--border) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  animation: pkTrSkel 1.6s ease-in-out infinite;
+  border-radius: 3px;
+  height: 12px;
+  display: inline-block;
+}
+@keyframes pkTrSkel {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+.pk-tr-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.pk-tr-empty {
+  padding: 64px 24px;
+  text-align: center;
+  background: var(--s1);
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+}
+.pk-tr-empty-icon {
+  font-size: 36px;
+  margin-bottom: 14px;
+  opacity: 0.4;
+  line-height: 1;
+}
+.pk-tr-empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.pk-tr-empty-sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pk-tr-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #0A0A0A;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s ease, border-color .15s ease;
+}
+.pk-tr-empty-cta:hover { background: var(--accent2); border-color: var(--accent2); }
+
+/* ── Bulk action bar ─────────────────────────────────────── */
+.pk-tr-bulk-bar {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--s2);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 8px 8px 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.4);
+  font-size: 13px;
+  z-index: 60;
+}
+.pk-tr-bulk-bar[hidden] { display: none; }
+.pk-tr-bulk-count {
+  color: var(--accent);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-bulk-sep { color: var(--muted); margin: 0 6px; }
+.pk-tr-bulk-btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-tr-bulk-btn:hover {
+  border-color: rgba(212,165,55,0.5);
+  color: var(--accent);
+  background: rgba(212,165,55,0.06);
+}
+.pk-tr-bulk-btn--warn:hover {
+  border-color: rgba(239,159,39,0.5);
+  color: var(--a2);
+  background: rgba(239,159,39,0.06);
+}
+.pk-tr-bulk-btn--danger:hover {
+  border-color: rgba(240,149,149,0.5);
+  color: var(--red);
+  background: rgba(240,149,149,0.06);
+}
+.pk-tr-bulk-x {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.pk-tr-bulk-x:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── Row action popover ──────────────────────────────────── */
+.pk-tr-popover {
+  position: fixed;
+  z-index: 70;
+  min-width: 180px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+  padding: 6px;
+  font-size: 12px;
+}
+.pk-tr-popover[hidden] { display: none; }
+.pk-tr-pop-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+}
+.pk-tr-pop-item:hover { background: var(--border); color: var(--accent); }
+.pk-tr-pop-item .pk-tr-pop-icon { color: var(--muted); width: 14px; text-align: center; }
+.pk-tr-pop-item:hover .pk-tr-pop-icon { color: var(--accent); }
+.pk-tr-pop-item--danger:hover { color: var(--red); }
+.pk-tr-pop-item--danger:hover .pk-tr-pop-icon { color: var(--red); }
+.pk-tr-pop-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 6px;
+}
+
+/* ── Mobile card stack (≤768px) ──────────────────────────── */
+.pk-tr-mcard {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 8px;
+}
+.pk-tr-mcard.is-voided { opacity: 0.55; }
+.pk-tr-mcard.is-selected { border-color: var(--accent); background: rgba(212,165,55,0.06); }
+.pk-tr-mcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+/* Mobile serial badge sits inline before the trade ID — muted color
+   to match the desktop "#" column treatment. Matches the inline
+   position of pk-tr-mcard-id which sits on the same line. */
+.pk-tr-mcard-serial {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-right: 6px;
+}
+.pk-tr-mcard-id {
+  font-size: 11px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+.pk-tr-mcard-cust {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-top: 6px;
+  margin-bottom: 2px;
+}
+.pk-tr-mcard-meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+.pk-tr-mcard-visitor {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: -1px;
+  margin-bottom: 4px;
+}
+.pk-tr-mcard-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.pk-tr-mcard-date {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-mcard-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.pk-tr-mcard-amt {
+  font-size: 16px;
+  color: var(--accent);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-mcard-prof {
+  font-size: 11px;
+  color: var(--green);
+  margin-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+.pk-tr-mcard-prof.is-voided { color: var(--muted); }
+.pk-tr-mcard-prof.is-loss { color: var(--red); }
+.pk-tr-mcard-checkbox {
+  display: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+}
+.pk-tr-mcard.is-selectable .pk-tr-mcard-checkbox { display: inline-flex; }
+.pk-tr-mcard.is-selected .pk-tr-mcard-checkbox {
+  background: var(--accent); border-color: var(--accent);
+}
+.pk-tr-mcard.is-selected .pk-tr-mcard-checkbox::after {
+  content: "✓";
+  color: #0A0A0A;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .pk-tr-sum-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .pk-tr-table thead th,
+  .pk-tr-table tbody td { padding: 10px 10px; }
+}
+@media (max-width: 768px) {
+  .pk-tr-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .pk-tr-h1 { font-size: 18px; }
+  .pk-tr-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pk-tr-actions .pk-tr-btn { justify-content: center; }
+  .pk-tr-actions .pk-tr-btn--primary { grid-column: 1 / -1; }
+  .pk-tr-desktop-only { display: none; }
+  .pk-tr-mobile-only  { display: inline-flex; }
+
+  .pk-tr-toolbar { gap: 6px; }
+  .pk-tr-search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .pk-tr-cust-select { display: none; }
+  .pk-tr-sum-row { grid-template-columns: repeat(2, 1fr); }
+
+  /* hide the desktop table wrapper styles since cards render inside */
+  .pk-tr-table-wrap {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .pk-tr-bulk-bar {
+    left: 16px; right: 16px;
+    transform: none;
+    bottom: 16px;
+    justify-content: space-between;
+    width: auto;
+  }
+}
+
+/* ── Privacy mode rules ──────────────────────────────────── */
+body.pk-privacy-on .pk-tr-profit-meta { display: none; }
+body.pk-privacy-on .pk-tr-tile--profit { display: none; }
+body.pk-privacy-on .pk-tr-sum-row { grid-template-columns: repeat(4, 1fr); }
+body.pk-privacy-on .pk-tr-table th.col-profit,
+body.pk-privacy-on .pk-tr-table td.col-profit { display: none; }
+body.pk-privacy-on .pk-tr-mcard-prof { display: none; }
+@media (max-width: 1100px) {
+  body.pk-privacy-on .pk-tr-sum-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  body.pk-privacy-on .pk-tr-sum-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Cost-blind role rules (Bundle 3 · UI-gating) — hide the profit
+   column/tile from cost-blind roles (manager + cashier). Keys off the
+   body.pk-cost-blind hook, which applyStaffMode() toggles for any
+   cost-blind role. Mirrors the privacy-on rules above. Cost-blind sees:
+   Trade ID / Customer / Items / Amount / Balance / Status / Date /
+   Actions (no Profit). 4 tiles (no Profit). */
+body.pk-cost-blind .pk-tr-tile--profit { display: none; }
+body.pk-cost-blind .pk-tr-sum-row { grid-template-columns: repeat(4, 1fr); }
+body.pk-cost-blind .pk-tr-table th.col-profit,
+body.pk-cost-blind .pk-tr-table td.col-profit { display: none; }
+body.pk-cost-blind .pk-tr-mcard-prof { display: none; }
+body.pk-cost-blind .pk-tr-profit-meta { display: none; }
+/* The "By"/performer column is NOT cost data — keep it cashier-only so a
+   manager can still see who performed each trade. */
+[data-mode="cashier"] .pk-tr-table th.col-by,
+[data-mode="cashier"] .pk-tr-table td.col-by { display: none; }
+[data-mode="cashier"] .pk-tr-mcard-by  { display: none; }
+@media (max-width: 1100px) {
+  body.pk-cost-blind .pk-tr-sum-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  body.pk-cost-blind .pk-tr-sum-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Refund-due badge + row tint ─────────────────────────── */
+.pk-tr-status--refund {
+  background: rgba(240,149,149,0.15);
+  color: var(--red);
+  border: 1px solid rgba(240,149,149,0.3);
+  animation: pk-refund-pulse 2s ease-in-out infinite;
+}
+@keyframes pk-refund-pulse {
+  0%, 100% { border-color: rgba(240,149,149,0.3); }
+  50%       { border-color: rgba(240,149,149,0.7); }
+}
+.pk-tr-table tr.has-refund { background: rgba(240,149,149,0.03); }
+.pk-tr-table tbody td.pk-tr-bal--refund { color: var(--red); }
+.pk-tr-mcard.has-refund { border-color: rgba(240,149,149,0.2); }
+/* Refund action in popover — styled like a warning (not a danger) */
+.pk-tr-pop-item--refund:hover { color: var(--red); }
+.pk-tr-pop-item--refund:hover .pk-tr-pop-icon { color: var(--red); }
+
+/* ── FAB ─────────────────────────────────────────────────── */
+/* Kept as legacy element — only show on mobile, hidden on
+   wider screens where the header has the New Trade button. */
+.new-trade-fab {
+  display: none;
+}
+@media (max-width: 768px) {
+  .new-trade-fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    background: var(--accent);
+    color: #0A0A0A;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(212,165,55,0.3);
+    z-index: 40;
+  }
+}
+
+/* Tablets and short screens: the cards list has no scroll of its own, so the
+   page must scroll. A fixed-height page squeezed the list to nothing. */
+@media (max-width: 768px), (max-height: 640px) {
+  #page-trade.active { height: auto; overflow: visible; }
+  .pk-tr-wrap { flex: none; }
+  .pk-tr-table-wrap { flex: none; overflow: visible; }
+}

@@ -1,0 +1,475 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── HELPERS ────────────────────────────────────────────────
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function sessionDoc() {
+      return /databases/$(database)/documents/sessions/$(request.auth.uid);
+    }
+
+    function staffSession(uid) {
+      return request.auth != null
+             && exists(sessionDoc())
+             && get(sessionDoc()).data.ownerUid == uid;
+    }
+
+    function staffRole(uid) {
+      return staffSession(uid) ? get(sessionDoc()).data.role : '';
+    }
+
+    function isManagerOf(uid) {
+      let role = staffRole(uid);
+      return role == 'manager' || role == 'admin';
+    }
+
+    function isAdminOf(uid) {
+      return staffRole(uid) == 'admin';
+    }
+
+    function canAccess(uid) {
+      return isOwner(uid) || staffSession(uid);
+    }
+
+    // F1 hardening helper — used only by /sessions/{sessionId} create.
+    // A session claiming {ownerUid, staffUsername, role} is only valid if
+    // a real, non-revoked staff record exists at that exact shop + username
+    // with that exact role. One `get()` instead of the get()-per-field
+    // repetition, mirroring the exists-then-get style used elsewhere here.
+    function isRealStaffFor(ownerUid, username, role) {
+      let staffPath = /databases/$(database)/documents/shops/$(ownerUid)/staff/$(username);
+      let staff     = exists(staffPath) ? get(staffPath).data : null;
+      return staff != null && staff.role == role && staff.revoked != true;
+    }
+
+    // ─── EFFECTIVE PERMISSIONS (BUG-005 hardening) ──────────────
+    // Mirrors getEffectiveSessionPerms() / getEffectiveRolePerms() in
+    // staff-auth.js exactly — keep both in sync if either changes.
+    // Precedence, highest wins:
+    //   1. per-staff override   — /shops/{uid}/staff/{username}.permissions
+    //   2. shop-wide role config — /shops/{uid}/settings/staffPerms
+    //   3. hardcoded role default (cashier: none; manager: void+edit;
+    //      admin: void+edit+delete)
+    // A literal `null` override (the Settings UI's "fall back to default"
+    // state — confirmed present in production staff docs) must NOT win,
+    // so every layer is type-checked with `is bool` instead of relying on
+    // map.get(key, default), which returns the stored null as-is.
+    function staffUsername(uid) {
+      return staffSession(uid) ? get(sessionDoc()).data.staffUsername : '';
+    }
+
+    // canDiscount defaults to false for EVERY role (cashier/manager/admin
+    // all start at false in ROLE_PERMISSIONS, unlike canVoid/canEdit which
+    // default true for manager/admin) — needs its own branch here.
+    function roleDefaultPerm(role, key) {
+      return key == 'canDelete'   ? role == 'admin'
+           : key == 'canDiscount' ? false
+           : (role == 'manager' || role == 'admin');
+    }
+
+    function effectivePerm(uid, key) {
+      let role    = staffRole(uid);
+      let base    = roleDefaultPerm(role, key);
+      let cfgPath = /databases/$(database)/documents/shops/$(uid)/settings/staffPerms;
+      let cfg     = exists(cfgPath) ? get(cfgPath).data : {};
+      let roleCfg = (role in cfg) && (cfg[role] is map) && (key in cfg[role]) && (cfg[role][key] is bool)
+                    ? cfg[role][key] : base;
+      let uname   = staffUsername(uid);
+      let sPath   = /databases/$(database)/documents/shops/$(uid)/staff/$(uname);
+      let sExists = uname != '' && exists(sPath);
+      let sPerms  = sExists && ('permissions' in get(sPath).data) && (get(sPath).data.permissions is map)
+                    ? get(sPath).data.permissions : {};
+      return (key in sPerms) && (sPerms[key] is bool) ? sPerms[key] : roleCfg;
+    }
+
+    // ─── DISCOUNT CAP (security queue #3) ───────────────────────
+    // maxDiscount is number|null (null = unlimited) — effectivePerm() above
+    // only handles bool values, so this is its own helper with the same
+    // override precedence (per-staff > shop-wide staffPerms > default null
+    // for every role, matching ROLE_PERMISSIONS in staff-auth.js).
+    function effectiveMaxDiscount(uid) {
+      let role    = staffRole(uid);
+      let cfgPath = /databases/$(database)/documents/shops/$(uid)/settings/staffPerms;
+      let cfg     = exists(cfgPath) ? get(cfgPath).data : {};
+      let roleCfg = (role in cfg) && (cfg[role] is map) && ('maxDiscount' in cfg[role])
+                      && (cfg[role]['maxDiscount'] is number || cfg[role]['maxDiscount'] == null)
+                    ? cfg[role]['maxDiscount'] : null;
+      let uname   = staffUsername(uid);
+      let sPath   = /databases/$(database)/documents/shops/$(uid)/staff/$(uname);
+      let sExists = uname != '' && exists(sPath);
+      let sPerms  = sExists && ('permissions' in get(sPath).data) && (get(sPath).data.permissions is map)
+                    ? get(sPath).data.permissions : {};
+      return ('maxDiscount' in sPerms) && (sPerms['maxDiscount'] is number || sPerms['maxDiscount'] == null)
+             ? sPerms['maxDiscount'] : roleCfg;
+    }
+
+    // Firestore rules can't loop request.resource.data.items (no array
+    // predicate support — confirmed via `firebase deploy --dry-run`, which
+    // rejected an .all() attempt outright). maxLineDiscount is a derived
+    // scalar the CLIENT computes (largest single-line discount in the cart,
+    // see trade-payment.js _pmConfirm / _saveEditedTrade) specifically so
+    // the rule has one number to check instead of a list.
+    function discountsWithinPolicy(uid) {
+      // BUG-013/F5 hardening: was request.resource.data.get('maxLineDiscount', 0)
+      // — defaulted to 0 (= "no discount", always passes) when the field was
+      // missing, AND `!(d is number)` treated a non-number value as an
+      // automatic pass too. Both let a direct-SDK write skip the discount
+      // cap entirely by omitting the field or sending the wrong type. The
+      // honest client always sends a real number (trade-payment.js), so
+      // requiring presence + type costs nothing for legitimate writes.
+      let can = effectivePerm(uid, 'canDiscount');
+      let max = effectiveMaxDiscount(uid);
+      return ('maxLineDiscount' in request.resource.data)
+             && (request.resource.data.maxLineDiscount is number)
+             && (
+               request.resource.data.maxLineDiscount <= 0
+               || (can && (max == null || request.resource.data.maxLineDiscount <= max))
+             );
+    }
+
+    // ─── /shops/ — LIVE PRIMARY PATH ────────────────────────────
+
+    // Items
+    //   Owner / manager / admin: full read+write
+    //   Cashier: read + stock-only update (stockQty, stockQtyPcs, qty, low, updatedTs)
+    //     so sale-driven stock decrement works via patchItem().
+    //   NOTE: spec said owner-only write but trade-payment.js:857 calls
+    //     patchItem() for staff. affectedKeys guard keeps prices locked.
+    match /shops/{uid}/items/{itemId} {
+      allow read:   if canAccess(uid);
+      allow create: if isOwner(uid) || isManagerOf(uid);
+      allow delete: if isOwner(uid) || isManagerOf(uid);
+      allow update: if isOwner(uid)
+                    || isManagerOf(uid)
+                    || (
+                      staffSession(uid)
+                      && request.resource.data.diff(resource.data)
+                           .affectedKeys()
+                           .hasOnly(['stockQty', 'stockQtyPcs', 'qty', 'low', 'updatedTs'])
+                    );
+    }
+
+    // Suppliers (D.9) — supplier directory.
+    //   Read:   owner / admin / manager (cashier has NO access).
+    //   Create: owner / admin / manager (D.9.3 — manager may add new).
+    //   Update/Delete: owner / admin only (manager is read-only on edits).
+    match /shops/{uid}/suppliers/{supplierId} {
+      allow read:           if isOwner(uid) || isManagerOf(uid);
+      allow create:         if isOwner(uid) || isManagerOf(uid);
+      allow update, delete: if isOwner(uid) || isAdminOf(uid);
+    }
+
+    // Supplier prices (D.9) — per-item supplier price observations + restocks.
+    //   Read:  owner / admin / manager (cashier has NO access).
+    //   Write: owner / admin / manager (manager logs purchases via Restock).
+    //   Delete: owner only.
+    match /shops/{uid}/supplierPrices/{priceId} {
+      allow read:           if isOwner(uid) || isManagerOf(uid);
+      allow create, update: if isOwner(uid) || isManagerOf(uid);
+      allow delete:         if isOwner(uid);
+    }
+
+    // Sales (trades) — owner + staff can create. Update is permission-gated
+    // by WHICH fields changed (BUG-005 hardening): payment add/remove stays
+    // open to every role (matches trade-payment.js, no app-side gate exists
+    // for it either); a void/unvoid-shaped diff requires effective canVoid;
+    // anything broader (item/revenue/cost edits) requires effective canEdit.
+    // Delete requires effective canDelete (was owner-only — that silently
+    // blocked admin, who the permission matrix says should be able to
+    // delete; confirmed via production staffPerms config already setting
+    // admin.canDelete=true with no way to act on it).
+    // Discount cap (security queue #3): create and the canEdit branch of
+    // update both carry the client-computed maxLineDiscount scalar, checked
+    // by discountsWithinPolicy() — a devtools/Firestore-SDK write can no
+    // longer set a discount beyond the staff member's effective maxDiscount,
+    // or any discount at all when canDiscount is false. Owner is exempt.
+    match /shops/{uid}/sales/{saleId} {
+      allow read:   if canAccess(uid);
+      allow create: if isOwner(uid)
+                    || (staffSession(uid) && discountsWithinPolicy(uid));
+      allow update: if isOwner(uid)
+                    || (
+                      staffSession(uid)
+                      && (
+                        request.resource.data.diff(resource.data).affectedKeys()
+                          .hasOnly(['payments', 'amountReceived', 'balanceOwing', 'paymentStatus'])
+                        || (
+                          request.resource.data.diff(resource.data).affectedKeys()
+                            .hasOnly(['voided', 'voidReason', 'voidedAt', 'voidedBy', 'unvoidedAt', 'unvoidedBy'])
+                          && effectivePerm(uid, 'canVoid')
+                        )
+                        || (effectivePerm(uid, 'canEdit') && discountsWithinPolicy(uid))
+                      )
+                    );
+      allow delete: if isOwner(uid) || effectivePerm(uid, 'canDelete');
+    }
+
+    // Customers — owner + staff can read/create/update; owner-only delete
+    match /shops/{uid}/customers/{custId} {
+      allow read:           if canAccess(uid);
+      allow create, update: if canAccess(uid);
+      allow delete:         if isOwner(uid);
+    }
+
+    // Borrowers (credit accounts) — owner + staff read/create/update.
+    // Delete requires effective canDelete (LIMITATION-003 hardening,
+    // mirrors the sales-delete rule): a cashier with devtools/Firestore
+    // SDK access could otherwise erase a debt record outright.
+    match /shops/{uid}/borrowers/{borrowerId} {
+      allow read:           if canAccess(uid);
+      allow create, update: if canAccess(uid);
+      allow delete:         if isOwner(uid) || effectivePerm(uid, 'canDelete');
+    }
+
+    // Contacts (unified customers + borrowers) — owner + staff read/create/
+    // update. Delete restricted the same way as borrowers (LIMITATION-003):
+    // this is the active collection deleteBorrower()/deleteContactDB() write
+    // to once contacts dual-write is live, so the same fraud vector applies.
+    match /shops/{uid}/contacts/{contactId} {
+      allow read:           if canAccess(uid);
+      allow create, update: if canAccess(uid);
+      allow delete:         if isOwner(uid) || effectivePerm(uid, 'canDelete');
+    }
+
+    // Expenses — owner and admin (MISSION §7, v1.18). Cost data, so still
+    // hidden from manager and cashier. isAdminOf reads the session role,
+    // which the /sessions create rule verifies against the real staff record.
+    match /shops/{uid}/expenses/{expenseId} {
+      allow read, write: if isOwner(uid) || isAdminOf(uid);
+    }
+
+    // Soft-delete tombstones — owner only
+    match /shops/{uid}/_pkDeleted/{docId} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // Staff records
+    //   Read: any authenticated user. Required because PIN login reads
+    //     the staff doc BEFORE the session doc exists (chicken-and-egg).
+    //     staffSession() would fail at that point.
+    //   Create/Delete: owner only.
+    //   Update: owner OR the staff member updating their OWN doc,
+    //     restricted to PIN and rate-limit fields only.
+    //     Covers: staffChangeOwnPin, legacy hash migration during login
+    //     (both need an existing session — pinHash/pinSalt stay
+    //     session-gated so a stranger can never touch the PIN itself).
+    //   BUG-012 fix — failedAttempts/lockedUntil have their OWN
+    //     pre-session branch below: the lockout counter has to write
+    //     DURING login, before /sessions/{anonUid} exists, so gating it
+    //     behind staffSession() meant the write always failed and the
+    //     60s-after-5-tries lockout never actually engaged (brute-forceable
+    //     PINs). Any authenticated user may bump it, but only in the exact
+    //     shape a real login attempt produces: the counter can only go up
+    //     by 1 or reset to 0, and lockedUntil can only be set a bounded
+    //     distance into the future (90s — the app uses 60s, this just adds
+    //     clock-skew slack) or cleared. Worst case a stranger can do with
+    //     this is grief-lock one account for under 2 minutes at a time —
+    //     accepted trade-off vs. unlimited PIN guessing, per the original
+    //     audit (BUG_LOG.md BUG-012).
+    //   LIMITATION-001: pinHash exposed to any authenticated user —
+    //     accepted; see BUG_LOG.md.
+    match /shops/{uid}/staff/{staffId} {
+      // F2 hardening: was `allow read` (get+list). staffLogin() only ever
+      // does getDoc on a known username — it never lists this collection.
+      // `read` let any authenticated (including anonymous) user dump the
+      // WHOLE staff roster of any shop in one query: usernames, pinHash,
+      // pinSalt, roles. get-only removes the list capability; single-doc
+      // gets by a known username still work exactly as before.
+      allow get:    if request.auth != null;
+      allow create: if isOwner(uid);
+      allow delete: if isOwner(uid);
+      allow update: if isOwner(uid)
+                    || (
+                      staffSession(uid)
+                      && get(sessionDoc()).data.staffUsername == staffId
+                      && request.resource.data.diff(resource.data)
+                           .affectedKeys()
+                           // F7 fix: 'displayName' was missing here even though
+                           // staffUpdateDisplayName() (staff-auth.js) has always
+                           // written it to this exact doc — the write silently
+                           // permission-denied every time, so the feature never
+                           // worked. Session doc write (:366-370) is unaffected,
+                           // already allowed displayName.
+                           .hasOnly(['pinHash', 'pinSalt', 'failedAttempts', 'lockedUntil', 'displayName'])
+                    )
+                    || (
+                      // F3 hardening: this pre-session branch exists so the
+                      // failed-attempt COUNTER can be bumped during login,
+                      // before /sessions/{anonUid} exists (BUG-012). The
+                      // reset-to-0 case used to live here too and was
+                      // unconditional — an attacker with direct SDK access
+                      // (no real PIN, no session) could bump then immediately
+                      // reset in a loop and the lockout would never trip.
+                      // Reset-to-0 only ever happens after a verified login
+                      // now (staff-auth.js Step 3d, moved after session
+                      // creation) and belongs on the staffSession() branch
+                      // above — so this branch allows ONLY a strict +1 bump,
+                      // and once that bump reaches MAX_ATTEMPTS (5) it MUST
+                      // carry a real future lockedUntil (was optional before,
+                      // so an attacker could bump forever while omitting
+                      // lockedUntil entirely and never actually get locked).
+                      request.auth != null
+                      && request.resource.data.diff(resource.data)
+                           .affectedKeys()
+                           .hasOnly(['failedAttempts', 'lockedUntil'])
+                      && request.resource.data.failedAttempts is number
+                      && request.resource.data.failedAttempts
+                           == (resource.data.failedAttempts is number ? resource.data.failedAttempts : 0) + 1
+                      && (
+                        request.resource.data.failedAttempts < 5
+                          ? (!('lockedUntil' in request.resource.data) || request.resource.data.lockedUntil == null)
+                          : (
+                            request.resource.data.lockedUntil is number
+                            && request.resource.data.lockedUntil > request.time.toMillis()
+                            && request.resource.data.lockedUntil <= request.time.toMillis() + 90000
+                          )
+                      )
+                    );
+    }
+
+    // Activity log — append-only for staff, full read for owner
+    //   F6 hardening: `performedBy` used to be whatever the client sent,
+    //   with no validation — a technically savvy staff member could
+    //   attribute their own action to another staff member, or to "Owner",
+    //   making the log useless as evidence against an insider. logActivity()
+    //   (staff-auth.js) always derives performedBy.username/.role from the
+    //   real session via getCurrentActor()/makePerformedBy() for every
+    //   legitimate write, so requiring it to match staffUsername(uid)/
+    //   staffRole(uid) costs the honest app nothing.
+    match /shops/{uid}/activityLog/{logId} {
+      allow read:   if isOwner(uid);
+      allow create: if isOwner(uid)
+                    || (
+                      staffSession(uid)
+                      && request.resource.data.performedBy.username == staffUsername(uid)
+                      && request.resource.data.performedBy.role == staffRole(uid)
+                    );
+    }
+
+    // Settings (staffPerms, future config) — staff read, owner write
+    match /shops/{uid}/settings/{settingId} {
+      allow read:  if canAccess(uid);
+      allow write: if isOwner(uid);
+    }
+
+    // Public storefront — a SANITIZED, owner-published snapshot of the shop's
+    // sellable items (name + sell prices + a stock badge only; NEVER cost,
+    // profit, supplier, or exact stock counts). The link is meant to be shared
+    // publicly, so reads are open; only the shop owner can publish. The raw
+    // /items collection stays private — we publish a separate clean doc here.
+    // TEMP LOCKDOWN (2026-07-14) — public storefront quota-exhaustion
+    // incident, see FOLLOWUP_LOG.md. Was `allow read: if true`. Revert once
+    // App Check is registered and enforced (site key pasted into
+    // js/firebase.js / shop.html) — see APP_CHECK_SITE_KEY there.
+    match /shops/{uid}/public/{docId} {
+      allow read:  if false;
+      allow write: if isOwner(uid);
+    }
+
+    // ─── /storefronts/{slug} — STOREFRONT SLUG → SHOP LOOKUP ────
+    // Maps a clean URL slug (e.g. "assad-ventures") to a shop uid so
+    // shop.html can resolve /shop/<slug>. Publicly readable (the link is
+    // public). A slug can only be created/changed by the owner it points to,
+    // and must always point to that same owner — so nobody can claim a slug
+    // for, or hijack the slug of, another shop.
+    // TEMP LOCKDOWN (2026-07-14) — same quota-exhaustion incident as above.
+    // Was `allow read: if true`. Revert once App Check is enforced.
+    match /storefronts/{slug} {
+      allow read:   if false;
+      // F8 hardening: same anonymous-squatting gap as /businesses below —
+      // only a real (Google-authenticated) owner publishes a storefront.
+      allow create: if request.auth != null
+                    && request.auth.token.firebase.sign_in_provider != 'anonymous'
+                    && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    // ─── /users/ — PARTIAL MIRROR (owner Settings reads) ────────
+    // Owner full access. No staff access — mirror isn't trusted for
+    // staff reads. Migration to /users/-only is a future project.
+    match /users/{uid}/{document=**} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // ─── /businesses/{code} — STAFF LOGIN LOOKUP ────────────────
+    // Any authenticated user can read (staff resolves code → ownerUid).
+    // Only the owner whose UID matches ownerUid can write/delete.
+    match /businesses/{code} {
+      // F2 hardening: was `allow read` (get+list). staffLogin() only ever
+      // does getDoc(businesses/{code}) for a code the user typed in — it
+      // never lists this collection. `read` let any authenticated user
+      // dump every business code -> ownerUid mapping in one query, making
+      // the 32^6 code space irrelevant. get-only closes that without
+      // touching the real lookup path.
+      allow get:    if request.auth != null;
+      // F8 hardening: getOrCreateBusinessCode() used to trust localStorage
+      // alone to know "do I already have a code?" — clearing site data or
+      // switching device/browser meant it just minted a second one, forking
+      // silently (both stay valid forever, owner's Settings can show a code
+      // different from the one staff actually use). Now it can look its own
+      // code up first via a scoped query. Firestore can statically verify
+      // this query only ever returns docs the caller owns, so this does NOT
+      // reopen the F2 enumeration hole (no unfiltered `list` capability).
+      allow list:   if request.auth != null && resource.data.ownerUid == request.auth.uid;
+      // Squatting: creation used to be open to ANY authenticated user,
+      // including anonymous staff sessions — a stranger could sign in
+      // anonymously and claim any unclaimed code (e.g. short/memorable
+      // ones), permanently blocking the real owner from ever choosing it
+      // (setCustomBusinessCode's uniqueness check has no way to reclaim a
+      // squatted code). Only a real (Google-authenticated) owner should be
+      // able to mint a business code — staff only ever read this collection.
+      allow create: if request.auth != null
+                    && request.auth.token.firebase.sign_in_provider != 'anonymous'
+                    && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.ownerUid == request.auth.uid;
+      allow delete: if request.auth != null
+                    && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // ─── /sessions/{sessionId} — STAFF SESSIONS (Option B) ──────
+    // Anonymous staff session doc keyed by anon UID. Contains role,
+    // ownerUid, staffUsername, createdAt, permissions, displayName.
+    //
+    // Read: session owner (resume on reload) + shop owner (future
+    //   remote revocation).
+    // Create: session owner only, must include required fields.
+    // Update: session owner only, restricted to displayName
+    //   (staffUpdateDisplayName merges {displayName} into session).
+    //   NOTE: spec said write-once but staff-auth.js:544 updates it.
+    // Delete: session owner (logout) + shop owner (remote revoke).
+    match /sessions/{sessionId} {
+      allow read:   if request.auth != null
+                    && (request.auth.uid == sessionId
+                        || resource.data.ownerUid == request.auth.uid);
+      allow create: if request.auth != null
+                    && request.auth.uid == sessionId
+                    && request.resource.data.keys()
+                         .hasAll(['role', 'ownerUid', 'staffUsername', 'createdAt'])
+                    // F1 hardening: the fields-present check above used to be
+                    // the ONLY gate on this doc, even though every permission
+                    // check in this file (staffRole/effectivePerm/etc.) trusts
+                    // it blindly — role/ownerUid were attacker-chosen strings.
+                    // Now the session must match a real, non-revoked staff
+                    // record for that exact shop + role. Still doesn't prove
+                    // PIN knowledge (rules can't read the request body of the
+                    // login flow), but collapses "any role in any shop" down
+                    // to "the exact role of a username you already know".
+                    && isRealStaffFor(request.resource.data.ownerUid, request.resource.data.staffUsername, request.resource.data.role);
+      allow update: if request.auth != null
+                    && request.auth.uid == sessionId
+                    && request.resource.data.diff(resource.data)
+                         .affectedKeys()
+                         .hasOnly(['displayName']);
+      allow delete: if request.auth != null
+                    && (request.auth.uid == sessionId
+                        || resource.data.ownerUid == request.auth.uid);
+    }
+  }
+}

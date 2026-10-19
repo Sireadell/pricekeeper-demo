@@ -1,0 +1,68 @@
+/* ============================================================
+   offline-banner.css — D.8.2a offline status banner + sync clock
+   Bold Command Center palette · .obx- namespace.
+   ============================================================ */
+
+.obx-banner {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 9999;
+  height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.02em;
+  cursor: pointer; user-select: none;
+  border-bottom: 1px solid transparent;
+}
+.obx-msg { padding: 0 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+.obx-banner.obx-offline { background: rgba(239,159,39,0.12);  color: var(--a2); border-bottom-color: rgba(239,159,39,0.4); }
+.obx-banner.obx-syncing { background: rgba(133,183,235,0.12); color: var(--blue); border-bottom-color: rgba(133,183,235,0.4); }
+.obx-banner.obx-review  { background: rgba(240,149,149,0.12); color: var(--red); border-bottom-color: rgba(240,149,149,0.4); }
+.obx-banner.obx-synced  { background: rgba(93,202,165,0.12);  color: var(--green); border-bottom-color: rgba(93,202,165,0.4); }
+/* Not signed in — loudest state. Solid danger fill so it can't be missed; a
+   sale rung here would be saved locally only and erased on the next sync. */
+.obx-banner.obx-loggedout {
+  background: var(--red); color: #2A0A0A; border-bottom-color: rgba(0,0,0,0.3);
+  font-weight: 500; letter-spacing: 0.03em;
+  animation: obx-loggedout-pulse 2s ease-in-out infinite;
+}
+@keyframes obx-loggedout-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.78; } }
+
+/* Push the app down so the fixed banner never covers the sticky header. */
+body.obx-banner-on { padding-top: 32px; }
+
+/* Dropdown: last sync events (tap the banner). */
+.obx-panel {
+  position: absolute; top: 100%; right: 8px;
+  width: min(360px, 92vw); max-height: 50vh; overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--border2); border-top: 0;
+  border-radius: 0 0 8px 8px; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  padding: 6px; cursor: default;
+}
+.obx-log-row {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center;
+  padding: 6px 8px; border-bottom: 1px solid var(--border); font-size: 11px;
+}
+.obx-log-row:last-child { border-bottom: 0; }
+.obx-log-res {
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; font-size: 9px;
+  padding: 1px 6px; border-radius: 4px; color: var(--muted); background: var(--s1); border: 1px solid var(--border);
+}
+.obx-log-res--synced       { color: var(--green); border-color: rgba(93,202,165,0.3); background: rgba(93,202,165,0.08); }
+.obx-log-res--needs_review { color: var(--red); border-color: rgba(240,149,149,0.3); background: rgba(240,149,149,0.08); }
+.obx-log-doc { color: var(--muted); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.obx-log-at  { color: var(--muted); font-size: 10px; white-space: nowrap; }
+.obx-log-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 11px; }
+
+@media (max-width: 768px) {
+  .obx-banner { height: 36px; }
+  body.obx-banner-on { padding-top: 36px; }
+  /* Two short lines instead of one cut-off line ("Log in b..."). */
+  .obx-msg {
+    white-space: normal; text-align: center; font-size: 11px; line-height: 1.25;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  }
+}
+
+/* Pending-sync clock on Trade history rows — inline, no extra column. */
+.pk-tr-sync { color: var(--a2); font-size: 11px; margin-left: 6px; cursor: default; }

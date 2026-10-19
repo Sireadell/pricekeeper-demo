@@ -1,0 +1,14 @@
+# F9 hardening — no security-headers file existed before this. Netlify
+# serves everything without X-Frame-Options/Referrer-Policy/nosniff by
+# default, which the app never opted out of, it just was never set.
+# camera=(self): the barcode scanner (js/barcode-scanner.js) needs the
+# camera on our own pages; camera=() blocked it everywhere.
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(self), microphone=()
+
+# Offline file saver: always fetch the newest copy so app updates reach phones.
+/sw.js
+  Cache-Control: no-cache

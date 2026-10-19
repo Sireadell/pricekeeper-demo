@@ -1,0 +1,97 @@
+/* ============================================================
+   restock-modal.css — D.9.1 Restock drawer
+   Namespaced .rst-  ·  Bold Command Center palette (dark only).
+   Drawer shell (overlay/transform) is inline in index.html, matching
+   the existing Add Item drawer; this file styles the inner content to
+   the D.9 mockup contract.
+   ============================================================ */
+
+.rst-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+
+.rst-eyebrow {
+  font-size: 10px; letter-spacing: 0.14em; color: var(--accent);
+  text-transform: uppercase; font-weight: 500;
+  margin: 16px 0 8px;
+}
+.rst-eyebrow:first-child { margin-top: 0; }
+
+.rst-row { display: grid; gap: 12px; margin-bottom: 12px; }
+.rst-row.two-col { grid-template-columns: 1fr 1fr; }
+
+.rst-field { display: flex; flex-direction: column; gap: 4px; }
+.rst-lab {
+  font-size: 9px; letter-spacing: 0.14em; color: var(--muted);
+  text-transform: uppercase; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+}
+.rst-lab .req { color: var(--accent); }
+
+.rst-inp {
+  padding: 9px 11px; background: var(--s1); border: 1px solid var(--border);
+  border-radius: 7px; color: var(--text); font-size: 12px; font-family: inherit;
+}
+.rst-inp:focus { outline: none; border-color: rgba(212,165,55,0.4); }
+.rst-inp::placeholder { color: var(--muted); }
+.rst-inp.rst-num { font-variant-numeric: tabular-nums; text-align: right; }
+
+/* amber price field when the price changed vs last restock */
+.rst-inp.rst-price-warn { color: var(--a2); border-color: rgba(239,159,39,0.5); }
+
+.rst-badge {
+  display: inline-flex; align-items: center; gap: 3px; padding: 0 5px;
+  background: rgba(93,202,165,0.08); border: 1px solid rgba(93,202,165,0.3);
+  border-radius: 3px; font-size: 8px; color: var(--green); letter-spacing: 0.06em;
+  font-weight: 500; text-transform: uppercase;
+}
+
+.rst-infobox {
+  padding: 10px 12px; background: rgba(133,183,235,0.05);
+  border: 1px solid rgba(133,183,235,0.2); border-radius: 7px;
+  font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 12px;
+}
+.rst-infobox b { color: var(--text); font-weight: 500; }
+.rst-infobox code {
+  background: var(--s1); padding: 1px 5px; border-radius: 3px;
+  color: var(--accent); font-family: 'Inter', monospace; font-size: 11px;
+}
+.rst-infobox--success { background: rgba(93,202,165,0.05); border-color: rgba(93,202,165,0.2); }
+.rst-infobox--success b { color: var(--green); }
+.rst-infobox--warn    { background: rgba(239,159,39,0.05); border-color: rgba(239,159,39,0.2); }
+.rst-infobox--warn b  { color: var(--a2); }
+.rst-wac { display: block; margin-top: 8px; padding: 7px 10px; background: rgba(212,165,55,0.04); border: 1px solid rgba(212,165,55,0.18); border-radius: 5px; font-size: 10px; color: var(--muted); line-height: 1.7; }
+.rst-wac b { color: var(--accent); font-weight: 500; }
+.rst-wac-dismiss { display: flex; align-items: center; gap: 5px; margin-top: 5px; cursor: pointer; color: var(--dim); font-size: 10px; user-select: none; }
+.rst-wac-dismiss input[type="checkbox"] { width: 12px; height: 12px; cursor: pointer; accent-color: var(--accent); }
+
+.rst-profit {
+  padding: 11px 14px; background: var(--s1); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted); font-size: 12px; margin-bottom: 4px;
+}
+.rst-profit.has-data { color: var(--muted); }
+.rst-profit.has-data b { color: var(--green); }
+.rst-profit .rst-neg, .rst-profit b.rst-neg { color: var(--red); }
+
+.rst-foot {
+  padding: 14px 20px; background: var(--bg); border-top: 1px solid var(--border);
+  display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0;
+}
+.rst-btn-cancel {
+  padding: 9px 14px; background: transparent; border: 1px solid var(--border2);
+  border-radius: 7px; color: var(--muted); font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.rst-btn-primary {
+  padding: 9px 18px; background: var(--accent); color: #0A0A0A; border: 1px solid var(--accent);
+  border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
+}
+.rst-btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+/* Mobile: full-width drawer (shell transform handled inline) */
+@media (max-width: 768px) {
+  .rst-row.two-col { grid-template-columns: 1fr; }
+}
+
+/* Bundle 3 · Stage 3 — cost-blind roles (manager + cashier) restock QTY only:
+   hide the entire "Where you bought it" block (supplier, buy price, date,
+   change box, margin preview). rstSave() only logs a supplier price when
+   price>0, so the empty/hidden price just skips the price write. */
+body.pk-cost-blind #rstWhereBought { display: none; }

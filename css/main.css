@@ -1,0 +1,935 @@
+@import url('tokens.css');
+/* ============================================================
+   main.css — PriceKeeper Premium POS
+   Aesthetic: Dark terminal meets Lagos night market
+   ============================================================ */
+
+/* ── Reset & tokens ────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Bold Command Center palette (Phase D step 1).
+   Dark is the default theme; light variant lives in [data-theme="light"]
+   further down. Values are the single source of truth for the legacy
+   --bg/--accent/--text token surface that the entire app reads from. */
+:root {
+  --bg:      #0A0A0A;   /* page */
+  --s1:      #141414;   /* card surface */
+  --s2:      #1A1A1A;   /* elevated surface */
+  --s3:      #222222;   /* recessed / divider stop */
+  --s4:      #2A2A2A;   /* even deeper */
+  --border:  #222222;   /* subtle card border */
+  --border2: #333333;   /* emphasis / focus-edge border */
+  --accent:  #D4A537;   /* gold primary */
+  --accent2: #E8B84A;   /* gold bright (hover) */
+  --a2:      #EF9F27;   /* warning amber */
+  --blue:    #85B7EB;   /* info, dark-optimized */
+  --blue2:   #A5C9F2;
+  --green:   #5DCAA5;   /* success, dark-optimized */
+  --green2:  #7FDEC0;
+  --red:     #F09595;   /* danger, dark-optimized */
+  --text:    #F5F1E8;   /* primary, warm off-white */
+  --text2:   #D3D1C7;   /* secondary */
+  --muted:   #B8A276;   /* section labels, warm gold-gray */
+  --fh: 'Plus Jakarta Sans', sans-serif;
+  --fb: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Glow effects — tuned for new gold/status hues */
+  --glow-accent: 0 0 20px rgba(212, 165, 55, 0.15);
+  --glow-green:  0 0 20px rgba(93, 202, 165, 0.15);
+  --glow-blue:   0 0 20px rgba(133, 183, 235, 0.15);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.5);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.6);
+
+  /* Hard-pin browser native controls (date pickers, scrollbars,
+     form widgets) to dark. Without this, an OS in light mode
+     auto-inverts them and produces the "mystery light mode"
+     half-baked appearance reported by cashier. MISSION §3.4. */
+  color-scheme: dark;
+
+  /* App-shell chrome heights — single source of truth for the full-height
+     page calcs (Business/Trade use calc(100dvh - top - bottom)). The top bar
+     is the one-line header (wordmark + tabs). On phones the tabs move to a
+     fixed bottom bar, so --pk-bottom becomes its height (set in the media
+     query below); on wide screens there is no bottom bar (0). */
+  --pk-top: 53px;
+  --pk-bottom: 0px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'PKNairaFallback', var(--fb);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle grid texture on bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245,200,66,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,10,15,.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  box-shadow: 0 1px 0 var(--border), var(--shadow-sm);
+}
+
+/* Accent line under header */
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: .3;
+}
+
+.logo {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--accent);
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  gap: 2px;
+}
+.logo em {
+  color: var(--text);
+  font-style: normal;
+  opacity: .7;
+}
+
+.auth-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 24px;
+  padding: 7px 16px;
+  margin: auto 0;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .73rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .3px;
+}
+.auth-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(245,200,66,.06);
+}
+.auth-btn img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: none;
+  border: 1.5px solid var(--accent);
+}
+
+/* ── Tab nav (Phase D.3.1 — pill active state) ─────────────── */
+.tab-nav {
+  /* Lives INSIDE .pk-header now (same line as the wordmark) — no longer its
+     own sticky bar. It takes the middle space between the wordmark and the
+     user chip and scrolls horizontally if the row gets tight on small screens.
+     Stickiness + background come from the header it sits in. */
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: var(--fh);
+  font-weight: 500;
+  font-size: .8rem;
+  color: #888;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .15s ease, background-color .15s ease;
+  letter-spacing: 0.02em;
+}
+.tab-ico { line-height: 1; font-size: 1em; }
+.tab-btn:hover { color: var(--muted); }
+.tab-btn.active {
+  color: #0A0A0A;
+  background: var(--accent);
+}
+.tab-btn.active:hover {
+  color: #0A0A0A;
+  background: var(--accent2);
+}
+
+/* Light-mode contrast bump for inactive tabs (#888 → warmer/darker) */
+[data-theme="light"] .tab-btn { color: #5F5E5A; }
+[data-theme="light"] .tab-btn:hover { color: #1A1A1A; }
+
+/* Hidden — legacy underline glow dot from the pre-pill design */
+.tab-btn.active::before {
+  content: none;
+}
+
+/* ── Mobile: the header tabs drop to a fixed bottom tab bar ──────
+   Below 720px the inline header row can't hold wordmark + 4 tabs + chip,
+   so the SAME nav element is pinned to the bottom (thumb-reachable, always
+   visible — no hidden dropdown). Each tab stacks icon over label. The shell
+   reserves --pk-bottom so full-height pages don't hide content behind it.
+   Because .tab-nav is still a child of .pk-header, the modal-open rule that
+   hides the header also hides this bar. */
+@media (max-width: 720px) {
+  :root { --pk-bottom: 56px; }
+
+  /* The header's blur makes it the frame that position:fixed children are
+     placed in, so the "bottom" bar landed on top of the header and covered
+     Sign in and Staff Login. Solid background instead of blur on phones. */
+  header {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(8,10,15);
+  }
+
+  .tab-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0; top: auto;
+    flex: none;
+    justify-content: space-around;
+    gap: 0;
+    height: calc(56px + env(safe-area-inset-bottom));
+    padding: 0 4px env(safe-area-inset-bottom);
+    background: #000;
+    border-top: 1px solid var(--border);
+    overflow: visible;
+    z-index: 95;
+  }
+  [data-theme="light"] .tab-nav { background: #FFFFFF; }
+
+  .tab-btn {
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px 2px 6px;
+    font-size: .6rem;
+    letter-spacing: 0;
+    border-radius: 8px;
+  }
+  .tab-ico { font-size: 1.3rem; }
+  /* Bottom-bar active = accent icon + label, not a filled gold pill. */
+  .tab-btn.active,
+  .tab-btn.active:hover { background: transparent; color: var(--accent); }
+
+  /* Dashboard scrolls the document (not an inner box like Trade/Business),
+     so its content needs clearance to sit above the fixed bottom bar.
+     .wrap (Inventory) already reserves 100px, which is plenty. */
+  #page-dashboard { padding-bottom: calc(var(--pk-bottom) + 16px); }
+}
+
+/* ── Pages ─────────────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+.wrap { width: 100%; max-width: 100%; margin: 0; padding: 24px 20px 100px; box-sizing: border-box; }
+
+/* ── Sync bar ──────────────────────────────────────────────── */
+.sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .69rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  letter-spacing: .3px;
+}
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+.sync-dot.online  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.sync-dot.offline { background: var(--a2);    box-shadow: 0 0 6px var(--a2); }
+
+/* ── Summary cards ─────────────────────────────────────────── */
+.sum-row {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+@media(max-width:500px){ .sum-row { grid-template-columns: repeat(2,1fr); } }
+
+.sc {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.sc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+.sc:hover { border-color: var(--border2); }
+
+.sc .sl {
+  font-size: .58rem;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-family: var(--fb);
+}
+.sc .sv {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+.sc .sv.y { color: var(--accent); }
+.sc .sv.g { color: var(--green); }
+.sc .sv.o { color: var(--a2); }
+
+/* ── Form inputs (shared) ──────────────────────────────────── */
+input[type=text], input[type=number], select, textarea {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 10px 13px;
+  font-family: var(--fb);
+  font-size: .85rem;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,.08);
+  background: var(--s3);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+select option { background: var(--s2); }
+textarea { resize: none; height: 60px; font-size: .81rem; }
+
+/* ── Form grids ────────────────────────────────────────────── */
+.fg  { display: grid; grid-template-columns: 1fr 1fr;         gap: 10px; margin-bottom: 10px; }
+.fg3 { display: grid; grid-template-columns: 2fr 1fr 1fr;     gap: 10px; margin-bottom: 10px; }
+.fg4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+@media(max-width:500px){ .fg, .fg3, .fg4 { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 5px; }
+label.lbl {
+  font-size: .62rem;
+  color: var(--muted);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-family: var(--fb);
+}
+.divider { border: none; border-top: 1px dashed var(--border2); margin: 14px 0; }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn-add {
+  width: 100%;
+  background: var(--accent);
+  color: #080a0f;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .92rem;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s, box-shadow .2s;
+  letter-spacing: .3px;
+}
+.btn-add:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(245,200,66,.3);
+}
+.btn-add:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 9px 15px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .8rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-secondary:hover {
+  background: var(--s3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Section label ─────────────────────────────────────────── */
+.sec-lbl {
+  font-family: var(--fh);
+  font-size: .61rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.badge {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: .62rem;
+  color: var(--muted);
+  font-family: var(--fb);
+}
+
+/* ── Toggle switch ─────────────────────────────────────────── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 13px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  margin-bottom: 10px;
+}
+.toggle-row label.lbl { margin: 0; font-size: .74rem; color: var(--text2); letter-spacing: 0; text-transform: none; }
+.toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; inset: 0; background: var(--s4); border-radius: 22px; cursor: pointer; transition: background .2s; border: 1px solid var(--border2); }
+.slider::before { content: ''; position: absolute; width: 15px; height: 15px; border-radius: 50%; background: var(--muted); top: 3px; left: 3px; transition: transform .2s, background .2s; }
+.toggle input:checked + .slider { background: rgba(245,200,66,.12); border-color: rgba(245,200,66,.3); }
+.toggle input:checked + .slider::before { transform: translateX(16px); background: var(--accent); }
+
+/* ── Modal ─────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.82);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  transform: scale(.96) translateY(8px);
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: .4;
+}
+.overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-title { font-family: var(--fh); font-weight: 800; font-size: 1rem; margin-bottom: 18px; color: var(--text); }
+.modal-btns { display: flex; gap: 10px; margin-top: 16px; }
+.btn-cancel {
+  flex: 1;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 11px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-cancel:hover { background: var(--s3); color: var(--text2); }
+.btn-save {
+  flex: 2;
+  background: var(--accent);
+  color: #080a0f;
+  border: none;
+  border-radius: 10px;
+  padding: 11px;
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: opacity .15s, box-shadow .2s;
+}
+.btn-save:hover { opacity: .88; box-shadow: 0 4px 14px rgba(245,200,66,.3); }
+
+/* ── Filter bar ────────────────────────────────────────────── */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.search-wrap { position: relative; flex: 1; min-width: 150px; }
+.search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+#searchInput { padding-left: 36px; background: var(--s1); border: 1px solid var(--border2); border-radius: 10px; }
+#searchInput:focus { border-color: var(--accent); }
+.cat-filter {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--fb);
+  font-size: .8rem;
+  color: var(--text2);
+  outline: none;
+  cursor: pointer;
+}
+.cat-filter:focus { border-color: var(--accent); }
+
+/* ── Empty state ───────────────────────────────────────────── */
+.empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+.empty .ico { font-size: 2.6rem; margin-bottom: 14px; opacity: .6; }
+.empty p { font-family: var(--fh); font-size: .86rem; line-height: 1.8; }
+
+/* ── Profit preview strip ──────────────────────────────────── */
+.preview {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 11px 14px;
+  margin-bottom: 14px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: .79rem;
+  color: var(--muted);
+}
+.preview strong { font-family: var(--fh); font-size: .92rem; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+
+/* ── Toast — top-right stack, color-coded (FEATURE-004) ───── */
+/* Stack sits above nav (z-index 100), staff bar (200), and modal overlays.
+   Using 99999 keeps it above the existing range without competing with the
+   token --pk-z-toast (200), which is reserved for future cleanup. */
+.pk-toast-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 99999;
+  pointer-events: none;
+  max-width: min(380px, calc(100vw - 32px));
+}
+
+.pk-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #1f2937; /* overridden per-variant */
+  border: none;
+  border-radius: var(--pk-radius-lg, 10px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  font-family: var(--pk-font-sans, var(--fb));
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity .22s ease, transform .26s cubic-bezier(.32,.72,0,1);
+}
+.pk-toast.show { opacity: 1; transform: translateX(0); }
+.pk-toast.leaving {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity .18s ease, transform .2s ease;
+}
+
+.pk-toast-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--pk-font-sans, var(--fh));
+  line-height: 1;
+  color: #ffffff;
+  margin-top: 1px;
+}
+.pk-toast-msg {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  word-wrap: break-word;
+  color: #ffffff;
+}
+.pk-toast-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1px;
+  margin-right: -4px;
+  opacity: 0.75;
+  transition: opacity .15s ease, background .15s ease;
+}
+.pk-toast-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, .15);
+}
+
+/* Variants — solid backgrounds, white text/icons (no soft tints). */
+.pk-toast--success { background: #047857; }
+.pk-toast--error,
+.pk-toast--danger  { background: #B91C1C; }
+.pk-toast--warning { background: #B45309; }
+.pk-toast--info    { background: #1E40AF; }
+
+/* Legacy fallback — old hidden element so any code path that still queries
+   #toast doesn't crash. Keeps the old visual offscreen. */
+.toast { display: none !important; }
+
+/* ── Sub-tab nav ───────────────────────────────────────────── */
+.sub-tab-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--s2);
+  border-radius: 10px 10px 0 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sub-tab-nav::-webkit-scrollbar { display: none; }
+.sub-tab-btn {
+  flex-shrink: 0;
+  padding: 11px 18px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .74rem;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .2s, border-color .2s;
+  letter-spacing: .4px;
+}
+.sub-tab-btn:hover { color: var(--text2); }
+.sub-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── Sub pages ─────────────────────────────────────────────── */
+.sub-page { display: none; }
+.sub-page.active { display: block; }
+
+/* ── Report summary ────────────────────────────────────────── */
+.report-summary { grid-template-columns: repeat(5, 1fr); }
+@media(max-width:600px){ .report-summary { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Scrollbar styling ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .5; }
+}
+
+/* Buy Unit Selector */
+.buy-unit-group {
+  display: flex;
+  gap: 8px;
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 6px;
+}
+
+.buy-unit-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.buy-unit-btn input[type="radio"] {
+  display: none;
+}
+
+.buy-unit-btn span {
+  display: block;
+}
+
+.buy-unit-btn.active {
+  background: var(--accent);
+  color: #080a0f;
+  border-color: var(--accent);
+}
+
+.buy-unit-btn:hover:not(.active) {
+  background: var(--s3);
+  border-color: var(--accent);
+}
+
+/* ══════════════════════════════════════════
+   ONBOARDING OVERLAY
+══════════════════════════════════════════ */
+#onboardingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  /* Onboarding is a deliberate always-dark immersive splash (its own self-contained
+     palette is injected by onboarding.js with light text on #080a0f). Kept dark in
+     BOTH themes — like #pkSplash — so the light-text content stays readable. */
+  background: #080a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#onboardingOverlay.ob-visible { opacity: 1; }
+#onboardingOverlay.ob-outro {
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* ====================== LIGHT MODE ====================== */
+/* Light variant — warm African Premium palette. Activated by
+   document.documentElement.setAttribute('data-theme', 'light'). */
+[data-theme="light"] {
+  --bg:        #FAFAF7;
+  --s1:        #FFFFFF;
+  --s2:        #F5F1E6;
+  --s3:        #F0EBD8;
+  --s4:        #E8E4D8;
+  --border:    #E8E4D8;
+  --border2:   #D3D1C7;
+  --text:      #1A1A1A;
+  --text2:     #5F5E5A;
+  --muted:     #8C7B5C;
+  --accent:    #B8862A;
+  --accent2:   #D4A537;
+  --a2:        #92400E;
+  --blue:      #1E40AF;
+  --blue2:     #0C447C;
+  --green:     #047857;
+  --green2:    #065F46;
+  --red:       #B91C1C;
+
+  /* Glows are too heavy on a light bg — neutralize */
+  --glow-accent: 0 0 0 0 transparent;
+  --glow-green:  0 0 0 0 transparent;
+  --glow-blue:   0 0 0 0 transparent;
+
+  /* Lighter shadows for the off-white surface */
+  --shadow-sm: 0 1px 2px rgba(26,26,26,.04);
+  --shadow-md: 0 2px 8px rgba(26,26,26,.06);
+  --shadow-lg: 0 8px 24px rgba(26,26,26,.10);
+}
+
+[data-theme="light"] body,
+[data-theme="light"] .panel-scroll,
+[data-theme="light"] .biz-nav,
+[data-theme="light"] .setting-row,
+[data-theme="light"] .borr-row,
+[data-theme="light"] .recent-sale-card,
+[data-theme="light"] .ov-kpi-card {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+/* ... rest of the CSS you posted ... */
+/* ── Add Item modal ──────────────────────────────────────────
+   Layout now lives in css/inventory-d33.css (.pk-ai-modal — centered,
+   compact, wide). The old right-side drawer rules were removed: as ID
+   selectors they overrode the new class and forced the modal off-screen
+   right at 440px wide (hiding the pricing column). Overlay base props are
+   set inline on #addItemOverlay; JS toggles its display. */
+#addItemDrawer .divider { margin: 14px 0; }
+#drawerBody::-webkit-scrollbar { width: 3px; }
+#drawerBody::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── Auth-pending splash (BUG-003) ──────────────────────────── */
+#pkSplash {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--bg, #0A0A0A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .25s ease;
+}
+#pkSplash.pk-splash-fadeout {
+  opacity: 0;
+  pointer-events: none;
+}
+.pk-splash-wordmark {
+  font-family: var(--fh, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  letter-spacing: 0.08em;
+  color: #B8862A;
+  text-align: center;
+}
+
+/* ── Staff logout confirmation modal (BUG-002) ─────────────── */
+/* Initial display:none is inline on #staffLogoutModal so the modal stays
+   hidden until JS flips it to display:flex. The rules below describe the
+   layout for when it IS shown — they don't fight the inline hide. */
+#staffLogoutModal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, .75);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.pk-logout-dialog {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
+}
+.pk-logout-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.pk-logout-body {
+  font-size: .74rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.pk-logout-actions {
+  display: flex;
+  gap: 8px;
+}
+.pk-logout-actions button {
+  border-radius: 9px;
+  padding: 10px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: .78rem;
+  cursor: pointer;
+  border: none;
+}
+.pk-logout-cancel {
+  flex: 1;
+  background: var(--s3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.pk-logout-confirm {
+  flex: 2;
+  background: var(--red);
+  color: #fff;
+  font-weight: 800;
+}
+.pk-logout-confirm:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,1305 @@
+/* ============================================================
+   inventory-d33.css — Phase D.3.3 Inventory redesign
+   Bold Command Center · matches docs/mockups/D.3.3-inventory.html
+   Tokens come from tokens.css; this file only adds layout + the
+   inventory-specific surface treatments.
+   ============================================================ */
+
+/* .pk-naira hook moved to tokens.css (shared with .currency). */
+
+/* ── Staff Login button (standalone, signed-out state only) ── */
+.pk-staff-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-staff-btn:hover { border-color: var(--border2); color: var(--accent); }
+
+/* ── Privacy toggle (sits in pk-header between LIVE + Staff) ─ */
+.pk-privacy-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-privacy-toggle:hover { border-color: var(--border2); color: var(--accent); }
+.pk-privacy-track {
+  width: 26px; height: 14px;
+  background: var(--border2); border-radius: 7px;
+  position: relative; flex-shrink: 0;
+  transition: background .15s ease;
+}
+.pk-privacy-thumb {
+  width: 10px; height: 10px;
+  background: var(--muted); border-radius: 50%;
+  position: absolute; top: 2px; left: 2px;
+  transition: transform .18s ease, background .15s ease;
+}
+.pk-privacy-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+}
+.pk-privacy-toggle[aria-pressed="true"] .pk-privacy-track { background: var(--accent); }
+.pk-privacy-toggle[aria-pressed="true"] .pk-privacy-thumb {
+  background: var(--bg);
+  transform: translateX(12px);
+}
+.pk-privacy-label { font-weight: 500; }
+
+/* Cost-blind sessions (cashier + manager, Bundle 3) never see cost, so the
+   owner privacy toggle is meaningless for them. Hide it whenever
+   applyStaffMode() has set body.pk-cost-blind. */
+body.pk-cost-blind #pkPrivacyToggle { display: none; }
+
+/* ── Page header (eyebrow + h1 + meta + 3 actions) ────────── */
+.pk-inv-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.pk-inv-head-l { min-width: 0; }
+.pk-inv-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.pk-inv-h1 {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.pk-inv-h1-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.pk-inv-h1-meta b {
+  color: var(--text);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pk-inv-meta-sep { color: var(--muted); margin: 0 4px; }
+
+.pk-inv-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.pk-inv-btn {
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--s2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+  white-space: nowrap;
+}
+.pk-inv-btn:hover { border-color: var(--border2); background: var(--s2); }
+.pk-inv-btn--primary {
+  background: var(--accent); color: #0A0A0A; border-color: var(--accent);
+}
+.pk-inv-btn--primary:hover { background: var(--accent2); border-color: var(--accent2); }
+.pk-inv-btn--success-ghost {
+  color: var(--green);
+  border-color: rgba(93,202,165,0.3);
+  background: transparent;
+}
+.pk-inv-btn--success-ghost:hover {
+  background: rgba(93,202,165,0.08);
+  border-color: rgba(93,202,165,0.5);
+}
+.pk-inv-btn--danger-ghost {
+  color: var(--red);
+  border-color: rgba(240,149,149,0.3);
+  background: transparent;
+}
+.pk-inv-btn--danger-ghost:hover {
+  background: rgba(240,149,149,0.08);
+  border-color: rgba(240,149,149,0.5);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.pk-inv-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  position: relative;
+}
+.pk-inv-search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 380px;
+  position: relative;
+}
+.pk-inv-search-icon {
+  position: absolute; left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+.pk-inv-search-input {
+  width: 100%;
+  padding: 9px 30px 9px 34px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.pk-inv-search-input::placeholder { color: var(--muted); }
+.pk-inv-search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212,165,55,0.18);
+}
+.pk-inv-search-clear:not([hidden]) {
+  position: absolute; right: 8px; top: 50%;
+  transform: translateY(-50%);
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: 50%;
+  color: var(--red);
+  font-size: 12px; line-height: 1; cursor: pointer; padding: 0;
+}
+.pk-inv-search-clear:hover { background: rgba(240,149,149,0.14); }
+
+.pk-inv-chip {
+  padding: 7px 12px;
+  font-size: 12px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-inv-chip:hover { border-color: var(--border2); color: var(--text2); }
+.pk-inv-chip.active {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+}
+.pk-inv-chip-count {
+  font-size: 10px;
+  padding: 1px 5px;
+  background: var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pk-inv-chip.active .pk-inv-chip-count {
+  background: rgba(212,165,55,0.2);
+  color: var(--accent);
+}
+
+/* Stock-state filter chips — the leading glyph keeps its status color even when
+   the chip is the gold active one, so Low/Out stay scannable at a glance. */
+.pk-inv-chip-ic { font-size: 11px; line-height: 1; }
+.pk-inv-chip--instock   .pk-inv-chip-ic { color: var(--green); }
+.pk-inv-chip--low       .pk-inv-chip-ic { color: var(--a2); }
+.pk-inv-chip--out       .pk-inv-chip-ic { color: var(--red); }
+.pk-inv-chip--untracked .pk-inv-chip-ic { color: var(--muted); }
+
+/* Category chip + native select stacked together.
+   The native select sits invisible above the chip so a click on
+   the chip opens the OS-native dropdown. The chip's visual state
+   is updated in JS to reflect the select's value. */
+.pk-inv-cat-wrap {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.pk-inv-cat-chip { pointer-events: none; }
+.pk-inv-cat-chip.active {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+}
+.pk-inv-cat-select {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  font: inherit;
+  /* IE/Edge legacy reset — harmless on modern */
+  background: transparent;
+}
+
+.pk-inv-sort {
+  padding: 7px 26px 7px 12px;
+  font-size: 12px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  outline: none;
+  flex-shrink: 0;
+  transition: border-color .15s ease;
+}
+.pk-inv-sort:hover { border-color: var(--border2); }
+.pk-inv-sort:focus { border-color: var(--accent); }
+
+.pk-inv-select-toggle {
+  padding: 7px 12px;
+  font-size: 12px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-inv-select-toggle:hover { border-color: var(--border2); color: var(--text2); }
+.pk-inv-select-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: rgba(212,165,55,0.4);
+  background: rgba(212,165,55,0.08);
+}
+.pk-inv-select-toggle[aria-pressed="true"] .pk-inv-select-icon::before { content: "✓"; }
+.pk-inv-select-toggle .pk-inv-select-icon::before { content: "☐"; }
+.pk-inv-select-toggle .pk-inv-select-icon { display: inline-block; }
+
+/* keep raw glyph hidden — replaced by ::before for clean toggling */
+.pk-inv-select-toggle .pk-inv-select-icon { font-size: 0; }
+.pk-inv-select-toggle .pk-inv-select-icon::before { font-size: 12px; }
+
+.pk-inv-low-pill {
+  margin-left: auto;
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: filter .15s ease;
+}
+.pk-inv-low-pill--ok {
+  background: rgba(93,202,165,0.08);
+  border: 1px solid rgba(93,202,165,0.3);
+  color: var(--green);
+}
+.pk-inv-low-pill--alert {
+  background: rgba(239,159,39,0.08);
+  border: 1px solid rgba(239,159,39,0.3);
+  color: var(--a2);
+}
+.pk-inv-low-pill--alert.pk-inv-low-pill--active {
+  background: rgba(239,159,39,0.18);
+  border-color: rgba(239,159,39,0.55);
+}
+.pk-inv-low-pill:hover { filter: brightness(1.08); }
+
+/* ── Grid + cards ────────────────────────────────────────── */
+.pk-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+@media (max-width: 1024px) {
+  .pk-inv-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .pk-inv-grid { grid-template-columns: 1fr; gap: 10px; }
+}
+
+.pk-inv-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color .15s ease, background .15s ease;
+}
+.pk-inv-card:hover {
+  border-color: var(--border2);
+  background: var(--s2);
+}
+.pk-inv-card.is-out { border-color: rgba(240,149,149,0.25); }
+.pk-inv-card.is-selected {
+  border-color: var(--accent);
+  background: rgba(212,165,55,0.04);
+}
+
+.pk-inv-checkbox {
+  position: absolute;
+  top: 14px; left: 14px;
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--border2);
+  border-radius: 5px;
+  background: var(--bg);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background .12s ease, border-color .12s ease;
+}
+.pk-inv-grid.is-select-mode .pk-inv-checkbox { display: flex; }
+.pk-inv-grid.is-select-mode .pk-inv-card { padding-left: 44px; cursor: pointer; }
+.pk-inv-card.is-selected .pk-inv-checkbox {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pk-inv-card.is-selected .pk-inv-checkbox::after {
+  content: "✓";
+  color: #0A0A0A;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pk-inv-cardhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.pk-inv-cardhead-l { flex: 1; min-width: 0; }
+.pk-inv-cardtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+.pk-inv-metarow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Category pill */
+.pk-inv-cat-pill {
+  display: inline-block;
+  padding: 1px 8px;
+  font-size: 10px;
+  background: rgba(133,183,235,0.1);
+  color: var(--blue);
+  border: 1px solid rgba(133,183,235,0.25);
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+/* Mode pill (Carton / Row / Piece) */
+.pk-inv-mode-pill {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 9px;
+  background: var(--border);
+  color: var(--muted);
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+/* Velocity dot */
+.pk-inv-vel {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--border2);
+  cursor: help;
+}
+.pk-inv-vel--selling { background: var(--green); }
+.pk-inv-vel--slow    { background: var(--a2); }
+.pk-inv-vel--dead    { background: var(--red); }
+.pk-inv-vel--never   { background: var(--border2); }
+
+/* Stock chip (matches mockup; reuses existing data labels) */
+.pk-inv-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.pk-inv-stock--ok {
+  background: rgba(93,202,165,0.1);
+  color: var(--green);
+  border: 1px solid rgba(93,202,165,0.2);
+}
+.pk-inv-stock--low {
+  background: rgba(239,159,39,0.1);
+  color: var(--a2);
+  border: 1px solid rgba(239,159,39,0.25);
+}
+.pk-inv-stock--out {
+  background: rgba(240,149,149,0.1);
+  color: var(--red);
+  border: 1px solid rgba(240,149,149,0.25);
+}
+.pk-inv-stock--untracked {
+  background: var(--border);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+/* Manually flagged via the kebab menu (restockFlag) — a personal restock
+   reminder, NOT a real recount. Dashed border keeps it visually distinct
+   from a genuinely computed low/out so the real number on a tracked item
+   is never mistaken for "system says zero." Never shown on the public
+   storefront — internal-only signal. */
+.pk-inv-stock--flagged { border-style: dashed; }
+
+/* Prices region */
+.pk-inv-prices {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 80px;
+}
+.pk-inv-prow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 4px 0;
+  gap: 8px;
+}
+.pk-inv-plabel {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.pk-inv-plabel .pk-inv-qtyhint {
+  color: var(--muted);
+  font-size: 10px;
+}
+.pk-inv-pvalue {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.pk-inv-prow--piece .pk-inv-pvalue { color: var(--accent); }
+
+/* Note */
+.pk-inv-note {
+  flex-shrink: 0;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(212,165,55,0.04);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  font-size: 11px;
+  color: var(--accent);
+  line-height: 1.5;
+}
+
+/* Action footer */
+.pk-inv-cardfoot {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.pk-inv-iconbtn {
+  flex: 1;
+  padding: 7px 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-inv-iconbtn .pk-inv-iconbtn-lbl {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.pk-inv-iconbtn--share:hover,
+.pk-inv-iconbtn--edit:hover {
+  border-color: rgba(212,165,55,0.4);
+  color: var(--accent);
+  background: rgba(212,165,55,0.06);
+}
+.pk-inv-iconbtn--del:hover {
+  border-color: rgba(240,149,149,0.4);
+  color: var(--red);
+  background: rgba(240,149,149,0.06);
+}
+/* Dim per-card actions while in select mode; they still fire (via
+   event.stopPropagation in the inline onclick), but visually defer
+   to the card-level selection click. */
+.pk-inv-grid.is-select-mode .pk-inv-iconbtn { opacity: 0.5; }
+.pk-inv-grid.is-select-mode .pk-inv-iconbtn:hover { opacity: 1; }
+
+/* ── Loading skeleton ────────────────────────────────────── */
+.pk-inv-skel {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+}
+.pk-inv-skel-line {
+  background: linear-gradient(90deg, var(--border) 0%, var(--border) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  animation: pkInvSkel 1.6s ease-in-out infinite;
+  border-radius: 4px;
+}
+.pk-inv-skel-title { height: 14px; margin-bottom: 8px; }
+.pk-inv-skel-meta  { height: 10px; margin-bottom: 16px; }
+.pk-inv-skel-row   { height: 12px; margin: 6px 0; }
+.pk-inv-skel-actions { height: 28px; border-radius: 7px; margin-top: auto; }
+
+@keyframes pkInvSkel {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty states ────────────────────────────────────────── */
+.pk-inv-empty {
+  grid-column: 1 / -1;
+  padding: 64px 24px;
+  text-align: center;
+  background: var(--s1);
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+}
+.pk-inv-empty-icon {
+  font-size: 36px;
+  margin-bottom: 14px;
+  opacity: 0.4;
+  line-height: 1;
+}
+.pk-inv-empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.pk-inv-empty-sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pk-inv-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #0A0A0A;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s ease, border-color .15s ease;
+}
+.pk-inv-empty-cta:hover { background: var(--accent2); border-color: var(--accent2); }
+
+/* ── Bulk action bar ─────────────────────────────────────── */
+.pk-inv-bulk-bar {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--s2);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 8px 8px 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.4);
+  font-size: 13px;
+  z-index: 60;
+}
+.pk-inv-bulk-bar[hidden] { display: none; }
+.pk-inv-bulk-count {
+  color: var(--accent);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.pk-inv-bulk-sep { color: var(--muted); margin: 0 6px; }
+.pk-inv-bulk-action {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-inv-bulk-action:hover {
+  border-color: rgba(212,165,55,0.5);
+  color: var(--accent);
+  background: rgba(212,165,55,0.06);
+}
+.pk-inv-bulk-action--danger:hover {
+  border-color: rgba(240,149,149,0.5);
+  color: var(--red);
+  background: rgba(240,149,149,0.06);
+}
+.pk-inv-bulk-x {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.pk-inv-bulk-x:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── Mobile (≤768px) ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pk-inv-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .pk-inv-h1 { font-size: 18px; }
+  .pk-inv-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  /* Stacked slim bar on mobile: switcher keeps its natural pill width on
+     its own line; actions drop below and bleed full width as a 2-col grid.
+     Reset the desktop margin-left:auto so the grid fills edge to edge. */
+  .pk-inv-bar .pk-inv-actions { flex: 1 1 100%; margin-left: 0; }
+  .pk-inv-actions .pk-inv-btn { justify-content: center; }
+  .pk-inv-actions .pk-inv-btn--primary {
+    grid-column: 1 / -1;
+  }
+  .pk-inv-toolbar { gap: 8px; }
+  .pk-inv-search {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .pk-inv-low-pill {
+    /* on mobile, let it fall in line rather than push fully right */
+    margin-left: auto;
+  }
+  .pk-inv-bulk-bar {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    bottom: 16px;
+    justify-content: space-between;
+  }
+}
+
+/* ── D.9.1 Inventory sub-tabs (Items | Suppliers) ────────── */
+.pk-inv-subtabs {
+  display: flex; gap: 6px; margin: 4px 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+.pk-inv-subtab {
+  padding: 9px 14px; background: transparent; border: none;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  color: var(--muted); font-size: 13px; font-family: inherit; font-weight: 500;
+  cursor: pointer; letter-spacing: 0.02em;
+}
+.pk-inv-subtab:hover { color: var(--text); }
+.pk-inv-subtab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── D.9.1 Suppliers sub-view shell (placeholder until D.9.3) ── */
+.pk-sup-shell {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 10px; padding: 64px 24px; max-width: 460px; margin: 0 auto;
+}
+.pk-sup-shell-icon { font-size: 34px; color: var(--accent); opacity: 0.85; }
+.pk-sup-shell-title { font-size: 16px; font-weight: 500; color: var(--text); }
+.pk-sup-shell-sub { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.pk-sup-shell-sub b { color: var(--accent); font-weight: 500; }
+.pk-sup-shell .pk-inv-btn { margin-top: 8px; }
+
+/* ── D.9.1 Item-card Restock button (gold, recommended flow) ── */
+.pk-inv-iconbtn--restock {
+  background: rgba(212,165,55,0.08);
+  border-color: rgba(212,165,55,0.4);
+  color: var(--accent);
+}
+.pk-inv-iconbtn--restock:hover { background: rgba(212,165,55,0.16); border-color: var(--accent); }
+
+/* ── Effective markup (derived, read-only) display ─────────
+   Replaces the old markup % input. Sell-price-wins: markup is
+   computed from sell vs buy, never typed. Gold when positive,
+   red when negative (sell below buy). ── */
+.pk-markup-display {
+  font-family: var(--fh);
+  font-weight: 500;
+  font-size: .95rem;
+  line-height: 1.2;
+  padding: 9px 0 8px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.pk-markup-display.is-negative { color: var(--red); }
+.pk-markup-display.is-empty    { color: var(--muted); font-weight: 400; }
+
+/* ── Privacy mode: drawer hides cost + margin numbers ─────── */
+body.pk-privacy-on #cartonPreview,
+body.pk-privacy-on #preview,
+body.pk-privacy-on .pk-inv-cost-only {
+  display: none !important;
+}
+
+/* ── Cost ENTRY fields (Add/Edit drawer buy price + Effective Markup +
+   Profit Preview) ── Bundle 3 · Stage 5: hidden from cost-blind roles
+   (manager/cashier) via the body.pk-cost-blind hook — they add/edit items
+   with SELL + QTY only. addItem()/_updateItem() skip the buy validation and
+   save/preserve buyPrice as null for cost-blind, so the form works end-to-end.
+   Owner/admin (no hook) keep the full cost-entry fields. */
+body.pk-cost-blind .pk-cost-entry { display: none !important; }
+
+/* ── Hide D.3.3 chrome when the wrap is in a placeholder
+   page state (no shaped wrapper supplied) — defensive only ── */
+.pk-inv-grid:empty + .pk-inv-bulk-bar[hidden] { display: none; }
+
+/* ════════════════════════════════════════════════════════════
+   D.3.5 — Inventory restructure + expandable item cards
+   Contracts: docs/mockups/D.3.5-inventory-restructure.html
+              docs/mockups/D.3.5-item-card-expand.html
+   These rules come AFTER the D.3.3 ones above, so equal-specificity
+   selectors (e.g. .pk-inv-grid, .pk-inv-card) intentionally override.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Segmented switcher (Items | Suppliers) · replaces the big header + underline subtabs ── */
+.pk-inv-segmented {
+  display: flex;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 4px;
+  margin: 4px 0 18px;
+  width: fit-content;
+  max-width: 100%;
+}
+.pk-inv-seg {
+  padding: 10px 22px;
+  font-size: 13px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+.pk-inv-seg.active { background: var(--accent); color: #0A0A0A; }
+.pk-inv-seg-count {
+  font-size: 11px;
+  padding: 1px 7px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.pk-inv-seg.active .pk-inv-seg-count { background: rgba(0,0,0,0.15); color: #0A0A0A; }
+
+/* ── D.3.5.1 Slim bar: switcher · metrics · actions on one row ──
+   `[hidden]` selector (0,2,0) beats the base `.pk-inv-metrics`/
+   `.pk-inv-actions` (0,1,0) display rule, so the hidden attribute is
+   honoured — this is the fix for the both-headers-showing overlap. */
+.pk-inv-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 18px;
+  flex-wrap: wrap;
+}
+.pk-inv-bar .pk-inv-segmented { margin: 0; }   /* drop its own bottom margin inside the bar */
+.pk-inv-metrics {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+  min-width: 200px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pk-inv-metrics[hidden] { display: none; }
+.pk-inv-metrics b { color: var(--text); font-weight: 500; }
+.pk-inv-metrics .pk-money { color: var(--text); }
+.pk-inv-metrics .pk-inv-msep { color: var(--border2); margin: 0 2px; }
+/* Items tab has no centre metric strip, so the actions need their own
+   push to the right edge of the bar. On Suppliers the flex:1 metric strip
+   already does this and the Items actions are hidden, so margin-left:auto
+   is a no-op there. */
+.pk-inv-bar .pk-inv-actions { margin-left: auto; }
+.pk-inv-bar .pk-inv-actions[hidden] { display: none; }
+
+/* ── Context-aware header (per tab) ── */
+.pk-inv-ctxhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.pk-inv-ctxhead-l { min-width: 0; }
+.pk-inv-ctxh2 {
+  font-size: 24px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+}
+.pk-inv-ctxmeta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.pk-inv-ctxmeta b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pk-inv-ctxsep { color: var(--border2); margin: 0 6px; }
+.pk-inv-alert-low { color: var(--a2); font-weight: 500; }
+.pk-inv-alert-out { color: var(--red); font-weight: 500; }
+.pk-inv-ctxmeta .gold { color: var(--accent); font-weight: 500; }
+
+/* ── Inner help line (Suppliers views — one-liner per inner tab) ── */
+.pk-inv-innerhelp {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+  margin: -4px 0 14px;
+}
+
+/* ── Inner supplier segmented restyled compact to match mockup ── */
+.pk-sup-seg {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  margin-bottom: 14px;
+  width: fit-content;
+  max-width: 100%;
+}
+.pk-sup-seg-btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pk-sup-seg-btn.active { background: var(--border); color: var(--accent); }
+.pk-sup-seg-count {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pk-sup-seg-btn.active .pk-sup-seg-count { background: rgba(212,165,55,0.12); color: var(--accent); }
+
+/* ── Items list: responsive card grid (reflows by viewport) ──
+   auto-FILL + minmax packs as many columns as fit at the track floor:
+   1 col on phones → 2 → 3 on standard desktop → up to 4 on wide screens.
+   The `calc((100% - 36px) / 4)` term (36px = three 12px gaps between four
+   columns) caps it at 4 even on ultrawide monitors; the 420px floor keeps
+   cards a comfortable width and sets the 4→3→2→1 step points; `min(100%,…)`
+   stops the floor overflowing on screens narrower than one card.
+   auto-FILL (not auto-fit): empty trailing tracks are KEPT, so a short last
+   row stays card-width and left-aligned instead of one card stretching to
+   fill the row. `align-items: stretch` makes every card in a row equal
+   height. Card surface tokens (var(--s1) / var(--border) / radius / padding) unchanged. */
+.pk-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(420px, calc((100% - 36px) / 4))), 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ── Always-open item card (D.3.5 · contract: D.3.5-item-card-always-open.html) ──
+   No tap-to-expand. The card renders fully open; tapping does nothing.
+   Sell prices only — buy/margin never appear on the card for any role. */
+.pk-inv-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: block;
+  transition: border-color .15s ease, background .15s ease;
+}
+.pk-inv-card:hover { border-color: var(--border2); }
+.pk-inv-card.is-out { border-color: rgba(240,149,149,0.25); }
+.pk-inv-card.is-selected { border-color: var(--accent); background: rgba(212,165,55,0.04); }
+
+/* Top row — name (+ category) left, stock chip right */
+.pk-inv-chead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.pk-inv-chead-info { flex: 1; min-width: 0; }
+.pk-inv-cname {
+  font-size: 15px; font-weight: 500; color: var(--text);
+  word-break: break-word;
+}
+.pk-inv-ccat {
+  font-size: 9px; color: var(--blue); letter-spacing: 0.1em;
+  text-transform: uppercase; font-weight: 500; margin-top: 4px;
+}
+
+/* Buy-unit pill (● Carton / Row / Piece) */
+.pk-inv-cunit {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 8px;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--muted);
+  background: var(--s2); border: 1px solid var(--border2); border-radius: 6px;
+  padding: 3px 8px; text-transform: uppercase; font-weight: 500;
+}
+.pk-inv-cunit-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); display: inline-block; flex-shrink: 0;
+}
+
+/* Internal dividers */
+.pk-inv-cdiv { border-top: 1px solid var(--border); margin: 14px 0; }
+
+/* Sell tiers */
+.pk-inv-trow {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px; padding: 5px 0;
+}
+.pk-inv-tlbl { font-size: 13px; color: var(--muted); font-weight: 400; }
+.pk-inv-tsub { color: var(--muted); font-size: 12px; }
+.pk-inv-tval {
+  font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.pk-inv-tval--gold  { font-size: 15px; color: var(--accent); }
+.pk-inv-tval--white { font-size: 16px; color: var(--text); }
+
+/* Price table (LEGACY · no longer emitted by the always-open card; kept
+   for the buy/margin privacy-gating contract referenced elsewhere) */
+.pk-inv-ptable {
+  width: 100%; border-collapse: collapse; margin-bottom: 14px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.pk-inv-ptable th {
+  text-align: left; padding: 9px 12px; color: var(--muted); font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+  border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.pk-inv-ptable th.num { text-align: right; }
+.pk-inv-ptable td {
+  padding: 10px 12px; font-size: 12px; color: var(--text);
+  font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--s1);
+}
+.pk-inv-ptable td.unit { letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; color: var(--muted); font-weight: 500; }
+.pk-inv-ptable td.num { text-align: right; }
+.pk-inv-ptable tr:last-child td { border-bottom: 0; }
+.pk-inv-ptable tr.default-row { background: rgba(212,165,55,0.04); }
+.pk-inv-ptable tr.default-row td.unit { color: var(--accent); }
+.pk-inv-ptable .buy-col { color: var(--muted); }
+.pk-inv-ptable .sell-col { color: var(--text); font-weight: 500; }
+.pk-inv-ptable tr.default-row .sell-col { color: var(--accent); }
+.pk-inv-ptable tr.default-row td.num.sellonly { color: var(--accent); font-weight: 500; }
+.pk-inv-ptable .margin-pos { color: var(--green); font-weight: 500; }
+.pk-inv-ptable .margin-neg { color: var(--red); font-weight: 500; }
+.pk-inv-ptable td.dash { color: var(--border2); font-style: italic; font-size: 11px; }
+.pk-inv-qhint { color: var(--border2); font-weight: 400; }
+.pk-inv-qhint.gold { color: rgba(212,165,55,0.6); }
+
+/* Action buttons — always visible, role-gated in _cardActions (§7).
+   Full-width row matching the mockup's .btns/.btn; wraps to 2-up when
+   four buttons (owner/admin) don't fit. */
+.pk-inv-cactions { display: flex; gap: 10px; flex-wrap: wrap; }
+.pk-inv-cbtn {
+  flex: 1; min-width: 84px;
+  padding: 10px 8px; background: var(--s2); border: 1px solid var(--border);
+  border-radius: 9px; color: var(--text); font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.pk-inv-cbtn:hover { border-color: rgba(212,165,55,0.4); color: var(--accent); background: rgba(212,165,55,0.06); }
+.pk-inv-cbtn.restock { background: rgba(212,165,55,0.06); border-color: rgba(212,165,55,0.45); color: var(--accent); }
+.pk-inv-cbtn.restock:hover { background: rgba(212,165,55,0.14); border-color: var(--accent); }
+.pk-inv-cbtn.danger { color: var(--red); border-color: var(--border); }
+.pk-inv-cbtn.danger:hover { background: rgba(240,149,149,0.06); border-color: rgba(240,149,149,0.5); color: var(--red); }
+
+/* Kebab (⋯) — quick restock-flag menu, sits alongside the row of action
+   buttons rather than stretching with them. Mirrors .pk-tr-more. */
+.pk-inv-more {
+  flex: 0 0 auto;
+  width: 38px; height: 38px;
+  background: var(--s2); border: 1px solid var(--border); border-radius: 9px;
+  color: var(--muted); font-size: 15px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pk-inv-more:hover { color: var(--accent); border-color: rgba(212,165,55,0.3); background: rgba(212,165,55,0.04); }
+
+/* Item action popover (one shared element, repositioned per click).
+   Mirrors .pk-tr-popover exactly for visual consistency. */
+.pk-inv-popover {
+  position: fixed; z-index: 70; min-width: 190px;
+  background: var(--s2); border: 1px solid var(--border2); border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.45); padding: 6px; font-size: 12px;
+}
+.pk-inv-popover[hidden] { display: none; }
+.pk-inv-pop-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 10px; background: transparent; border: 0;
+  color: var(--text); font-family: inherit; font-size: 12px;
+  border-radius: 6px; cursor: pointer; text-align: left;
+}
+.pk-inv-pop-item:hover { background: var(--border); color: var(--accent); }
+.pk-inv-pop-item .pk-inv-pop-icon { color: var(--muted); width: 14px; text-align: center; }
+.pk-inv-pop-item:hover .pk-inv-pop-icon { color: var(--accent); }
+.pk-inv-pop-sep { height: 1px; background: var(--border); margin: 4px 6px; }
+/* Dim per-card actions in select mode (they still fire via stopPropagation) */
+.pk-inv-grid.is-select-mode .pk-inv-cbtn { opacity: 0.5; }
+.pk-inv-grid.is-select-mode .pk-inv-cbtn:hover { opacity: 1; }
+
+/* Permission note (manager / cashier) */
+.pk-inv-permnote {
+  margin-top: 10px; padding: 8px 12px;
+  background: rgba(133,183,235,0.04); border: 1px solid rgba(133,183,235,0.15);
+  border-radius: 6px; font-size: 11px; color: var(--blue); line-height: 1.5;
+}
+.pk-inv-permnote b { color: var(--text); font-weight: 500; }
+
+/* Select-mode: checkbox overlays the card's top-left; shift the card's
+   content right so the name doesn't sit under it. */
+.pk-inv-grid.is-select-mode .pk-inv-card { padding-left: 44px; cursor: pointer; }
+.pk-inv-card .pk-inv-checkbox { top: 16px; left: 16px; }
+
+/* ── Add/Edit drawer: profit preview block (Part 3) ── */
+.pk-inv-profit-preview {
+  margin-top: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.pk-inv-pp-head {
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 500; padding: 10px 14px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.pk-inv-pp-row {
+  display: grid; grid-template-columns: 52px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid var(--s1);
+  font-size: 12px; font-variant-numeric: tabular-nums;
+}
+.pk-inv-pp-row:last-child { border-bottom: 0; }
+.pk-inv-pp-unit { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.pk-inv-pp-flow { color: var(--text); }
+.pk-inv-pp-flow .b { color: var(--muted); }
+.pk-inv-pp-flow .arrow { color: var(--border2); margin: 0 4px; }
+.pk-inv-pp-margin { font-weight: 500; text-align: right; white-space: nowrap; }
+.pk-inv-pp-margin.pos { color: var(--green); }
+.pk-inv-pp-margin.neg { color: var(--red); }
+.pk-inv-pp-margin.dash { color: var(--border2); font-style: italic; }
+/* Margin% suffix sits quietly next to the profit amount (which is now primary). */
+.pk-inv-pp-pct { color: var(--muted); font-weight: 400; font-size: 11px; margin-left: 5px; }
+.pk-inv-pp-row.is-default { background: rgba(212,165,55,0.04); }
+
+/* ── Add Item — compact wide modal (replaces the slide-in drawer) ──── */
+.pk-ai-modal {
+  width: 100%; max-width: 680px; margin: auto;
+  background: var(--s1); border: 1px solid var(--border2); border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.6);
+  display: flex; flex-direction: column; max-height: calc(100dvh - 48px);
+}
+.pk-ai-in { animation: pkAiIn .18s ease-out; }
+@keyframes pkAiIn { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
+.pk-ai-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.pk-ai-body { padding: 16px 18px; overflow-y: auto; }
+.pk-ai-foot { display: flex; gap: 9px; padding: 12px 18px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--s1); border-radius: 0 0 14px 14px; }
+.pk-ai-namerow { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; margin-bottom: 14px; }
+.pk-ai-core { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 16px; align-items: start; }
+.pk-ai-core #cartonFields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pk-ai-grid2 { display: grid; grid-template-columns: 1fr 110px; gap: 8px; }
+
+/* Buy-unit segmented control — compact, text-only (no emoji logos), per mockup */
+.pk-ai-core .buy-unit-group { gap: 3px; padding: 3px; border-radius: 8px; background: var(--bg); }
+.pk-ai-core .buy-unit-btn { padding: 7px 6px; font-size: 11.5px; font-weight: 500; border-width: 1px; border-radius: 6px; }
+@media (max-width: 640px) {
+  .pk-ai-core   { grid-template-columns: 1fr; }
+  .pk-ai-namerow{ grid-template-columns: 1fr 1fr; }
+}
+
+/* collapsible sections (Stock & sourcing, Details) */
+.pk-ai-acc { border: 1px solid var(--border2); border-radius: 10px; margin-top: 12px; overflow: hidden; background: var(--s1); }
+.pk-ai-acc-h { display: flex; align-items: center; gap: 9px; padding: 12px 13px; cursor: pointer; user-select: none; }
+.pk-ai-acc-h .ic { color: var(--accent); font-size: 11px; transition: transform .15s ease; }
+.pk-ai-acc.open .pk-ai-acc-h .ic { transform: rotate(90deg); }
+.pk-ai-acc-h .t { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.pk-ai-acc-h .sub { font-size: 10.5px; color: var(--muted); margin-left: auto; }
+.pk-ai-acc-b { display: none; padding: 0 13px 13px; border-top: 1px solid var(--border); }
+.pk-ai-acc.open .pk-ai-acc-b { display: block; padding-top: 12px; }
+
+/* pricing rows: the Sell input is folded into each unit's profit row */
+#profitPreview .pk-inv-pp-row { display: flex; align-items: center; gap: 8px; }
+#profitPreview .pk-inv-pp-unit { width: 34px; flex-shrink: 0; }
+#profitPreview .pk-inv-pp-flow { white-space: nowrap; flex-shrink: 0; }
+#profitPreview .pk-pp-sellwrap { display: inline-flex; align-items: center; gap: 2px; color: var(--muted); }
+#profitPreview .pk-pp-sell { width: 72px; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); font: inherit; font-size: 12px; padding: 5px 7px; text-align: right; }
+#profitPreview .pk-pp-sell:focus { outline: none; border-color: var(--accent); }
+#profitPreview .pk-inv-pp-margin { margin-left: auto; }
+.pk-pp-off { display: none !important; }
+.pk-inv-pp-row.is-default .pk-inv-pp-unit { color: var(--accent); }
+
+/* ── Bundle 3 · Stage 6: owner/admin needs-cost surfaces ──────────────
+   "NO COST YET" card tag, the amber "Set cost" card button, and the
+   "Needs cost · N" toolbar filter chip. Rendered only for owner/admin in
+   inventory.js — never for cost-blind roles. */
+.pk-inv-nocost {
+  display: inline-block; vertical-align: middle;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--a2); background: rgba(239,159,39,0.10);
+  border: 1px solid rgba(239,159,39,0.4); border-radius: 4px;
+  padding: 2px 7px; margin-right: 8px;
+}
+/* solid amber CTA — vivid amber fill + dark text reads on both themes */
+.pk-inv-cbtn--setcost { background: var(--a2); border-color: var(--a2); color: #1a1206; }
+.pk-inv-cbtn--setcost:hover { background: #F2B04A; border-color: #F2B04A; color: #1a1206; }
+.pk-inv-needscost-chip.active,
+.pk-inv-needscost-chip:hover {
+  color: var(--a2); border-color: rgba(239,159,39,0.5); background: rgba(239,159,39,0.10);
+}
+.pk-inv-needscost-chip .pk-inv-chip-count { background: rgba(239,159,39,0.2); color: var(--a2); }
+
+/* ── v1.0 stock-tracking: inline Set-stock editor (inside the item card).
+   Opened by the amber "Set stock" button on NO-STOCK-SET cards; one editor
+   at a time. Locked Bold Command Center tokens; weights 400/500 only. */
+.pk-ss-editor {
+  display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+  cursor: default;
+}
+.pk-ss-field { flex: 1; min-width: 110px; }
+.pk-ss-field--unit { flex: 0.8; min-width: 90px; }
+.pk-ss-lbl {
+  display: block; font-size: 10px; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;
+}
+.pk-ss-field input, .pk-ss-field select {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: inherit; font-size: 14px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  padding: 8px 10px; width: 100%; outline: none;
+}
+.pk-ss-field input:focus, .pk-ss-field select:focus { border-color: var(--accent); }
+.pk-ss-hint   { font-size: 10.5px; color: var(--muted); margin-top: 5px; }
+.pk-ss-auto   { color: var(--green); }
+.pk-ss-manual { color: var(--a2); }
+.pk-ss-actions { display: flex; gap: 8px; }
+.pk-ss-save {
+  background: var(--accent); color: #1a1206; border: none; border-radius: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  padding: 9px 16px; cursor: pointer; white-space: nowrap;
+}
+.pk-ss-save:active { background: var(--accent2); }
+.pk-ss-cancel {
+  background: none; color: var(--muted); border: 1px solid var(--border); border-radius: 8px;
+  font-family: inherit; font-size: 12px; font-weight: 400;
+  padding: 8px 12px; cursor: pointer;
+}
+.pk-ss-cancel:hover { border-color: var(--accent); color: var(--text); }
+
+/* ── Light-mode fix: segment count pills use a faint white tint that disappears on
+   the light surface. Dark keeps rgba(255,255,255,*); swap to a faint dark tint in light. ── */
+[data-theme="light"] .pk-inv-seg-count,
+[data-theme="light"] .pk-sup-seg-count { background: rgba(0,0,0,0.05); }

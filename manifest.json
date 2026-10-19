@@ -1,0 +1,22 @@
+{
+  "name": "PriceKeeper",
+  "short_name": "PriceKeeper",
+  "description": "The smart POS built for Nigerian small businesses.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/pricekeeper-logo-v2.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/pricekeeper-logo-v2.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,397 @@
+/* ============================================================
+   tokens.css — Bold Command Center design tokens
+   Dark is the default theme (Phase D step 1).
+   Light variant lives in [data-theme="light"] below.
+   ============================================================ */
+
+:root {
+  /* ----- Surfaces ----- */
+  --pk-bg-page: #0A0A0A;
+  --pk-bg-card: #141414;
+  --pk-bg-card-warm: #1A1A1A;
+  --pk-bg-nav: #000000;
+  --pk-bg-overlay: rgba(0, 0, 0, 0.7);
+  --pk-bg-input: #141414;
+  --pk-bg-hover: rgba(212, 165, 55, 0.08);
+
+  /* ----- Text ----- */
+  --pk-text-primary: #F5F1E8;
+  --pk-text-secondary: #D3D1C7;
+  --pk-text-muted: #B8A276;
+  --pk-text-faint: #6B6B6B;
+  --pk-text-on-dark: #F5F1E8;
+  --pk-text-on-gold: #0A0A0A;
+
+  /* ----- Brand gold ----- */
+  --pk-gold: #D4A537;
+  --pk-gold-bright: #E8B84A;
+  --pk-gold-deep: #B8862A;
+  --pk-gold-tint: rgba(212, 165, 55, 0.12);
+
+  /* ----- Borders ----- */
+  --pk-border-light: #222222;
+  --pk-border-strong: #333333;
+  --pk-border-divider: #1F1F1F;
+  --pk-border-focus: var(--pk-gold);
+
+  /* ----- Status (dark-optimized lighter ramp stops) ----- */
+  --pk-success-bg: rgba(93, 202, 165, 0.12);
+  --pk-success-fg: #5DCAA5;
+  --pk-success-strong: #9FE1CB;
+
+  --pk-danger-bg: rgba(240, 149, 149, 0.12);
+  --pk-danger-fg: #F09595;
+  --pk-danger-strong: #F7C1C1;
+
+  --pk-warning-bg: rgba(239, 159, 39, 0.12);
+  --pk-warning-fg: #EF9F27;
+  --pk-warning-strong: #FAC775;
+  --pk-warning-border: rgba(239, 159, 39, 0.3);
+
+  --pk-info-bg: rgba(133, 183, 235, 0.12);
+  --pk-info-fg: #85B7EB;
+  --pk-info-strong: #B5D4F4;
+
+  --pk-neutral-bg: rgba(179, 178, 169, 0.1);
+  --pk-neutral-fg: #B4B2A9;
+
+  /* ----- CLV tiers ----- */
+  --pk-tier-champion-bg: #D4A537;
+  --pk-tier-champion-fg: #0A0A0A;
+  --pk-tier-regular-bg: var(--pk-success-bg);
+  --pk-tier-regular-fg: var(--pk-success-fg);
+  --pk-tier-new-bg: var(--pk-info-bg);
+  --pk-tier-new-fg: var(--pk-info-fg);
+  --pk-tier-atrisk-bg: var(--pk-warning-bg);
+  --pk-tier-atrisk-fg: var(--pk-warning-fg);
+  --pk-tier-lost-bg: var(--pk-neutral-bg);
+  --pk-tier-lost-fg: var(--pk-neutral-fg);
+
+  /* ----- Elevation ----- */
+  --pk-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --pk-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --pk-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --pk-shadow-modal: 0 12px 40px rgba(0, 0, 0, 0.6);
+
+  /* ----- Glow (hero cards) ----- */
+  --pk-glow-gold: radial-gradient(circle at top right, rgba(212, 165, 55, 0.15), transparent 60%);
+
+  /* ----- Typography ----- */
+  --pk-font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --pk-font-mono: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --pk-text-xs: 10px;
+  --pk-text-sm: 11px;
+  --pk-text-base: 13px;
+  --pk-text-md: 14px;
+  --pk-text-lg: 17px;
+  --pk-text-xl: 22px;
+  --pk-text-2xl: 28px;
+  --pk-text-3xl: 36px;
+
+  --pk-weight-regular: 400;
+  --pk-weight-medium: 500;
+
+  --pk-tracking-tight: -0.02em;
+  --pk-tracking-wide: 0.05em;
+  --pk-tracking-wider: 0.08em;
+  --pk-tracking-widest: 0.15em;
+
+  /* ----- Spacing (4px scale) ----- */
+  --pk-space-1: 4px;
+  --pk-space-2: 8px;
+  --pk-space-3: 12px;
+  --pk-space-4: 16px;
+  --pk-space-5: 20px;
+  --pk-space-6: 24px;
+  --pk-space-7: 28px;
+  --pk-space-8: 32px;
+
+  /* ----- Radius ----- */
+  --pk-radius-sm: 4px;
+  --pk-radius-md: 8px;
+  --pk-radius-lg: 10px;
+  --pk-radius-xl: 12px;
+  --pk-radius-pill: 999px;
+
+  /* ----- Misc ----- */
+  --pk-focus-ring: 0 0 0 3px rgba(212, 165, 55, 0.35);
+  --pk-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --pk-duration: 160ms;
+
+  /* ----- Z-index scale ----- */
+  --pk-z-dropdown: 50;
+  --pk-z-sticky: 60;
+  --pk-z-modal: 100;
+  --pk-z-tooltip: 150;
+  --pk-z-toast: 200;
+}
+
+/* ============================================================
+   LIGHT THEME — warm African Premium variant
+   Activated by document.documentElement.setAttribute('data-theme','light')
+   ============================================================ */
+
+[data-theme="light"] {
+  /* ----- Surfaces ----- */
+  --pk-bg-page: #FAFAF7;
+  --pk-bg-card: #FFFFFF;
+  --pk-bg-card-warm: #F5F1E6;
+  --pk-bg-nav: #1A1A1A;
+  --pk-bg-overlay: rgba(26, 26, 26, 0.45);
+  --pk-bg-input: #FFFFFF;
+  --pk-bg-hover: rgba(184, 134, 42, 0.06);
+
+  /* ----- Text ----- */
+  --pk-text-primary: #1A1A1A;
+  --pk-text-secondary: #5F5E5A;
+  --pk-text-muted: #8C7B5C;
+  --pk-text-faint: #A8956A;
+  --pk-text-on-dark: #FAFAF7;
+  --pk-text-on-gold: #1A1A1A;
+
+  /* ----- Brand gold ----- */
+  --pk-gold: #B8862A;
+  --pk-gold-bright: #D4A537;
+  --pk-gold-deep: #6B5520;
+  --pk-gold-tint: #F0EBD8;
+
+  /* ----- Borders ----- */
+  --pk-border-light: #E8E4D8;
+  --pk-border-strong: #D3D1C7;
+  --pk-border-divider: #F0EBD8;
+  --pk-border-focus: var(--pk-gold);
+
+  /* ----- Status ----- */
+  --pk-success-bg: #ECFDF5;
+  --pk-success-fg: #047857;
+  --pk-success-strong: #065F46;
+
+  --pk-danger-bg: #FEF2F2;
+  --pk-danger-fg: #B91C1C;
+  --pk-danger-strong: #991B1B;
+
+  --pk-warning-bg: #FFFBEB;
+  --pk-warning-fg: #92400E;
+  --pk-warning-strong: #78350F;
+  --pk-warning-border: #FDE68A;
+
+  --pk-info-bg: #E6F1FB;
+  --pk-info-fg: #0C447C;
+  --pk-info-strong: #042C53;
+
+  --pk-neutral-bg: #F1EFE8;
+  --pk-neutral-fg: #5F5E5A;
+
+  /* ----- CLV tiers ----- */
+  --pk-tier-champion-bg: #B8862A;
+  --pk-tier-champion-fg: #FFFFFF;
+  --pk-tier-regular-bg: var(--pk-success-bg);
+  --pk-tier-regular-fg: var(--pk-success-fg);
+  --pk-tier-new-bg: var(--pk-info-bg);
+  --pk-tier-new-fg: var(--pk-info-fg);
+  --pk-tier-atrisk-bg: var(--pk-warning-bg);
+  --pk-tier-atrisk-fg: var(--pk-warning-fg);
+  --pk-tier-lost-bg: var(--pk-neutral-bg);
+  --pk-tier-lost-fg: var(--pk-neutral-fg);
+
+  /* ----- Elevation (subtler on light) ----- */
+  --pk-shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.04);
+  --pk-shadow-md: 0 2px 8px rgba(26, 26, 26, 0.06);
+  --pk-shadow-lg: 0 8px 24px rgba(26, 26, 26, 0.10);
+  --pk-shadow-modal: 0 12px 40px rgba(26, 26, 26, 0.18);
+
+  /* ----- Glow disabled on light bg ----- */
+  --pk-glow-gold: none;
+
+  /* ----- Focus ring ----- */
+  --pk-focus-ring: 0 0 0 3px rgba(184, 134, 42, 0.25);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+/* Naira sign (₦, U+20A6) glyph fallback.
+   Inter's ₦ either isn't included in Google's served subset or sits
+   on a different baseline than the digits, producing a visibly "off"
+   currency symbol next to tabular-nums numbers. This @font-face is a
+   synthetic font that matches ONLY U+20A6 and resolves via local()
+   lookup to whichever system font is installed. For every other
+   character the browser skips this font and falls through to Inter,
+   so the rest of the typography is unchanged. */
+@font-face {
+  font-family: 'PKNairaFallback';
+  src: local('Segoe UI'),
+       local('-apple-system'),
+       local('BlinkMacSystemFont'),
+       local('Noto Sans'),
+       local('Liberation Sans'),
+       local('Arial');
+  unicode-range: U+20A6;
+}
+
+/* Explicit currency-glyph hook. Body already inherits PKNairaFallback
+   via @font-face above, but elements that override font-family (modals,
+   print, third-party content) lose the fallback. Wrap ₦ in
+   <span class="currency"> (or legacy .pk-naira) to force Noto Sans
+   resolution at the inline level. */
+.currency,
+.pk-naira {
+  font-family: 'Noto Sans', 'PKNairaFallback', var(--pk-font-sans, system-ui, sans-serif);
+}
+
+body {
+  background: var(--pk-bg-page);
+  color: var(--pk-text-primary);
+  font-family: 'PKNairaFallback', var(--pk-font-sans);
+  font-size: var(--pk-text-md);
+  line-height: 1.5;
+  transition: background var(--pk-duration) var(--pk-ease),
+              color var(--pk-duration) var(--pk-ease);
+}
+
+.pk-money,
+[data-money] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.pk-label {
+  font-size: var(--pk-text-xs);
+  color: var(--pk-text-muted);
+  letter-spacing: var(--pk-tracking-wider);
+  text-transform: uppercase;
+  font-weight: var(--pk-weight-medium);
+}
+
+/* ============================================================
+   COMPONENT PRIMITIVES
+   ============================================================ */
+
+.pk-card {
+  background: var(--pk-bg-card);
+  border: 1px solid var(--pk-border-light);
+  border-radius: var(--pk-radius-lg);
+  padding: var(--pk-space-4) var(--pk-space-5);
+  transition: background var(--pk-duration) var(--pk-ease),
+              border-color var(--pk-duration) var(--pk-ease);
+}
+
+.pk-input {
+  height: 38px;
+  background: var(--pk-bg-input);
+  border: 1px solid var(--pk-border-light);
+  border-radius: var(--pk-radius-md);
+  padding: 0 var(--pk-space-3);
+  font-size: var(--pk-text-base);
+  color: var(--pk-text-primary);
+  font-family: inherit;
+  transition: border-color var(--pk-duration) var(--pk-ease),
+              box-shadow var(--pk-duration) var(--pk-ease);
+}
+.pk-input::placeholder { color: var(--pk-text-faint); }
+.pk-input:focus {
+  outline: none;
+  border-color: var(--pk-border-focus);
+  box-shadow: var(--pk-focus-ring);
+}
+
+.pk-btn-primary {
+  height: 38px;
+  padding: 0 var(--pk-space-4);
+  background: var(--pk-gold);
+  color: var(--pk-text-on-gold);
+  border: none;
+  border-radius: var(--pk-radius-md);
+  font-size: var(--pk-text-base);
+  font-weight: var(--pk-weight-medium);
+  cursor: pointer;
+  transition: opacity var(--pk-duration) var(--pk-ease),
+              transform var(--pk-duration) var(--pk-ease),
+              background var(--pk-duration) var(--pk-ease);
+}
+.pk-btn-primary:hover { background: var(--pk-gold-bright); }
+.pk-btn-primary:active { transform: scale(0.98); }
+.pk-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pk-btn-secondary {
+  height: 38px;
+  padding: 0 var(--pk-space-4);
+  background: transparent;
+  color: var(--pk-text-primary);
+  border: 1px solid var(--pk-border-strong);
+  border-radius: var(--pk-radius-md);
+  font-size: var(--pk-text-base);
+  cursor: pointer;
+  transition: border-color var(--pk-duration) var(--pk-ease),
+              background var(--pk-duration) var(--pk-ease);
+}
+.pk-btn-secondary:hover {
+  border-color: var(--pk-gold);
+  background: var(--pk-bg-hover);
+}
+
+.pk-btn-danger {
+  height: 38px;
+  padding: 0 var(--pk-space-4);
+  background: var(--pk-danger-bg);
+  color: var(--pk-danger-fg);
+  border: 1px solid var(--pk-danger-fg);
+  border-radius: var(--pk-radius-md);
+  font-size: var(--pk-text-base);
+  cursor: pointer;
+}
+
+.pk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--pk-text-sm);
+  padding: 2px 10px;
+  border-radius: var(--pk-radius-pill);
+  font-weight: var(--pk-weight-medium);
+  letter-spacing: var(--pk-tracking-wide);
+}
+
+.pk-pill--success { background: var(--pk-success-bg); color: var(--pk-success-fg); }
+.pk-pill--danger  { background: var(--pk-danger-bg);  color: var(--pk-danger-fg); }
+.pk-pill--warning { background: var(--pk-warning-bg); color: var(--pk-warning-fg); }
+.pk-pill--info    { background: var(--pk-info-bg);    color: var(--pk-info-fg); }
+.pk-pill--neutral { background: var(--pk-neutral-bg); color: var(--pk-neutral-fg); }
+.pk-pill--champion {
+  background: var(--pk-tier-champion-bg);
+  color: var(--pk-tier-champion-fg);
+  text-transform: uppercase;
+  font-size: var(--pk-text-xs);
+}
+
+/* ============================================================
+   THEME TOGGLE BUTTON (for nav bar — wired in Phase D step 1)
+   ============================================================ */
+
+.pk-theme-toggle {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--pk-border-light);
+  border-radius: var(--pk-radius-md);
+  color: var(--pk-text-primary);
+  cursor: pointer;
+  transition: background var(--pk-duration) var(--pk-ease),
+              border-color var(--pk-duration) var(--pk-ease);
+}
+.pk-theme-toggle:hover {
+  background: var(--pk-bg-hover);
+  border-color: var(--pk-border-strong);
+}
+
+/* By default (dark), show the sun icon (offer light). In light mode,
+   show the moon (offer dark). */
+.pk-theme-toggle .pk-theme-toggle__sun  { display: inline-block; }
+.pk-theme-toggle .pk-theme-toggle__moon { display: none; }
+[data-theme="light"] .pk-theme-toggle .pk-theme-toggle__sun  { display: none; }
+[data-theme="light"] .pk-theme-toggle .pk-theme-toggle__moon { display: inline-block; }

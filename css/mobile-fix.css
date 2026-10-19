@@ -1,0 +1,167 @@
+@import url('tokens.css');
+/* ============================================================
+   mobile-fix.css — PriceKeeper
+   Targeted fixes only. Does NOT touch the new trade modal
+   (#newTradeModal / .ntm-*) — that already has its own mobile
+   tab system in trade.css. Only fixes what's actually broken.
+   ============================================================ */
+
+
+/* ── FIX 1: .overlay modals (borrowerOverlay, txOverlay, custOverlay)
+   These use .overlay > .modal from main.css/pages.css.
+   On mobile they overflow the screen or get clipped.
+   ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .overlay .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 18px 18px 0 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  /* Modal save/cancel buttons: stick to bottom so they're always visible */
+  .overlay .modal-btns {
+    position: sticky;
+    bottom: 0;
+    background: var(--s1);
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+}
+
+
+/* ── FIX 2: Borrower cards — long names push balance off screen,
+   action buttons (Add Debt, Payment) collapse and become untappable
+   ─────────────────────────────────────────────────────────── */
+
+/* Header row: allow wrap so name + balance never fight for space */
+.borrow-hdr {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Name side: truncate long names cleanly */
+.borrow-hdr > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.borrow-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  max-width: 100%;
+}
+
+/* Balance: never shrink or wrap */
+.borrow-balance {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Action buttons row: always wrap, never collapse */
+.borrow-top-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.borrow-top-actions .btn-secondary {
+  flex: 1;
+  min-width: 90px;       /* never collapses below a tappable size */
+  text-align: center;
+  white-space: nowrap;
+  padding: 10px 8px;
+  font-size: 0.76rem;
+}
+
+.borrow-receipt-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Footer: wrap gracefully */
+.borrow-footer {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  /* Stack all buttons vertically on very narrow screens */
+  .borrow-top-actions {
+    flex-direction: column;
+  }
+
+  .borrow-top-actions .btn-secondary,
+  .borrow-receipt-btn {
+    width: 100%;
+    flex: none;
+    text-align: center;
+    padding: 12px;
+    font-size: 0.83rem;
+    min-height: 44px;    /* iOS minimum tap target */
+  }
+
+  /* Transaction table: 2 columns on narrow screens */
+  .btx-header,
+  .btx-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  /* Hide less important columns */
+  .btx-header span:nth-child(n+3),
+  .btx-row .btx-date,
+  .btx-row .btx-type {
+    display: none;
+  }
+
+  .borrow-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .borrow-body {
+    overflow: visible;
+  }
+}
+
+/* Borrowers page: ensure last card is never hidden behind any button */
+#page-borrowers .wrap {
+  padding-bottom: 100px;
+}
+
+
+/* ── FIX 3: Trade stats bar — 5 columns don't fit on mobile
+   trade.css already hides 2 at <600px but the remaining 3
+   can still be too tight on very small screens
+   ─────────────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .trade-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .trade-stats-bar .trade-stat:nth-child(3) {
+    display: none;
+  }
+}
+
+
+/* ── FIX 4: General wrap padding so FABs never cover content ── */
+@media (max-width: 640px) {
+  .wrap {
+    padding-bottom: 90px;
+  }
+}
