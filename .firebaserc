@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "pricekeeper-demo"
+  },
+  "targets": {
+    "pricekeeper-demo": {
+      "hosting": {
+        "live": [
+          "pricekeeper-demo"
+        ],
+        "preview": [
+          "pricekeeper-demo-preview"
+        ]
+      }
+    }
   }
 }

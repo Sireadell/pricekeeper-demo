@@ -18,3 +18,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRICEKEEPER_DEMO }}
           projectId: pricekeeper-demo
+          target: preview
+          channelId: live
