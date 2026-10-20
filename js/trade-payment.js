@@ -512,7 +512,6 @@ async function _finalizeNewSale(received, custId, total, btn, idleLabel, fromDep
       }
     }
 
-    _decrementStock(cart, activeUid);
     saveLocal();
     _lastSale = { sig: dupSig, tradeId, ts: Date.now() };   // arm dup-guard before close
 
