@@ -244,6 +244,7 @@ export function openCustModal(id) {
     const ct = document.getElementById('custContact'); if(ct) ct.value = '';
   }
   openModal('custOverlay');
+  setTimeout(() => document.getElementById('custName')?.focus(), 60);
 }
 
 export const editCustomer = id => openCustModal(id);
