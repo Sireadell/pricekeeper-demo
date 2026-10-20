@@ -1259,9 +1259,8 @@ export async function bulkVoidTrades() {
   if (!ids.length) return;
   const perms = window._staffPerms;
   if (window._staffOwnerUid && !(perms?.canVoid ?? false)) return toast('⚠️ Your role cannot void trades', 'err');
-  const reason = prompt(`Void ${ids.length} trade${ids.length !== 1 ? 's' : ''}?\nEnter a reason (required):`);
+  const reason = await _askVoidReason(`Void ${ids.length} trade${ids.length !== 1 ? 's' : ''}?`);
   if (reason === null) return;
-  if (!reason.trim()) return toast('⚠️ Enter a void reason', 'err');
   let ok = 0;
   for (const id of ids) {
     const sale = (window._pkSales || []).find(s => s.id === id);
@@ -1577,14 +1576,56 @@ window._unvoidTradeTable = async function(id) {
   });
 };
 
+// ── Void reason box ───────────────────────────────────────────
+// In-page box that asks for the void reason (replaces the browser pop-up so
+// it can be used by keyboard, by touch and by automated tests). Resolves with
+// the reason text, or null when the user cancels.
+function _askVoidReason(title) {
+  return new Promise(resolve => {
+    const old = document.getElementById('pkVoidReasonBox');
+    if (old) old.remove();
+    const el = document.createElement('div');
+    el.id = 'pkVoidReasonBox';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;';
+    el.innerHTML = `
+      <div style="background:var(--s1);border:1px solid rgba(255,71,87,.35);border-radius:18px;max-width:380px;width:100%;padding:20px;">
+        <div style="font-family:var(--fh);font-weight:800;font-size:.95rem;color:var(--red);margin-bottom:6px;">${title}</div>
+        <label for="pkVoidReasonInput" style="display:block;font-size:.8rem;margin-bottom:6px;">Enter a reason (required)</label>
+        <input id="pkVoidReasonInput" type="text" autocomplete="off" aria-label="Void reason"
+          style="width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid var(--bdr,#444);background:var(--s2,#222);color:inherit;">
+        <div id="pkVoidReasonError" style="color:var(--red);font-size:.75rem;min-height:1.1em;margin-top:6px;"></div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button type="button" id="pkVoidReasonCancel" style="flex:1;padding:10px;border-radius:10px;">Cancel</button>
+          <button type="button" id="pkVoidReasonConfirm" style="flex:1;padding:10px;border-radius:10px;font-weight:700;">Void trade</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    const input = el.querySelector('#pkVoidReasonInput');
+    const err = el.querySelector('#pkVoidReasonError');
+    const done = val => { el.remove(); resolve(val); };
+    const submit = () => {
+      if (!input.value.trim()) { err.textContent = 'Enter a void reason'; input.focus(); return; }
+      done(input.value);
+    };
+    el.querySelector('#pkVoidReasonConfirm').onclick = submit;
+    el.querySelector('#pkVoidReasonCancel').onclick = () => done(null);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') submit();
+      else if (e.key === 'Escape') done(null);
+    });
+    input.focus();
+  });
+}
+
 // ── Void ──────────────────────────────────────────────────────
 window._voidTradeTable = async function(id) {
   const perms = window._staffPerms;
   if (window._staffOwnerUid && !(perms?.canVoid ?? false)) return toast('⚠️ Your role cannot void trades', 'err');
 
-  const reason = prompt('Void this trade?\nEnter a reason (required):');
+  const reason = await _askVoidReason('Void this trade?');
   if (reason === null) return;
-  if (!reason.trim()) return toast('⚠️ Enter a void reason', 'err');
 
   const sale = (window._pkSales || []).find(s => s.id === id);
   if (!sale) return;
