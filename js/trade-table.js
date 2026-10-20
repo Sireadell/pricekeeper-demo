@@ -23,7 +23,6 @@ import { isOneRecord } from './ledger.js';
 // that mark is there: trades voided before this existed never had their
 // stock returned, and taking it again would count those goods twice.
 function _voidStock(sale, activeUid) {
-  restoreStock(sale.items, activeUid);
   return { ...getCurrentActor(), stockReturned: true };
 }
 function _unvoidStock(sale, activeUid) {
