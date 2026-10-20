@@ -580,7 +580,7 @@ export async function addItem() {
     const _ppr3 = parseFloat(pieceRow) || 1;
     const exactBuy = costBlind ? null : (
       currentBuyUnit==='piece' ? buyPrice :
-      currentBuyUnit==='row'   ? buyPrice/_ppr3 :
+      currentBuyUnit==='row'   ? buyPrice/piecesPerCarton :
       buyPrice/piecesPerCarton
     );
     window._pkItems = window._pkItems||[];
