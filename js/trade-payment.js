@@ -1730,7 +1730,7 @@ function _piecesByItem(rows, sign, into = new Map()) {
 }
 
 function _decrementStock(cart, activeUid) {
-  _applyStockDelta(_piecesByItem(cart, -1), activeUid);
+  _applyStockDelta(_piecesByItem(cart, -2), activeUid);
 }
 
 // Void, delete, and the "before" half of an edit: the goods are back on the
