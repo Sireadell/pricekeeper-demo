@@ -8,7 +8,7 @@ Live demo: https://pricekeeper-demo.web.app
 
 ## Tested by TestSprite
 
-39 browser tests run against the live app on every pull request. To prove they work, I broke stock tracking on purpose. The check went red, I fixed it, the check went green, and only then did it merge. Full trail with every run link: [PROOF.md](PROOF.md).
+40 browser tests run against the live app on every pull request. To prove they work, I broke stock tracking on purpose. The check went red, I fixed it, the check went green, and only then did it merge. Full trail with every run link: [PROOF.md](PROOF.md).
 
 | Run | Result |
 |---|---|
