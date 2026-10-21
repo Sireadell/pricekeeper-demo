@@ -78,4 +78,4 @@ Taking stock off the shelf after a sale needs the live database (Firebase), so i
 ## Rules I kept
 
 - The break was on purpose, to show the suite catches it.
-- Nothing merged while the check was red. The merge gate was on the whole time.
+- Nothing merged while the check was red. During the two proofs above I held that rule myself. Since October 21, GitHub enforces it: the `main` branch will not accept a merge until the TestSprite check and the unit tests both pass.
