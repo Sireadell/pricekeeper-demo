@@ -14,3 +14,5 @@ Live demo: https://pricekeeper-demo.web.app
 |---|---|
 | Red, stock line removed | 3 stock tests failed |
 | Green, line restored | 24 of 24 passed, merged |
+
+I also made every sale take twice the stock, and TestSprite caught that too. 64 offline unit tests check the money maths on every push, in seconds. Both are in [PROOF.md](PROOF.md#second-proof-every-sale-took-twice-the-stock).
