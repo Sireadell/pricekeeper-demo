@@ -1,0 +1,31 @@
+# Proof: the tests caught a real bug, then went green
+
+To prove the test suite does its job, I broke the app on purpose and watched what happened. I removed the one line that takes sold items out of stock. The TestSprite check on the pull request turned red. I put the line back, the check turned green, and only then did the change merge.
+
+Every run below happened in TestSprite against a live copy of the app, from a GitHub pull request. Each link opens the full run.
+
+| Step | What I did | Result | Links |
+|---|---|---|---|
+| Baseline | First check on a clean change | 12 of 12 passed | [PR #1](https://github.com/Sireadell/pricekeeper-demo/pull/1), [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/78a6cc60-f691-4d7b-81d9-f104af505d07) |
+| Red | Removed the line that lowers stock after a sale ([28bed78](https://github.com/Sireadell/pricekeeper-demo/pull/3/commits/28bed78)) | 5 failed. 3 of them were the stock tests | [PR #3](https://github.com/Sireadell/pricekeeper-demo/pull/3), [red run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a66f2860-07a5-4fb1-8241-a8decc0185b5) |
+| Fix | Put the line back ([08558e4](https://github.com/Sireadell/pricekeeper-demo/pull/3/commits/08558e4)) | Stock tests pass again | same PR |
+| Green | Full check on the final version, then merged | 24 of 24 passed | [green run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/7bc6aa85-f9f6-4033-bd2e-d122d8fb5a49), merged as [56a0f34](https://github.com/Sireadell/pricekeeper-demo/commit/56a0f34a83f8619090b87f4881e39106dd03ea01) |
+
+## What the red run caught
+
+With the stock line gone, a sale still went through and the till looked fine. The shelf count was wrong, and three tests noticed:
+
+- **Sell one piece.** Stock should drop from 20 to 19. It stayed at 20.
+- **Sell five pieces.** Stock should drop from 20 to 15. It stayed at 20.
+- **Sell until stock runs low.** The item should show in the low-stock list. It never did.
+
+This is the bug a shop owner would find weeks later, when the shelf is empty and the app says otherwise.
+
+## The other two failures
+
+Two more tests failed in the red run, and neither was about stock. The wrong-PIN login test passed in every run after it. The add-customer test was removed from the suite because the test agent could not fill in the New Customer box. That is a limit of the agent, not a bug in the app.
+
+## Rules I kept
+
+- The break was on purpose, to show the suite catches it.
+- Nothing merged while the check was red. The merge gate was on the whole time.
