@@ -1108,7 +1108,9 @@ window._nt2SetMode = function(idx, mode) {
 window._nt2CartStep = function(idx, d) {
   const l = _cart[idx]; const item = byId(l?.itemId);
   if (!l || !item) return;
-  _recomputeLine(l, item, _normQty(_lineModeQty(l) + d, _MIN_QTY));
+  const next = _lineModeQty(l) + d;
+  if (next <= 0) return;   // stepping down never reaches zero; remove the line instead
+  _recomputeLine(l, item, _normQty(next, _MIN_QTY));
   _renderNtmCart();
 };
 window._nt2SetCartQty = function(idx, val) {
@@ -1419,6 +1421,7 @@ function _addFocused() {
 }
 function _attemptComplete() {
   if (!_cart.length) return;
+  if (_cart.some(r => _lineTotalPcs(r, byId(r.itemId)) < 1)) { toast('⛔ Each item needs at least 1 piece — raise the quantity or remove it', 'err'); return; }
   const blocked = _blockedReason();
   if (blocked) { toast(blocked === 'stock' ? '⛔ Qty exceeds stock — reduce to proceed' : '⛔ Discount over limit — reduce to proceed', 'err'); return; }
   window.PK?.openPaymentModal?.();
