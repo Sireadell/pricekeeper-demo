@@ -17,4 +17,4 @@ Live demo: https://pricekeeper-demo.web.app
 
 I also made every sale take twice the stock, and TestSprite caught that too. 64 offline unit tests check the money maths on every push, in seconds. Both are in [PROOF.md](PROOF.md#second-proof-every-sale-took-twice-the-stock).
 
-To run the unit tests yourself, install Node 20 or newer and run `npm test` in the project folder.
+To run the unit tests yourself, install Node 22 or newer and run `npm test` in the project folder.
