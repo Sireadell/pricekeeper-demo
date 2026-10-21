@@ -82,7 +82,7 @@ export function computeWac(item, addQty, addPricePerUnit, unit) {
   const newBuyPc  = addPricePerUnit / pu;
 
   const wacPc = (addPricePerUnit > 0 && oldPcs > 0 && oldBuyPc > 0)
-    ? (oldPcs * oldBuyPc + newQtyPcs * newBuyPc) / oldPcs
+    ? (oldPcs * oldBuyPc + newQtyPcs * newBuyPc) / (oldPcs + newQtyPcs)
     : (newBuyPc || oldBuyPc);
 
   return {
