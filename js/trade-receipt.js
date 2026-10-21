@@ -18,7 +18,7 @@ window._showReceiptModal = function(saleId) {
   const cust     = (window._pkWholesale || []).find(c => c.id === sale.custId) || { name: sale.customerName || sale.custName || 'Walk-in' };
   const revenue  = sale.totalRevenue ?? sale.revenue ?? 0;
   const discount = sale.totalDiscount || 0;
-  const received = sale.amountReceived || revenue;
+  const received = sale.amountReceived ?? revenue;
   const balance  = sale.balanceOwing ?? 0;
 
   let rows = '';
