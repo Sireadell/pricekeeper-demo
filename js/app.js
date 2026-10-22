@@ -322,4 +322,14 @@ function _hideSplash() {
   _hideSplash();
 
   if (!isStaffMode()) checkOnboarding();
+
+  // A staff sign-out reloads the page. Open the staff sign-in straight away
+  // so the next person on a shared shop phone lands on it, not on an empty
+  // shop screen they could mistake for the real one.
+  try {
+    if (sessionStorage.getItem('pkAfterStaffLogout') === '1') {
+      sessionStorage.removeItem('pkAfterStaffLogout');
+      if (!isStaffMode()) window._safeShowStaffLogin?.();
+    }
+  } catch (_) {}
 })();

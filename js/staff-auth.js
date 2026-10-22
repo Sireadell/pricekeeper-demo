@@ -525,6 +525,7 @@ export async function staffLogout() {
     console.error('[auth] signOut failed:', err);
   }
 
+  try { sessionStorage.setItem('pkAfterStaffLogout', '1'); } catch (_) {}
   window.location.reload();
 }
 
