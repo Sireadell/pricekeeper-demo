@@ -47,6 +47,36 @@ const _escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&
 export const escapeHtml = s =>
   typeof s === 'string' ? s.replace(/[&<>"']/g, m => _escMap[m]) : '';
 
+// In-page "are you sure?" box. Resolves true on the OK button, false on
+// Cancel, a tap outside or Escape. Used instead of the browser's own confirm()
+// pop-up, which freezes the page and cannot be styled or seen by test robots.
+export function askConfirm(message, okLabel = 'Delete') {
+  return new Promise(resolve => {
+    document.getElementById('pkAskConfirm')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'pkAskConfirm';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:10000;padding:20px;';
+    overlay.innerHTML = `
+      <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:340px;width:100%;">
+        <div style="font-size:.82rem;color:var(--text);font-weight:500;margin-bottom:16px;white-space:pre-line;">${escapeHtml(message)}</div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" id="pkAskConfirmCancel" style="flex:1;background:var(--s2);border:1px solid var(--border2);color:var(--muted);border-radius:8px;padding:10px;font-size:.78rem;cursor:pointer;">Cancel</button>
+          <button type="button" id="pkAskConfirmOk" style="flex:1;background:rgba(240,149,149,.12);border:1px solid rgba(240,149,149,.3);color:var(--red);border-radius:8px;padding:10px;font-size:.78rem;font-weight:500;cursor:pointer;">${escapeHtml(okLabel)}</button>
+        </div>
+      </div>`;
+    const done = ok => { document.removeEventListener('keydown', onKey); overlay.remove(); resolve(ok); };
+    const onKey = e => { if (e.key === 'Escape') done(false); };
+    overlay.querySelector('#pkAskConfirmCancel').onclick = () => done(false);
+    overlay.querySelector('#pkAskConfirmOk').onclick = () => done(true);
+    overlay.addEventListener('click', e => { if (e.target === overlay) done(false); });
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(overlay);
+    overlay.querySelector('#pkAskConfirmOk').focus();
+  });
+}
+
 // Generate a unique ID for every record (cryptographically random)
 export const uid = () => crypto.randomUUID();
 

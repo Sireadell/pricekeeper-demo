@@ -6,7 +6,7 @@
 // ============================================================
 
 import { fmt, pct, uid, now, today,
-         openModal, closeModal, toast, escapeHtml,
+         openModal, closeModal, toast, escapeHtml, askConfirm,
          saveLocal, getMarkup, setBtnLoading, itemNeedsCost, itemNeedsStock,
          lowStockPct, lowThresholdFromPct, isoDate, csvCell, CSV_BOM } from './utils.js';
 import { currentUser, activeUid }               from './auth.js';
@@ -1611,7 +1611,7 @@ export async function saveEdit() {
 export async function deleteItem(id) {
   if (!assertPermission('deleteItem')) return;
   const item=(window._pkItems||[]).find(i=>i.id===id);
-  if(!item||!confirm('Delete "'+item.name+'"?')) return;
+  if(!item||!(await askConfirm('Delete "'+item.name+'"?'))) return;
   window._pkItems=window._pkItems.filter(i=>i.id!==id);  const _uid5 = activeUid();
   if(_uid5){ await removeItem(_uid5, id); await addTombstone(_uid5, id); }
   logActivity('DELETE_ITEM', { itemId: id });  saveLocal();renderItems();updateSummary();toast('🗑 Deleted','ok');window.__pkRepublishStorefront?.();
@@ -2155,7 +2155,7 @@ export async function bulkDeleteSelected() {
   if (!assertPermission('deleteItem')) return;
   const ids = Array.from(window._pkInventorySelIds || []);
   if (!ids.length) return;
-  if (!confirm(`Delete ${ids.length} item${ids.length !== 1 ? 's' : ''}?`)) return;
+  if (!(await askConfirm(`Delete ${ids.length} item${ids.length !== 1 ? 's' : ''}?`))) return;
   const _uid = activeUid();
   for (const id of ids) {
     window._pkItems = (window._pkItems || []).filter(i => i.id !== id);
