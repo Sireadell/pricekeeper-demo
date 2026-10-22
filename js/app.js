@@ -321,15 +321,18 @@ function _hideSplash() {
   initRouter(_navigateTo);
   _hideSplash();
 
-  if (!isStaffMode()) checkOnboarding();
-
   // A staff sign-out reloads the page. Open the staff sign-in straight away
   // so the next person on a shared shop phone lands on it, not on an empty
-  // shop screen they could mistake for the real one.
+  // shop screen they could mistake for the real one. The owner welcome tour
+  // stays closed then: it would sit on top of the sign-in and block it.
+  let afterStaffLogout = false;
   try {
-    if (sessionStorage.getItem('pkAfterStaffLogout') === '1') {
-      sessionStorage.removeItem('pkAfterStaffLogout');
-      if (!isStaffMode()) window._safeShowStaffLogin?.();
-    }
+    afterStaffLogout = sessionStorage.getItem('pkAfterStaffLogout') === '1';
+    if (afterStaffLogout) sessionStorage.removeItem('pkAfterStaffLogout');
   } catch (_) {}
+
+  if (!isStaffMode()) {
+    if (afterStaffLogout) window._safeShowStaffLogin?.();
+    else checkOnboarding();
+  }
 })();
