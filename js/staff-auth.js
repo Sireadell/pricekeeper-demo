@@ -17,6 +17,7 @@ import {
 import { toast, saveLocal, today } from './utils.js';
 import { currentUser }   from './auth.js';
 import { normalizeSales } from './sale-derive.js';
+import { withPending, refreshPending } from './pending-overlay.js';
 
 const SESSION_KEY            = 'pkStaffSession';
 const SESSION_SCHEMA_VERSION = 2;
@@ -907,8 +908,8 @@ export async function refetchOwnerDataForStaff(ownerUid) {
     getDocs(collection(db, 'shops', ownerUid, 'sales')),
     getDocs(collection(db, 'shops', ownerUid, 'items')),
   ]);
-  window._pkSales = normalizeSales(salesSnap.docs.map(d => d.data()));
-  window._pkItems = itemsSnap.docs.map(d => d.data());
+  window._pkSales = normalizeSales(withPending('sales', salesSnap.docs.map(d => d.data())));
+  window._pkItems = withPending('items', itemsSnap.docs.map(d => d.data()));
   saveLocal();
 }
 
@@ -957,11 +958,16 @@ export async function loadOwnerDataForStaff(ownerUid) {
       getDocs(collection(db, 'shops', ownerUid, 'sales')),
       getDocs(collection(db, 'shops', ownerUid, 'borrowers')),
     ]);
-    window._pkItems       = itemsSnap.docs.map(d => d.data());
-    window._pkWholesale   = custsSnap.docs.map(d => d.data());
-    window._pkSales       = normalizeSales(salesSnap.docs.map(d => d.data()));
-    window._pkBorrowers   = borrsSnap.docs.map(d => d.data());
+    // Saves made offline wait in the queue until they reach the database, so
+    // the database copy does not have them yet. Lay them over every list, as
+    // the owner's listeners in db.js do, or a staff member who reopens the
+    // app offline would not see their own sales and stock would jump back.
     window._staffOwnerUid = ownerUid;
+    await refreshPending();
+    window._pkItems       = withPending('items', itemsSnap.docs.map(d => d.data()));
+    window._pkWholesale   = withPending('customers', custsSnap.docs.map(d => d.data()));
+    window._pkSales       = normalizeSales(withPending('sales', salesSnap.docs.map(d => d.data())));
+    window._pkBorrowers   = withPending('borrowers', borrsSnap.docs.map(d => d.data()));
     saveLocal();
 
     // Dashboard live-refresh: only re-render the Dashboard when it's
@@ -974,26 +980,26 @@ export async function loadOwnerDataForStaff(ownerUid) {
     };
 
     _staffUnsubs.push(onSnapshot(query(collection(db, 'shops', ownerUid, 'items')), snap => {
-      window._pkItems = snap.docs.map(d => d.data());
+      window._pkItems = withPending('items', snap.docs.map(d => d.data()));
       saveLocal();
       window.__PK?.renderItems?.();
       _refreshDashIfActive();
     }));
     _staffUnsubs.push(onSnapshot(query(collection(db, 'shops', ownerUid, 'sales')), snap => {
-      window._pkSales = normalizeSales(snap.docs.map(d => d.data()));
+      window._pkSales = normalizeSales(withPending('sales', snap.docs.map(d => d.data())));
       saveLocal();
       window.__PK?.renderTradeTable?.();
       _refreshDashIfActive();
     }));
     _staffUnsubs.push(onSnapshot(query(collection(db, 'shops', ownerUid, 'customers')), snap => {
       if (window._pkContactsActive) return;
-      window._pkWholesale = snap.docs.map(d => d.data());
+      window._pkWholesale = withPending('customers', snap.docs.map(d => d.data()));
       saveLocal();
       window.__PK?.populateTradeCustSelect?.();
     }));
     _staffUnsubs.push(onSnapshot(query(collection(db, 'shops', ownerUid, 'borrowers')), snap => {
       if (window._pkContactsActive) return;
-      window._pkBorrowers = snap.docs.map(d => d.data());
+      window._pkBorrowers = withPending('borrowers', snap.docs.map(d => d.data()));
       saveLocal();
     }));
 
@@ -1004,7 +1010,7 @@ export async function loadOwnerDataForStaff(ownerUid) {
     saveLocal();
     if (_currentStaffSession?.role === 'admin') {
       _staffUnsubs.push(onSnapshot(query(collection(db, 'shops', ownerUid, 'expenses')), snap => {
-        window._pkExpenses = snap.docs.map(d => d.data());
+        window._pkExpenses = withPending('expenses', snap.docs.map(d => d.data()));
         saveLocal();
         _refreshDashIfActive();
       }, err => console.warn('[auth] staff expenses listener:', err?.code || err?.message)));

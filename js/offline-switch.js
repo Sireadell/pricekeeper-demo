@@ -12,14 +12,30 @@
 //  Pressing it again turns the database connection back on and the queue
 //  sends, exactly as when real signal returns.
 //
-//  Without the address flag nothing is shown and nothing changes. The flag
-//  is remembered for the browser tab only (sessionStorage).
+//  Without the address flag nothing is shown and nothing changes. The flag,
+//  and whether the switch is off, are remembered for the browser tab only
+//  (sessionStorage), so reloading the page while "offline" keeps the database
+//  off. That lets a test close and reopen the app with no connection and
+//  check the sales made offline are still there. The app's own files still
+//  load from the internet on reload; only the database stays cut off.
 // ============================================================
 
 import { db, disableNetwork, enableNetwork } from './firebase.js';
 
-const FLAG = 'offline-switch';
-const KEY  = 'pkOfflineSwitch';
+const FLAG   = 'offline-switch';
+const KEY    = 'pkOfflineSwitch';
+const KEY_ON = 'pkOfflineSwitchOff';
+
+function _remember(off) {
+  try { off ? sessionStorage.setItem(KEY_ON, '1') : sessionStorage.removeItem(KEY_ON); } catch (_) {}
+}
+
+// Runs as soon as this file loads, before the sync engine starts, so a page
+// reopened while the switch is off starts offline from the first moment.
+if (_wanted() && (() => { try { return sessionStorage.getItem(KEY_ON) === '1'; } catch (_) { return false; } })()) {
+  window._pkForceOffline = true;
+  disableNetwork(db).catch(err => console.warn('[offline-switch] could not start offline:', err));
+}
 
 function _wanted() {
   try {
@@ -44,11 +60,13 @@ async function _set(off, btn) {
     if (off) {
       // Flag first, so every save from this moment on takes the offline path.
       window._pkForceOffline = true;
+      _remember(true);
       window.dispatchEvent(new Event('offline'));
       await disableNetwork(db);
     } else {
       await enableNetwork(db);
       window._pkForceOffline = false;
+      _remember(false);
       window.dispatchEvent(new Event('online'));
     }
   } catch (err) {

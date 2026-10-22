@@ -469,7 +469,7 @@ function _renderRow(sale, selMode, serial) {
       <td class="pk-tr-serial num">${serial}</td>
       <td>
         <span class="pk-tr-id">${escapeHtml(sale.id || '—')}</span>
-        ${sale._pkSyncPending ? '<span class="pk-tr-sync" title="Pending sync">⧗</span>' : ''}
+        ${sale._pkSyncPending ? '<span class="pk-tr-sync" title="Saved on this phone, not sent to the database yet">⧗ waiting to sync</span>' : ''}
       </td>
       <td class="name">${escapeHtml(custName)}${sale.visitorName ? `<span class="pk-tr-visitor">via ${escapeHtml(sale.visitorName)}</span>` : ''}</td>
       <td class="num">${iCount}</td>
