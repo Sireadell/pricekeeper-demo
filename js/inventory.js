@@ -605,7 +605,9 @@ export async function addItem() {
       window._pkItems[existing]=updated;
       savedId=updated.id;
 const _uid4 = activeUid(); if(_uid4) await saveItem(_uid4, updated);
-    logActivity('EDIT_ITEM', { itemName: updated.name });toast('✅ '+name+' updated!','ok');
+    logActivity('EDIT_ITEM', { itemName: updated.name });toast('✅ '+name+' was already in stock, its prices and quantity are updated','ok');
+      // Close the form here too: left open and emptied, it looked like the save failed.
+      window.closeAddItemDrawer();
     } else {
       const item={id:uid(),...baseData,addedDate:today(),history:[]};
       window._pkItems.unshift(item);
