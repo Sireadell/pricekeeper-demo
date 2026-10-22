@@ -76,6 +76,7 @@ import { renderProfit } from './profit.js';
 import { initUserMenu, toggleUserMenu, userMenuSignOut, refreshThemeMenuLabel } from './user-menu.js';
 import * as offlineStore from './offline-store.js';   // D.8.1 — offline foundation
 import * as syncEngine   from './sync-engine.js';     // D.8.2a — queue drainer + banner
+import { initOfflineSwitch } from './offline-switch.js'; // test-only, needs ?offline-switch=1
 
 // Offline file saver (sw.js): keeps a copy of the app on the phone so it
 // still opens with no internet.
@@ -309,6 +310,7 @@ function _hideSplash() {
   } catch (err) {
     console.error('[app] syncEngine.start() threw — continuing boot:', err);
   }
+  initOfflineSwitch();
 
   renderItems();
   updateSummary();

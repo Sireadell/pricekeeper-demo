@@ -131,6 +131,7 @@ export function updateAuthUI(user) {
 }
 
 export function updateSyncBar(online) {
+  if (window._pkForceOffline) online = false;   // offline-switch.js test switch
   let msg, cls;
   if (!currentUser) {
     msg = 'Not signed in — data saved locally only';

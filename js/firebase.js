@@ -25,6 +25,7 @@ import {
   onSnapshot, query, where, orderBy, limit,
   serverTimestamp, writeBatch, runTransaction,
   Timestamp, increment,
+  disableNetwork, enableNetwork,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 // ── PASTE YOUR CONFIG HERE ───────────────────────────────────
 
@@ -65,4 +66,5 @@ export {
   onSnapshot, query, where, orderBy, limit,
   serverTimestamp, writeBatch, runTransaction,
   Timestamp, increment,
+  disableNetwork, enableNetwork,
 };

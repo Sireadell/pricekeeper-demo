@@ -33,6 +33,7 @@ const APP_FILES = [
   'js/inventory.js',
   'js/ledger.js',
   'js/offline-store.js',
+  'js/offline-switch.js',
   'js/onboarding.js',
   'js/one-record.js',
   'js/pending-overlay.js',
