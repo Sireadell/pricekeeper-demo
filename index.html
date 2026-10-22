@@ -1234,6 +1234,23 @@
   </div>
 </div>
 
+<!-- While the staff sign-in is open, the shop behind it is hidden for real,
+     not just covered, so its text cannot be read by screen readers or test
+     robots before anyone has signed in. -->
+<style>
+  body.pk-staff-gate > :not(#staffLoginModal):not(#pkToastStack):not(#pkOfflineSwitch):not(script):not(style) {
+    visibility: hidden !important;
+  }
+</style>
+<script>
+  (function () {
+    const modal = document.getElementById('staffLoginModal');
+    const sync = () => document.body.classList.toggle('pk-staff-gate', modal.style.display !== 'none');
+    new MutationObserver(sync).observe(modal, { attributes: true, attributeFilter: ['style'] });
+    sync();
+  })();
+</script>
+
 <!-- Staff logout confirmation modal -->
 <div id="staffLogoutModal" style="display:none;">
   <div class="pk-logout-dialog">
