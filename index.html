@@ -1188,7 +1188,7 @@
 </div>
 
 <!-- Staff Login Modal (D.3.9) -->
-<div id="staffLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;">
+<div id="staffLoginModal" style="display:none;position:fixed;inset:0;z-index:99999;background:#080a0f;align-items:center;justify-content:center;">
   <div class="sl2-inner">
     <!-- Black header -->
     <div class="sl2-head">
@@ -1233,6 +1233,23 @@
     </div>
   </div>
 </div>
+
+<!-- While the staff sign-in is open, the shop behind it is hidden for real,
+     not just covered, so its text cannot be read by screen readers or test
+     robots before anyone has signed in. -->
+<style>
+  body.pk-staff-gate > :not(#staffLoginModal):not(#pkToastStack):not(#pkOfflineSwitch):not(script):not(style) {
+    visibility: hidden !important;
+  }
+</style>
+<script>
+  (function () {
+    const modal = document.getElementById('staffLoginModal');
+    const sync = () => document.body.classList.toggle('pk-staff-gate', modal.style.display !== 'none');
+    new MutationObserver(sync).observe(modal, { attributes: true, attributeFilter: ['style'] });
+    sync();
+  })();
+</script>
 
 <!-- Staff logout confirmation modal -->
 <div id="staffLogoutModal" style="display:none;">

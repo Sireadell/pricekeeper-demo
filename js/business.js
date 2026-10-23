@@ -570,7 +570,9 @@ function _panelOverview(){
   const deltaZero = (pct ?? 0) === 0;
   const arrow = deltaZero ? '•' : (deltaUp ? '↑' : '↓');
   const deltaClass = deltaZero ? 'pk-ov-delta--flat' : (deltaUp ? 'pk-ov-delta--up' : 'pk-ov-delta--down');
-  const deltaText = pct === null ? '' : `${arrow} ${Math.abs(pct).toFixed(1)}%`;
+  // The arrow is decoration; the sign carries the meaning on its own
+  const deltaSign = deltaZero ? '' : (deltaUp ? '+' : '-');
+  const deltaText = pct === null ? '' : `${arrow} ${deltaSign}${Math.abs(pct).toFixed(1)}%`;
   const rangeUpper = win.rangeLabel;
   const txnLine = periodTxns === 0
     ? `<div class="pk-ov-empty-line">No sales yet ${period === 'today' ? 'today' : `for ${win.rangeLabel.toLowerCase()}`}.</div>`
@@ -772,7 +774,7 @@ function _panelOverview(){
               : `
                 ${hasComparison && periodTxns > 0 ? `
                   <div>
-                    <span class="pk-ov-delta ${deltaClass}" data-money><span aria-hidden="true">${arrow}</span> ${Math.abs(pct).toFixed(1)}%</span>
+                    <span class="pk-ov-delta ${deltaClass}" data-money><span aria-hidden="true">${arrow}</span> ${deltaSign}${Math.abs(pct).toFixed(1)}%</span>
                     <span class="pk-ov-vs">vs ${win.prevLabel}</span>
                   </div>
                   <div class="pk-ov-divider" aria-hidden="true"></div>

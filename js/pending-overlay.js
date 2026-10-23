@@ -41,6 +41,10 @@ async function _activeUid() {
 // Re-read the queue. Cheap (one IndexedDB read), called whenever it changes.
 export async function refreshPending() {
   try {
+    // On a reopen the data listeners can start before app boot has opened the
+    // phone's store, and reading it then quietly returns nothing, which hid
+    // every save still waiting to be sent. open() is shared and safe to repeat.
+    await offlineStore.open();
     const uid = await _activeUid();
     const all = await offlineStore.readAll('pendingWrites');
     const next = new Map();

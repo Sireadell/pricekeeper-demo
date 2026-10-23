@@ -348,6 +348,7 @@ window._pmConfirm = async function(total, custId) {
 // error so the inline Complete button doesn't get stuck saying "Confirm
 // Payment ✓" (the popup's label) if it ever fails.
 async function _finalizeNewSale(received, custId, total, btn, idleLabel, fromDeposit = 0) {
+  received = Math.max(0, Number(received) || 0);   // a negative amount can never be money received
   if (btn) { btn.disabled = true; btn.innerHTML = 'Processing…'; btn.style.opacity = '.6'; }
   try {
     if (!_requireSaleAuth()) {
@@ -780,7 +781,7 @@ async function _saveEditedTrade(custId, cust, total, editingId) {
 
   const originalSale  = window._pkSales[idx];
   const receivedVal   = parseFloat(document.getElementById('ntmAmountReceived')?.value);
-  let received        = !isNaN(receivedVal) ? receivedVal : (originalSale.amountReceived || 0);
+  let received        = Math.max(0, !isNaN(receivedVal) ? receivedVal : (originalSale.amountReceived || 0));
 
   // BUG-015 guard: the Amount Received field is free text, decoupled from
   // the trade's own payments[] log. A number lower than what the payment

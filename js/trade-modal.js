@@ -711,7 +711,9 @@ window._nt2CustomAdd = function() {
   const name  = (document.getElementById('nt2CustName')?.value || '').trim();
   const num   = id => parseFloat(String(document.getElementById(id)?.value || '').replace(/,/g, ''));
   const price = num('nt2CustPrice');
-  const qty   = _normQty(document.getElementById('nt2CustQty')?.value, 1);
+  const rawQty = num('nt2CustQty');
+  if (Number.isFinite(rawQty) && rawQty <= 0) return toast('⛔ Quantity must be at least 1 piece, nothing was added', 'err');
+  const qty   = _normQty(rawQty, 1);
   const costIn = num('nt2CustCost');
   if (!name) return toast('⚠️ Type the item name', 'err');
   if (!(price > 0)) return toast('⚠️ Type the price', 'err');
@@ -867,7 +869,10 @@ window._nt2ResAdd = function(i) {
   let mode = _resMode[item.id];
   if (!mode) mode = (_parsed && i === _focusIdx) ? (_parsed.mode || _defaultMode(item)) : _defaultMode(item);
   if (!_availableModes(item)[mode]) mode = _defaultMode(item);
-  const qty = _normQty(document.getElementById('nt2-resqty-' + i)?.value, 1);
+  // A typed 0 or minus number is refused, not quietly turned into 1 piece.
+  const raw = parseFloat(document.getElementById('nt2-resqty-' + i)?.value);
+  if (Number.isFinite(raw) && raw <= 0) { toast('⛔ Quantity must be at least 1 piece, nothing was added', 'err'); return; }
+  const qty = _normQty(raw, 1);
   _addToCart(item.id, mode, qty);
 };
 
