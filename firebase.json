@@ -19,7 +19,10 @@
         "firestore.rules",
         "firestore.indexes.json",
         "_headers",
-        "_redirects"
+        "_redirects",
+        "testsprite_tests/**",
+        "scripts/**",
+        "*.md"
       ],
       "rewrites": [
         {
@@ -71,7 +74,10 @@
         "firestore.rules",
         "firestore.indexes.json",
         "_headers",
-        "_redirects"
+        "_redirects",
+        "testsprite_tests/**",
+        "scripts/**",
+        "*.md"
       ],
       "rewrites": [
         {
@@ -108,5 +114,17 @@
         }
       ]
     }
-  ]
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
 }

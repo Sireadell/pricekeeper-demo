@@ -2479,11 +2479,14 @@ window.bizAddStaff = async function() {
   try {
     const { hashPinPBKDF2, generateSalt } = await import('./staff-auth.js');
     const pinSalt = generateSalt();
-    const pinHash = await hashPinPBKDF2(pin, pinSalt);
+    const pinProof = await hashPinPBKDF2(pin, pinSalt);
 
     const { doc, setDoc } = await import('./firebase.js');
+    // The PIN's fingerprint goes in its own owner-only document, never on the
+    // staff record, which any signed-in visitor can fetch during sign-in.
+    await setDoc(doc(db, 'shops', currentUser.uid, 'staffPins', username, 'proofs', pinProof), { createdAt: Date.now() });
     const staffData = {
-      username, displayName, pinHash, pinSalt, role: document.getElementById('newStaffRole')?.value || 'cashier',
+      username, displayName, pinSalt, role: document.getElementById('newStaffRole')?.value || 'cashier',
       revoked: false, createdAt: Date.now(),
       // D.3.4a / MISSION v1.4 — default discount permissions for any new
       // staff are OFF (canDiscount=false, no max). Owner enables case-by-case

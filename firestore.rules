@@ -269,8 +269,21 @@ service cloud.firestore {
     //     this is grief-lock one account for under 2 minutes at a time —
     //     accepted trade-off vs. unlimited PIN guessing, per the original
     //     audit (BUG_LOG.md BUG-012).
-    //   LIMITATION-001: pinHash exposed to any authenticated user —
-    //     accepted; see BUG_LOG.md.
+    //   LIMITATION-001 closed: the PIN fingerprint no longer lives on
+    //     this record (any signed-in visitor can fetch it, and a 4-digit
+    //     PIN falls to an offline guess in seconds). It lives under
+    //     staffPins below. Backend test B06 checks it stays off.
+    // PIN fingerprints. One document per valid PIN, named by its
+    // fingerprint. Never readable by staff or strangers: the session rule
+    // only asks "does this exact one exist?". Owner manages them; a signed-in
+    // staff member may swap their own when changing their PIN.
+    match /shops/{uid}/staffPins/{username}/proofs/{proof} {
+      allow read:           if isOwner(uid);
+      allow create, delete: if isOwner(uid)
+                            || (staffSession(uid)
+                                && get(sessionDoc()).data.staffUsername == username);
+    }
+
     match /shops/{uid}/staff/{staffId} {
       // F2 hardening: was `allow read` (get+list). staffLogin() only ever
       // does getDoc on a known username — it never lists this collection.
@@ -293,7 +306,7 @@ service cloud.firestore {
                            // permission-denied every time, so the feature never
                            // worked. Session doc write (:366-370) is unaffected,
                            // already allowed displayName.
-                           .hasOnly(['pinHash', 'pinSalt', 'failedAttempts', 'lockedUntil', 'displayName'])
+                           .hasOnly(['pinSalt', 'failedAttempts', 'lockedUntil', 'displayName'])
                     )
                     || (
                       // F3 hardening: this pre-session branch exists so the
@@ -461,12 +474,20 @@ service cloud.firestore {
                     // PIN knowledge (rules can't read the request body of the
                     // login flow), but collapses "any role in any shop" down
                     // to "the exact role of a username you already know".
-                    && isRealStaffFor(request.resource.data.ownerUid, request.resource.data.staffUsername, request.resource.data.role);
+                    && isRealStaffFor(request.resource.data.ownerUid, request.resource.data.staffUsername, request.resource.data.role)
+                    // PIN check: the session must name the fingerprint of the
+                    // PIN that was typed, and that fingerprint must exist under
+                    // staffPins, which no one but the owner can read. Before
+                    // this, knowing a username and its role was enough to
+                    // become that staff member (backend test B05).
+                    && request.resource.data.pinProof is string
+                    && request.resource.data.pinProof.matches('^[0-9a-f]{64}$')
+                    && exists(/databases/$(database)/documents/shops/$(request.resource.data.ownerUid)/staffPins/$(request.resource.data.staffUsername)/proofs/$(request.resource.data.pinProof));
       allow update: if request.auth != null
                     && request.auth.uid == sessionId
                     && request.resource.data.diff(resource.data)
                          .affectedKeys()
-                         .hasOnly(['displayName']);
+                         .hasOnly(['displayName', 'pinProof']);
       allow delete: if request.auth != null
                     && (request.auth.uid == sessionId
                         || resource.data.ownerUid == request.auth.uid);

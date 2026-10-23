@@ -11,7 +11,7 @@
 import {
   db, auth,
   doc, getDoc, setDoc, deleteDoc, collection, getDocs, addDoc,
-  onSnapshot, query, where, serverTimestamp,
+  onSnapshot, query, where, serverTimestamp, deleteField,
   signInAnonymously, signOut as fbSignOut,
 } from './firebase.js';
 import { toast, saveLocal, today } from './utils.js';
@@ -81,6 +81,21 @@ async function hashPinLegacy(pin) {
 
 // Unified hash: uses PBKDF2 if salt exists, falls back to legacy
 export { hashPinPBKDF2, generateSalt };
+
+// Swaps a signed-in staff member's PIN fingerprint for a new one: writes the
+// new fingerprint, then the new salt, then removes the old fingerprint and
+// points the session at the new one. Order matters: the new fingerprint must
+// exist before the salt changes, or the next sign-in would find nothing.
+async function _replacePinProof(ownerUid, username, sessionId, oldProof, newPin) {
+  const newSalt  = generateSalt();
+  const newProof = await hashPinPBKDF2(newPin, newSalt);
+  const proofs   = collection(db, 'shops', ownerUid, 'staffPins', username, 'proofs');
+  await setDoc(doc(proofs, newProof), { createdAt: Date.now() });
+  await setDoc(doc(db, 'shops', ownerUid, 'staff', username), { pinSalt: newSalt }, { merge: true });
+  await deleteDoc(doc(proofs, oldProof)).catch(() => {});
+  await setDoc(doc(db, 'sessions', sessionId), { pinProof: newProof }, { merge: true });
+  if (_currentStaffSession?.sessionId === sessionId) _currentStaffSession.pinProof = newProof;
+}
 async function hashPin(pin, salt) {
   if (salt) return hashPinPBKDF2(pin, salt);
   return hashPinLegacy(pin);
@@ -364,28 +379,19 @@ export async function staffLogin(businessCode, username, pin) {
       return { ok: false, error: `Account locked. Try again in ${secsLeft}s` };
     }
 
-    // Step 3c: PIN check
-    const hashed = await hashPin(pin, staff.pinSalt || null);
-    if (hashed !== staff.pinHash) {
-      const attempts   = (staff.failedAttempts || 0) + 1;
-      const lockFields = attempts >= MAX_ATTEMPTS
-        ? { failedAttempts: attempts, lockedUntil: Date.now() + LOCKOUT_MS }
-        : { failedAttempts: attempts };
-      // Bump the rate-limit counter while still authenticated.
-      await setDoc(staffRef, lockFields, { merge: true })
-        .catch(e => console.warn('[auth] failed-attempt write failed (non-critical):', e));
-      await _cleanupAnon(anonUid);
-      _staffLoginInProgress = false;
-      if (attempts >= MAX_ATTEMPTS) {
-        return { ok: false, error: `Too many attempts. Locked for 60 seconds` };
-      }
-      return { ok: false, error: `Wrong PIN (${MAX_ATTEMPTS - attempts} attempts left)` };
-    }
     if (staff.revoked) {
       await _cleanupAnon(anonUid);
       _staffLoginInProgress = false;
       return { ok: false, error: 'This account has been disabled' };
     }
+
+    // Step 3c: PIN check, done by the database rather than this page. The
+    // PIN's fingerprint is stored at /shops/{ownerUid}/staffPins/{username}/
+    // proofs/{fingerprint}, which only the owner can read. The session write
+    // below names the fingerprint of the PIN that was typed, and the rules
+    // accept the session only if that exact document exists, so a stranger
+    // who knows a username but not the PIN is refused (backend test B05).
+    const pinProof = await hashPin(pin, staff.pinSalt || null);
 
     // Step 4: write /sessions/{anonUid}. Failure here leaves a half-state
     // (signed in, no session doc), so we explicitly clean up the anon user.
@@ -400,10 +406,27 @@ export async function staffLogin(businessCode, username, pin) {
       // so the resolver can layer them over role-effective perms without an
       // extra Firestore read per action.
       permissions:    staff.permissions || null,
+      pinProof,
     };
     try {
       await setDoc(doc(db, 'sessions', anonUid), sessionPayload);
     } catch (err) {
+      if (err?.code === 'permission-denied') {
+        // The rules found no fingerprint for this PIN: wrong PIN.
+        const attempts   = (staff.failedAttempts || 0) + 1;
+        const lockFields = attempts >= MAX_ATTEMPTS
+          ? { failedAttempts: attempts, lockedUntil: Date.now() + LOCKOUT_MS }
+          : { failedAttempts: attempts };
+        // Bump the rate-limit counter while still authenticated.
+        await setDoc(staffRef, lockFields, { merge: true })
+          .catch(e => console.warn('[auth] failed-attempt write failed (non-critical):', e));
+        await _cleanupAnon(anonUid);
+        _staffLoginInProgress = false;
+        if (attempts >= MAX_ATTEMPTS) {
+          return { ok: false, error: `Too many attempts. Locked for 60 seconds` };
+        }
+        return { ok: false, error: `Wrong PIN (${MAX_ATTEMPTS - attempts} attempts left)` };
+      }
       console.error('[auth] /sessions write failed:', err);
       await _cleanupAnon(anonUid);
       _staffLoginInProgress = false;
@@ -418,7 +441,7 @@ export async function staffLogin(businessCode, username, pin) {
     // could bump-then-reset in a loop and the lockout would never engage.
     // Now runs after Step 4, so staffSession(uid) is true and this lands on
     // the existing rule branch that already allows failedAttempts/lockedUntil
-    // for a session member (same shape as the pinHash/pinSalt branch below).
+    // for a session member (same shape as the pinSalt branch below).
     // The pre-session rules branch now only ever allows the +1 bump.
     if (staff.failedAttempts) {
       await setDoc(staffRef, { failedAttempts: 0, lockedUntil: null }, { merge: true }).catch(() => {});
@@ -426,17 +449,13 @@ export async function staffLogin(businessCode, username, pin) {
 
     // Step 3e (moved here, BUG-012): transparent legacy → PBKDF2 hash
     // migration. Used to run before the session doc existed, so the
-    // pinHash/pinSalt write always failed the staffSession() rule check
+    // salt write always failed the staffSession() rule check
     // (same chicken-and-egg gap the failedAttempts counter had) and legacy
     // accounts silently never upgraded off the older hash. Now runs after
     // Step 4, so staffSession(uid) is true and this lands on the existing
-    // rule branch that already allows pinHash/pinSalt for a session member.
+    // rule branch that already allows pinSalt for a session member.
     if (!staff.pinSalt) {
-      const newSalt = generateSalt();
-      const newHash = await hashPinPBKDF2(pin, newSalt);
-      await setDoc(staffRef, { pinHash: newHash, pinSalt: newSalt }, { merge: true }).catch(() => {});
-      const usersRef = doc(db, 'users', ownerUid, 'staff', username.toLowerCase().trim());
-      await setDoc(usersRef, { pinHash: newHash, pinSalt: newSalt }, { merge: true }).catch(() => {});
+      await _replacePinProof(ownerUid, staff.username, anonUid, pinProof, pin).catch(() => {});
     }
 
     // Step 5: local state.
@@ -552,13 +571,11 @@ export async function staffChangeOwnPin(currentPin, newPin, confirmPin) {
     if (!snap.exists()) return { ok: false, error: 'Account not found' };
 
     const staff      = snap.data();
-    const currentHashed = await hashPin(currentPin, staff.pinSalt || null);
-    if (currentHashed !== staff.pinHash)
+    const currentProof = await hashPin(currentPin, staff.pinSalt || null);
+    if (currentProof !== session.pinProof)
       return { ok: false, error: 'Current PIN is incorrect' };
 
-    const newSalt = generateSalt();
-    const newHash = await hashPinPBKDF2(newPin, newSalt);
-    await setDoc(staffRef, { pinHash: newHash, pinSalt: newSalt }, { merge: true });
+    await _replacePinProof(session.ownerUid, session.staffUsername, session.sessionId, currentProof, newPin);
 
     await logActivity('CHANGE_OWN_PIN', { username: session.staffUsername });
     return { ok: true };
@@ -585,12 +602,16 @@ export async function ownerResetStaffPin(staffUsername, newPin) {
     const snap     = await getDoc(shopRef);
     if (!snap.exists()) return { ok: false, error: 'Staff account not found' };
 
-    const newSalt = generateSalt();
-    const newHash = await hashPinPBKDF2(newPin, newSalt);
+    const newSalt  = generateSalt();
+    const proofs   = collection(db, 'shops', currentUser.uid, 'staffPins', staffUsername, 'proofs');
+    const old      = await getDocs(proofs);
+    await Promise.all(old.docs.map(d => deleteDoc(d.ref)));
+    await setDoc(doc(proofs, await hashPinPBKDF2(newPin, newSalt)), { createdAt: Date.now() });
     const usersRef = doc(db, 'users', currentUser.uid, 'staff', staffUsername);
+    const fields   = { pinSalt: newSalt, pinHash: deleteField(), failedAttempts: 0, lockedUntil: null };
     await Promise.all([
-      setDoc(shopRef,  { pinHash: newHash, pinSalt: newSalt, failedAttempts: 0, lockedUntil: null }, { merge: true }),
-      setDoc(usersRef, { pinHash: newHash, pinSalt: newSalt, failedAttempts: 0, lockedUntil: null }, { merge: true }),
+      setDoc(shopRef,  fields, { merge: true }),
+      setDoc(usersRef, fields, { merge: true }),
     ]);
 
     await logActivity('RESET_STAFF_PIN', { username: staffUsername });
