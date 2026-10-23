@@ -1,0 +1,37 @@
+name: Explain TestSprite results
+# When the TestSprite check on a pull request finishes, post one comment
+# that says which tests failed, the step each stopped on, and what
+# TestSprite saw. A later green run updates the same comment.
+on: status
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  statuses: read
+
+jobs:
+  explain:
+    if: >-
+      github.event.context == 'TestSprite V3' &&
+      (github.event.state == 'failure' || github.event.state == 'error' || github.event.state == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: explain-${{ github.event.sha }}
+      cancel-in-progress: true
+    env:
+      TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i -g @testsprite/testsprite-cli@latest
+      - name: Explain the run
+        env:
+          SHA: ${{ github.event.sha }}
+          RUN_URL: ${{ github.event.target_url }}
+          KIND: browser
+        run: node scripts/explain-failures.mjs
