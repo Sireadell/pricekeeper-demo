@@ -6,7 +6,7 @@ import requests
 
 API_KEY = "AIzaSyCAQa_uqAfUbhE6pDtIGOqBeEoc6fDfXdU"  # public web key, same as the app
 PROJECT = "pricekeeper-demo"
-# PK_EMULATOR=1 points the same tests at a local Firebase emulator (scripts/rules-check.sh).
+# PK_EMULATOR=1 points the same tests at a local Firebase emulator (scripts/rules-check.py).
 _LOCAL = os.environ.get("PK_EMULATOR")
 DB = (f"http://127.0.0.1:8080/v1/projects/{PROJECT}/databases/(default)/documents" if _LOCAL
       else f"https://firestore.googleapis.com/v1/projects/{PROJECT}/databases/(default)/documents")
