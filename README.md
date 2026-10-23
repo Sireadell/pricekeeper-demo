@@ -41,7 +41,7 @@ Pull request #10 started with a bug I planted on purpose: the receipt showed a s
 
 Use a computer with Chrome, or a phone.
 
-1. Open https://pricekeeper-demo.web.app. Tap **Skip** on the intro, then **Staff Login**. Sign in with name `JUDGE_NAME` and PIN `JUDGE_PIN`.
+1. Open https://pricekeeper-demo.web.app. Tap **Skip** on the intro, then **Staff Login**. Sign in with name `robot` and PIN `4821`.
 2. Turn the network off. In Chrome, press F12, open the **Network** tab and change **No throttling** to **Offline**. On a phone, turn on airplane mode.
 3. Look at the top of the screen. An amber bar says the app is offline and will sync when it's back online. The bar shows on every screen.
 4. Go to **Trade**, start a new trade, add an item and complete the sale. It goes through as normal. In Trade history the sale has a small hourglass, which means it's waiting to be sent. The bar counts the changes waiting.
@@ -51,7 +51,7 @@ Please don't reload the page while the network is fully off. The app is built to
 
 ## Judge it in one minute
 
-1. Open https://pricekeeper-demo.web.app and sign in as staff with `JUDGE_NAME` and `JUDGE_PIN`.
+1. Open https://pricekeeper-demo.web.app and sign in as staff with `robot` and `4821`.
 2. Open [pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10). Its commits are the five fixes, and its checks show the last run at 43 of 43.
 3. Click any red or green link in [Five problems it caught](#five-problems-it-caught). It opens the full TestSprite run, test by test.
 
