@@ -1,12 +1,44 @@
-# Proof: the tests caught two real bugs, then went green
+# Proof: every red run and every green run
+
+This file has the full trail behind the README. It starts with pull request #10, where TestSprite found five problems I didn't know about. Below that are the two breaks I made on purpose, and the unit tests.
+
+Every TestSprite run below happened against a live preview copy of the app, from a GitHub pull request, unless it says otherwise. Each link opens the full run.
+
+## Pull request #10: five problems, then 43 of 43
+
+[Pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10) began as a planted bug: I made the receipt show a sale on credit as paid in full. No test caught it. What the first run did catch was a real bug I hadn't planted: a minus amount received turned into extra debt. From there I kept fixing what each run found until the whole suite passed.
+
+These are all 11 runs on that pull request, in order.
+
+| Commit | Result | What it found or proved |
+|---|---|---|
+| [9fd0e3a](https://github.com/Sireadell/pricekeeper-demo/commit/9fd0e3a) | [36 of 42 passed, 3 failed, 3 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9b97e840-3a06-4cf9-8394-b982d9a816f8) | **Bug 1.** Typing -500 as the amount received on an ₦800 sale saved ₦1,300 as debt. The planted receipt bug went through unnoticed. Two dashboard tests failed on how falling figures were shown. The two offline tests came back blocked. |
+| [5bf2ef6](https://github.com/Sireadell/pricekeeper-demo/commit/5bf2ef6) | [38 of 42 passed, 2 failed, 2 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b36fe793-8a2e-43bf-b7ed-26e3fd29df91) | Fixed bug 1, took out the planted bug, and gave falling dashboard figures a minus sign. **Bug 2.** The delete test failed on the browser's own pop-up. The minus amount test failed again, but the run shows the app got it right (₦800 owing). The robot had checked a different item with a similar name. The offline tests were blocked again. |
+| [6abf224](https://github.com/Sireadell/pricekeeper-demo/commit/6abf224) | [41 of 42 passed, 1 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a9a67e16-518a-4989-9f24-e94856c5fdee) | Added the pretend-offline switch. Both offline tests passed. Bug 1's test passed. The delete test failed on the pop-up again. |
+| [4b50685](https://github.com/Sireadell/pricekeeper-demo/commit/4b50685) | [40 of 42 passed, 1 failed, 1 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b) | Delete now asks inside the page, and its test passed. **Bug 3.** The sale test got stuck: saving an item whose name was already in stock left the form open and blank. The failed test was the robot checking a look-alike item. |
+| [f228f71](https://github.com/Sireadell/pricekeeper-demo/commit/f228f71) | [41 of 42 passed, 1 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/cc0b7b71-8bc5-416a-b2ee-572c6d714792) | The form now closes and says the item was updated. The sale test passed. The low-stock test was blocked, and it passed in every run after. |
+| [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61) | [41 of 43 passed, 1 failed, 1 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/351e133d-e129-4688-a5e9-3d6681005ef6) | Fixed **bug 4**, the offline reopen (see below). The new reopen test joined the suite and passed. The log-out test failed: after a staff sign-out, the sign-in didn't open straight away. The repayment test was blocked. |
+| [c45146e](https://github.com/Sireadell/pricekeeper-demo/commit/c45146e) | [42 of 43 passed, 1 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/3e6286de-9196-4a87-b00d-2a92b36357af) | The sign-in now opens right after a sign-out, and the log-out test passed. The wrong-PIN test failed: the shop showed faintly through the sign-in box. |
+| [6975881](https://github.com/Sireadell/pricekeeper-demo/commit/6975881) | [42 of 43 passed, 1 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/65b84008-c95b-4b71-a9b5-be730c828187) | The sign-in box is now solid. The wrong-PIN test still failed, because the shop's text was still in the page under the box. |
+| [97e8e39](https://github.com/Sireadell/pricekeeper-demo/commit/97e8e39) | [41 of 43 passed, 2 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b1adede2-406e-4924-81be-a2c97f0238e8) | The shop is now hidden for real while the sign-in is open, and the wrong-PIN test passed. Two tests were blocked because the robot picked the wrong item among hundreds of old test items. I cleared those out of the demo shop. |
+| [d10dded](https://github.com/Sireadell/pricekeeper-demo/commit/d10dded) | [42 of 43 passed, 1 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/675ed041-288c-4af2-9af9-b746005bc34d) | A fresh run on the cleaned shop. **Bug 5.** Typing 0 pieces and pressing Add put 1 piece in the cart. |
+| [9057fee](https://github.com/Sireadell/pricekeeper-demo/commit/9057fee) | [43 of 43 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) | A 0 or minus number of pieces is now refused. Merged. |
+
+### Bug 4, the offline reopen
+
+This one was found from the TestSprite command line, not on the pull request. I wrote a new test: add an item with 10 pieces, go offline, sell 2, then close and reopen the app while still offline. It should still show the sale, marked as waiting to be sent, and 8 pieces left.
+
+It failed. After the reopen, the sale was gone from a staff member's screen and the stock was back at 10. The sale was waiting to be sent, but the staff screens didn't show sales that were still waiting. I fixed that in [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61), the command-line run passed, and the test has passed in every pull request run since.
+
+The command-line runs were against a private preview link, so they aren't linked here. The first pull request run with the fix is the 1cefe61 row above.
+
+## Two breaks made on purpose
 
 To prove the test suite does its job, I broke the app on purpose twice and watched what happened. Both breaks were in stock tracking, and each was a different kind of mistake.
 
 The first time, I removed the one line that takes sold items out of stock. The TestSprite check on the pull request turned red. I put the line back, the check turned green, and only then did the change merge.
 
 The second time, the line stayed but took off the wrong amount: every sale took twice the stock off the shelf. The check turned red again, with 3 failures, and went green once I fixed the line.
-
-Every run below happened in TestSprite against a live copy of the app, from a GitHub pull request. Each link opens the full run.
 
 Further down there is a third proof, for the offline unit tests that check the money maths.
 
@@ -55,7 +87,7 @@ This was the first time the void test caught a real fault.
 
 ## Unit tests: the money maths, checked on every push
 
-Next to the 24 TestSprite browser tests, there are 64 small unit tests in five files in the `tests/` folder. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
+Next to the 43 TestSprite browser tests, there are 64 small unit tests in five files in the `tests/` folder. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
 
 They run on Node's built-in test runner, with no packages to install. A GitHub Action called "Unit tests" runs them on every push and pull request and finishes in seconds. They cost nothing to run, and they pass in four time zones: UTC, Lagos, Los Angeles and Auckland.
 

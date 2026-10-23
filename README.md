@@ -1,20 +1,147 @@
-# PriceKeeper Demo
+# PriceKeeper
 
-PriceKeeper is a point-of-sale and stock app for traders in Nigeria. It runs in the phone browser, keeps working when the internet drops, and tracks sales, stock, debts and profit.
+[![maths](https://github.com/Sireadell/pricekeeper-demo/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/Sireadell/pricekeeper-demo/actions/workflows/unit-tests.yml)
 
-This is a demo copy with made-up trading data.
+PriceKeeper is a stock and sales app for market traders in Nigeria that keeps working when the signal drops.
+
+I built it because market signal comes and goes all day, and a trader can't stop selling and wait for it.
+
+On one pull request, TestSprite caught five problems I didn't know were there. One was in the offline part: a sale made with no signal disappeared from the screen when the app was closed and opened again. All five are fixed, and the last run passed 43 of 43.
 
 Live demo: https://pricekeeper-demo.web.app
 
-## Tested by TestSprite
+Built for TestSprite Hackathon Season 4, Project Track.
 
-24 browser tests run against the live app on every pull request. To prove they work, I broke stock tracking on purpose. The check went red, I fixed it, the check went green, and only then did it merge. Full trail with every run link: [PROOF.md](PROOF.md).
+## Receipts
 
-| Run | Result |
-|---|---|
-| Red, stock line removed | 3 stock tests failed |
-| Green, line restored | 24 of 24 passed, merged |
+| What | Count | Where to check |
+|---|---|---|
+| Browser tests saved in TestSprite | 43 | [Last run: 43 of 43 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) |
+| Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
+| Offline tests | 3 | [Testing offline](#testing-offline) |
+| Breaks I made on purpose that it caught | 2 | [PROOF.md](PROOF.md) |
+| Unit tests on the money maths | 64 | `tests/` folder, the "maths" check |
+| Pull requests merged | 6 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
 
-I also made every sale take twice the stock, and TestSprite caught that too. 64 offline unit tests check the money maths on every push, in seconds. Both are in [PROOF.md](PROOF.md#second-proof-every-sale-took-twice-the-stock).
+## Five problems it caught
+
+All five came up on [pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10). Each row links the run that went red and the first run where the same test passed after the fix.
+
+| What went wrong | Fix | Red | Green |
+|---|---|---|---|
+| A trader typed -500 as the amount received on an ₦800 sale. The app saved ₦1,300 as debt. It now counts a minus amount as ₦0, so the debt is ₦800. | [5bf2ef6](https://github.com/Sireadell/pricekeeper-demo/commit/5bf2ef6) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9b97e840-3a06-4cf9-8394-b982d9a816f8) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a9a67e16-518a-4989-9f24-e94856c5fdee) |
+| Saving an item whose name was already in stock updated that item, but the form stayed open and went blank. It looked as if the save had failed, and the sale test got stuck there. The form now closes and says the item was updated. | [f228f71](https://github.com/Sireadell/pricekeeper-demo/commit/f228f71) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/cc0b7b71-8bc5-416a-b2ee-572c6d714792) |
+| **Offline.** A staff member made a sale with no signal, then closed and opened the app, still with no signal. The sale was gone from the screen and the item's stock jumped back up. Sales waiting to be sent now show on staff screens after a reopen. | [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61) | From the command line, see [Testing offline](#testing-offline) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/351e133d-e129-4688-a5e9-3d6681005ef6) |
+| Typing 0 pieces and pressing Add quietly put 1 piece in the cart. A 0 or a minus number is now refused with a message. | [9057fee](https://github.com/Sireadell/pricekeeper-demo/commit/9057fee) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/675ed041-288c-4af2-9af9-b746005bc34d) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) |
+| Deleting an item used the browser's own "Are you sure?" pop-up. That froze the page for the test robot, and the delete test failed twice. This one hurt the robot more than a trader. Delete now asks inside the page, like the rest of the app. | [4b50685](https://github.com/Sireadell/pricekeeper-demo/commit/4b50685) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b36fe793-8a2e-43bf-b7ed-26e3fd29df91) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b) |
+
+Pull request #10 started with a bug I planted on purpose: the receipt showed a sale on credit as paid in full. No test caught that one. I took it out in the same commit as the minus payment fix. More in [PROOF.md](PROOF.md).
+
+## Offline in one minute
+
+Use a computer with Chrome, or a phone.
+
+1. Open https://pricekeeper-demo.web.app. Tap **Skip** on the intro, then **Staff Login**. Sign in with name `JUDGE_NAME` and PIN `JUDGE_PIN`.
+2. Turn the network off. In Chrome, press F12, open the **Network** tab and change **No throttling** to **Offline**. On a phone, turn on airplane mode.
+3. Look at the top of the screen. An amber bar says the app is offline and will sync when it's back online. The bar shows on every screen.
+4. Go to **Trade**, start a new trade, add an item and complete the sale. It goes through as normal. In Trade history the sale has a small hourglass, which means it's waiting to be sent. The bar counts the changes waiting.
+5. Turn the network back on (set **No throttling** again, or turn airplane mode off). The bar says it's syncing, then shows "All synced" for a few seconds and goes away. The hourglass on the sale goes too.
+
+Please don't reload the page while the network is fully off. The app is built to open from the copy saved on the phone, but no test covers that yet.
+
+## Judge it in one minute
+
+1. Open https://pricekeeper-demo.web.app and sign in as staff with `JUDGE_NAME` and `JUDGE_PIN`.
+2. Open [pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10). Its commits are the five fixes, and its checks show the last run at 43 of 43.
+3. Click any red or green link in [Five problems it caught](#five-problems-it-caught). It opens the full TestSprite run, test by test.
+
+The shop, its items and its customers are made up. Other judges use the same shop, and I may reset the data.
+
+## How offline works
+
+Every save goes through one gate in the app. If the phone is online, the save goes straight to the database. If it's offline, the save waits in a queue on the phone, and the screen shows it at once.
+
+That covers sales, stock changes, customers and expenses.
+
+The app doesn't trust the phone's own "online" flag, because it can be wrong. It also checks every 30 seconds that it can really reach the database.
+
+When the signal is back, the queue sends its saves one at a time, oldest first. A save that fails is tried again up to 5 times, with a longer wait each time. If it still fails, it's set aside for the owner to look at, and the rest of the queue carries on. One bad save never holds up the others.
+
+When a customer pays toward an earlier sale, the payment and its line in their credit record are sent together, so they can't land at different times.
+
+## Testing offline
+
+This is the part I care about most, and it was the hardest to test.
+
+A test robot can't pull the plug on the internet in the middle of a run. My first try cut the network from inside a saved test with Playwright, the browser tool TestSprite runs on. That worked from the TestSprite command line, and I wrote it up for other builders as a docs suggestion: [issue #630](https://github.com/TestSprite/testsprite-cli/issues/630). On the pull request runs, the same tests came back blocked.
+
+So the app has a pretend-offline switch for tests. It only appears when the address ends in `?offline-switch=1`. Pressing it cuts the app's link to the database, so saves wait in the queue and the amber bar shows, the same as when the signal drops. Pressing it again reconnects, and the queue sends.
+
+Three tests use it, and all three passed in the last run:
+
+| Test | What it does | What it checks |
+|---|---|---|
+| Offline banner | Signs in, goes offline, comes back | The bar appears and says offline, then clears |
+| Offline sale | Adds a new item, goes offline, sells 2 pieces to a customer, comes back | The sale is in Trade history, and its hourglass clears once it's sent |
+| Offline reopen | Adds an item with 10 pieces, goes offline, sells 2, then closes and reopens the app while still offline | The sale is still in Trade history, marked as waiting, and the item still shows 8 pieces. Once back online, the waiting mark clears |
+
+The reopen test is the one that found the offline bug above. I wrote it, ran it from the command line, and it failed. After the fix it passed, and it has passed in every pull request run since.
+
+Each sale test makes its own item with a new name, so it doesn't depend on what's already in the shop.
+
+## What it does
+
+A customer buys 5 pieces and pays for 3. Here's what the trader does in PriceKeeper:
+
+1. Pick the item and the quantity, and choose the customer.
+2. Type the amount received. The app works out what's still owed.
+3. Confirm. Stock goes down by 5, and the unpaid part goes on that customer's balance.
+4. The dashboard now shows the money owed to the shop and any item running low.
+
+If the sale was a mistake, the trader voids it and the stock comes back.
+
+It runs in the phone browser and installs like an app. It's plain JavaScript on Firebase, with no framework.
+
+## How the testing loop works
+
+1. I open a pull request.
+2. GitHub builds a preview copy of the app.
+3. TestSprite runs all 43 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
+4. At the same time, the "maths" check runs 64 unit tests in a few seconds.
+5. The `main` branch won't accept the merge until both checks pass. GitHub enforces this, so I can't skip it.
+
+The browser tests click through the app like a cashier would: selling, selling on credit, part payments, voids, receipts, stock alerts, staff login, wrong PINs and the three offline tests.
+
+The unit tests check the sums behind the screens, like average cost, margin and how a payment is shared across a customer's debts. A wrong figure can hide behind a screen that looks fine.
 
 To run the unit tests yourself, install Node 22 or newer and run `npm test` in the project folder.
+
+## Two breaks I made on purpose
+
+Before pull request #10, I broke stock tracking on purpose twice to see if the tests would notice. Both times the check went red, and it went green once I put things right.
+
+| Pull request | What I broke | Red run | Green run |
+|---|---|---|---|
+| [#3](https://github.com/Sireadell/pricekeeper-demo/pull/3) | Removed the line that takes sold items out of stock | [5 failed, 3 of them stock tests](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a66f2860-07a5-4fb1-8241-a8decc0185b5) | [24 of 24 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/7bc6aa85-f9f6-4033-bd2e-d122d8fb5a49) |
+| [#6](https://github.com/Sireadell/pricekeeper-demo/pull/6) | Made every sale take twice the stock | [21 passed, 3 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d50ec602-0006-4dca-a698-825e312bef0a) | [24 of 24 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/ddc06f18-ebf9-45f1-ab51-e2b027b35a2a) |
+
+The suite was 24 tests then. It's 43 now. The full trail is in [PROOF.md](PROOF.md).
+
+## What this is not
+
+- **Not a full accounting system.** It keeps stock, sales and who owes what.
+- **No real payments.** It records the money the trader received. It doesn't move any money.
+- **Demo data.** The shop, items and customers are made up, and the data may be reset.
+- **The offline tests use a switch, not a dead network.** The switch cuts the app's link to the database. When the reopen test reloads the page, the app's own files still come from the internet.
+- **Opening the app with no signal at all isn't tested.** The app keeps a copy of its files on the phone for that, but no test covers it yet.
+- **Not every red run was a bug.** Getting to 43 of 43 took 11 runs on pull request #10. Some red runs were the robot mixing up look-alike test items in the shared demo shop. I cleared out old test data and named test items more clearly.
+- **It missed my planted receipt bug.** See [Five problems it caught](#five-problems-it-caught).
+- **Stock after a sale needs the live database,** so the unit tests don't cover it. The browser tests do.
+
+## Links
+
+- Demo video: VIDEO_LINK
+- Pull request #10, the five fixes: https://github.com/Sireadell/pricekeeper-demo/pull/10
+- Offline testing recipe: [TestSprite CLI issue #630](https://github.com/TestSprite/testsprite-cli/issues/630)
+- Every red and green run: [PROOF.md](PROOF.md)
+- Live app: https://pricekeeper-demo.web.app
