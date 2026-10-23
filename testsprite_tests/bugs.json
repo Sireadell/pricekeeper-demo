@@ -1,0 +1,38 @@
+[
+  {
+    "what": "Typing -500 as the amount received on an ₦800 sale saved ₦1,300 as debt.",
+    "test": "TS03",
+    "red": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9b97e840-3a06-4cf9-8394-b982d9a816f8",
+    "fix": "https://github.com/Sireadell/pricekeeper-demo/commit/5bf2ef6",
+    "green": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a9a67e16-518a-4989-9f24-e94856c5fdee"
+  },
+  {
+    "what": "Deleting an item asked through the browser's own pop-up, which the test could not answer. Delete now asks inside the page.",
+    "test": "TS17",
+    "red": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b36fe793-8a2e-43bf-b7ed-26e3fd29df91",
+    "fix": "https://github.com/Sireadell/pricekeeper-demo/commit/4b50685",
+    "green": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b"
+  },
+  {
+    "what": "Saving an item whose name was already in stock left the form open and blank.",
+    "test": "TS27",
+    "red": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b",
+    "fix": "https://github.com/Sireadell/pricekeeper-demo/commit/f228f71",
+    "green": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/cc0b7b71-8bc5-416a-b2ee-572c6d714792"
+  },
+  {
+    "what": "A sale made offline vanished from a staff member's screen after closing and reopening the app, and the stock went back up.",
+    "test": "TS08",
+    "red": "",
+    "redNote": "Found from the TestSprite command line on a private preview link",
+    "fix": "https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61",
+    "green": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/351e133d-e129-4688-a5e9-3d6681005ef6"
+  },
+  {
+    "what": "Typing 0 pieces and pressing Add put 1 piece in the cart.",
+    "test": "TS09",
+    "red": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/675ed041-288c-4af2-9af9-b746005bc34d",
+    "fix": "https://github.com/Sireadell/pricekeeper-demo/commit/9057fee",
+    "green": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a"
+  }
+]

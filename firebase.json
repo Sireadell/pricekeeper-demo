@@ -26,6 +26,10 @@
       ],
       "rewrites": [
         {
+          "source": "/checks",
+          "destination": "/checks.html"
+        },
+        {
           "source": "/shop/**",
           "destination": "/shop.html"
         }
@@ -80,6 +84,10 @@
         "*.md"
       ],
       "rewrites": [
+        {
+          "source": "/checks",
+          "destination": "/checks.html"
+        },
         {
           "source": "/shop/**",
           "destination": "/shop.html"
