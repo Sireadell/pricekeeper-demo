@@ -47,11 +47,13 @@ Staff sign in with a name and a 4-digit PIN. The page checked the PIN, but the d
 
 TestSprite didn't find this one. I found it by reading the database rules and trying them on a copy of the database running on my own computer. The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on that local copy pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
 
+Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. [See that run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111).
+
 Next, I'm turning the six break-in checks into TestSprite server tests that go straight to the database. They haven't been created or run yet.
 
 | What went wrong | Fix | Red | Green |
 |---|---|---|---|
-| A staff session opened with only a staff name, no PIN | after merge | not run yet <!-- add red/green run links after the server runs --> | not run yet |
+| A staff session opened with only a staff name, no PIN | after merge | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111) | after merge |
 
 The PIN never sits in the database as typed. It's stored as a one-way fingerprint that can't be turned back into the PIN, and one of the local checks makes sure the fingerprint is never handed out.
 
@@ -109,7 +111,7 @@ Each sale test makes its own item with a new name, so it doesn't depend on what'
 
 ## Testing the database
 
-The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. Today they run on a copy of the database on my own computer, and all six pass, along with a seventh that makes sure the right PIN still works.
+The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. They live in TestSprite as server tests. Against the live database, before the fix, four passed and two failed. On a copy of the database with the fixed rules, all six pass, along with a seventh that makes sure the right PIN still works.
 
 | Test | What it tries |
 |---|---|
@@ -129,7 +131,7 @@ The plan from here: on every pull request, a "database rules" check runs the sam
 | Every pull request | TestSprite runs all 43 browser tests on a preview copy, and the 64 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
 | A test fails | A comment is set up to appear on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Not yet |
 | After every merge | TestSprite is set up to run the six server tests against the live database, once they're created. | Not yet |
-| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test joins them once it exists. If one fails, an issue opens on GitHub by itself. | Not yet |
+| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Not yet |
 | On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Not yet |
 
 ## What it does

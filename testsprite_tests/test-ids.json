@@ -345,7 +345,7 @@
   },
   {
     "code": "B01",
-    "id": null,
+    "id": "30869fd8-53df-44b3-9cb4-b6e6b2e6e149",
     "name": "Server: no sign-in cannot read shop data",
     "file": "backend/B01_no_sign_in_cannot_read_shop_data.py",
     "description": "A request with no sign-in at all tries to read sales, items and customers, and must be refused.",
@@ -353,7 +353,7 @@
   },
   {
     "code": "B02",
-    "id": null,
+    "id": "7031dd7d-eb71-469f-b4a8-14bc4adbb4a4",
     "name": "Server: a stranger without a staff session cannot read shop data",
     "file": "backend/B02_stranger_without_session_cannot_read_shop_data.py",
     "description": "A brand-new anonymous visitor, signed in but with no staff session, tries to read the shop and must be refused.",
@@ -361,7 +361,7 @@
   },
   {
     "code": "B03",
-    "id": null,
+    "id": "67657f30-8a64-46d3-a33c-e299b7987e24",
     "name": "Server: the staff list and shop codes cannot be listed",
     "file": "backend/B03_staff_roster_and_shop_codes_cannot_be_listed.py",
     "description": "A stranger tries to list every staff member and every shop code, and must be refused.",
@@ -369,7 +369,7 @@
   },
   {
     "code": "B04",
-    "id": null,
+    "id": "3dd420aa-2d61-497f-9853-1520a6bae71f",
     "name": "Server: a made-up staff session is refused",
     "file": "backend/B04_made_up_staff_session_is_refused.py",
     "description": "A stranger writes a session for a staff name that does not exist, and must be refused.",
@@ -377,7 +377,7 @@
   },
   {
     "code": "B05",
-    "id": null,
+    "id": "73f01dc0-97d4-42c6-8508-3dfae5a28675",
     "name": "Server: a staff session needs the PIN",
     "file": "backend/B05_staff_session_needs_the_pin.py",
     "description": "A stranger who knows a real staff name and role, but not the PIN, tries to become that staff member, and must be refused.",
@@ -385,7 +385,7 @@
   },
   {
     "code": "B06",
-    "id": null,
+    "id": "0b1c79f0-5bfb-454f-8b01-7ea6088b0cd1",
     "name": "Server: the PIN fingerprint is not handed out",
     "file": "backend/B06_pin_hash_is_not_handed_out.py",
     "description": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T14:15:43.704Z",
+ "generatedAt": "2026-10-24T09:26:18.974Z",
  "project": "81dc7004-270e-42bb-96d2-a47ea8b1b818",
  "totals": {
   "pulls": 10,
@@ -573,7 +573,12 @@
    "kind": "server",
    "checks": "A request with no sign-in at all tries to read sales, items and customers, and must be refused.",
    "file": "backend/B01_no_sign_in_cannot_read_shop_data.py",
-   "last": null
+   "last": {
+    "verdict": "passed",
+    "at": "2026-10-24T09:24:10.311Z",
+    "where": "",
+    "target": ""
+   }
   },
   {
    "code": "B02",
@@ -581,7 +586,12 @@
    "kind": "server",
    "checks": "A brand-new anonymous visitor, signed in but with no staff session, tries to read the shop and must be refused.",
    "file": "backend/B02_stranger_without_session_cannot_read_shop_data.py",
-   "last": null
+   "last": {
+    "verdict": "passed",
+    "at": "2026-10-24T09:24:10.495Z",
+    "where": "",
+    "target": ""
+   }
   },
   {
    "code": "B03",
@@ -589,7 +599,12 @@
    "kind": "server",
    "checks": "A stranger tries to list every staff member and every shop code, and must be refused.",
    "file": "backend/B03_staff_roster_and_shop_codes_cannot_be_listed.py",
-   "last": null
+   "last": {
+    "verdict": "passed",
+    "at": "2026-10-24T09:24:10.187Z",
+    "where": "",
+    "target": ""
+   }
   },
   {
    "code": "B04",
@@ -597,7 +612,12 @@
    "kind": "server",
    "checks": "A stranger writes a session for a staff name that does not exist, and must be refused.",
    "file": "backend/B04_made_up_staff_session_is_refused.py",
-   "last": null
+   "last": {
+    "verdict": "passed",
+    "at": "2026-10-24T09:24:10.319Z",
+    "where": "",
+    "target": ""
+   }
   },
   {
    "code": "B05",
@@ -605,7 +625,12 @@
    "kind": "server",
    "checks": "A stranger who knows a real staff name and role, but not the PIN, tries to become that staff member, and must be refused.",
    "file": "backend/B05_staff_session_needs_the_pin.py",
-   "last": null
+   "last": {
+    "verdict": "failed",
+    "at": "2026-10-24T09:24:14.081Z",
+    "where": "",
+    "target": ""
+   }
   },
   {
    "code": "B06",
@@ -613,7 +638,12 @@
    "kind": "server",
    "checks": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",
    "file": "backend/B06_pin_hash_is_not_handed_out.py",
-   "last": null
+   "last": {
+    "verdict": "failed",
+    "at": "2026-10-24T09:24:13.110Z",
+    "where": "",
+    "target": ""
+   }
   }
  ],
  "bugs": [

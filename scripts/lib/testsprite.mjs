@@ -7,6 +7,8 @@ import { promisify } from 'node:util';
 
 const run = promisify(execFile);
 export const PROJECT = process.env.TESTSPRITE_PROJECT_ID || '81dc7004-270e-42bb-96d2-a47ea8b1b818';
+// TestSprite keeps server tests in their own project.
+export const SERVER_PROJECT = process.env.TESTSPRITE_SERVER_PROJECT_ID || 'c474b925-8e42-47b8-a1fc-7c828dd273bd';
 
 // Every test in the suite, browser and server, from testsprite_tests/test-ids.json.
 // Tests not yet created in TestSprite have no id and are left out.
@@ -56,7 +58,7 @@ export async function runDetail(runId) {
   }
 }
 
-export const testPage = id => `https://www.testsprite.com/dashboard/tests/${PROJECT}/test/${id}`;
+export const testPage = (id, kind) => `https://www.testsprite.com/dashboard/tests/${kind === 'server' ? SERVER_PROJECT : PROJECT}/test/${id}`;
 
 // The step a failed run stopped on, in the words TestSprite recorded.
 export async function failedStep(testId, runId) {

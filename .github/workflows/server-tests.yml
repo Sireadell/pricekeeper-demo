@@ -73,7 +73,7 @@ jobs:
     timeout-minutes: 30
     env:
       TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
-      TESTSPRITE_PROJECT_ID: 81dc7004-270e-42bb-96d2-a47ea8b1b818
+      TESTSPRITE_PROJECT_ID: c474b925-8e42-47b8-a1fc-7c828dd273bd
       GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4

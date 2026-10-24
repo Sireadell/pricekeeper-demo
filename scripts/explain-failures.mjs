@@ -72,7 +72,7 @@ if (!ran.length) {
     '',
     '| Test | Result | Where it stopped | What TestSprite saw |',
     '|---|---|---|---|',
-    ...bad.map(r => `| [${r.t.code} ${cell(r.t.name)}](${r.link || testPage(r.t.id)}) | ${r.state} | ${cell(r.step) || 'not recorded'} | ${cell(r.said) || 'see the test page'} |`),
+    ...bad.map(r => `| [${r.t.code} ${cell(r.t.name)}](${r.link || testPage(r.t.id, r.t.kind)}) | ${r.state} | ${cell(r.step) || 'not recorded'} | ${cell(r.said) || 'see the test page'} |`),
     '',
     'Each test name opens that run in TestSprite, with the video and a screenshot of every step.',
     '',
