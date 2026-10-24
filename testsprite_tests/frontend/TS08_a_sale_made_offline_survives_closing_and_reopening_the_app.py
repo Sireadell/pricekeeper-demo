@@ -1,7 +1,8 @@
 import asyncio
 import re
 import random
-NAME = "Reopen Offline Item %04d" % random.randint(1000, 9999)
+import time
+NAME = "Reopen Offline Item %d" % (int(time.time() * 1000) % 10000000)
 BASE = "https://pricekeeper-demo-preview.web.app"
 from playwright import async_api
 from playwright.async_api import expect

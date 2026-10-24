@@ -1,10 +1,10 @@
 import asyncio
-import random
+import time
 import re
 from playwright import async_api
 from playwright.async_api import expect
 
-NAME = "Low Alert Item %04d" % random.randint(1000, 9999)
+NAME = "Low Alert Item %d" % (int(time.time() * 1000) % 10000000)
 BASE = "https://pricekeeper-demo-preview.web.app"
 
 
