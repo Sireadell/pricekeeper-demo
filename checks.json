@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T09:26:18.974Z",
+ "generatedAt": "2026-10-24T10:11:47.179Z",
  "project": "81dc7004-270e-42bb-96d2-a47ea8b1b818",
  "totals": {
   "pulls": 10,
@@ -575,7 +575,7 @@
    "file": "backend/B01_no_sign_in_cannot_read_shop_data.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T09:24:10.311Z",
+    "at": "2026-10-24T10:10:09.832Z",
     "where": "",
     "target": ""
    }
@@ -588,7 +588,7 @@
    "file": "backend/B02_stranger_without_session_cannot_read_shop_data.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T09:24:10.495Z",
+    "at": "2026-10-24T10:10:09.565Z",
     "where": "",
     "target": ""
    }
@@ -601,7 +601,7 @@
    "file": "backend/B03_staff_roster_and_shop_codes_cannot_be_listed.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T09:24:10.187Z",
+    "at": "2026-10-24T10:10:08.111Z",
     "where": "",
     "target": ""
    }
@@ -614,7 +614,7 @@
    "file": "backend/B04_made_up_staff_session_is_refused.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T09:24:10.319Z",
+    "at": "2026-10-24T10:10:09.658Z",
     "where": "",
     "target": ""
    }
@@ -626,8 +626,8 @@
    "checks": "A stranger who knows a real staff name and role, but not the PIN, tries to become that staff member, and must be refused.",
    "file": "backend/B05_staff_session_needs_the_pin.py",
    "last": {
-    "verdict": "failed",
-    "at": "2026-10-24T09:24:14.081Z",
+    "verdict": "passed",
+    "at": "2026-10-24T10:10:09.352Z",
     "where": "",
     "target": ""
    }
@@ -639,8 +639,8 @@
    "checks": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",
    "file": "backend/B06_pin_hash_is_not_handed_out.py",
    "last": {
-    "verdict": "failed",
-    "at": "2026-10-24T09:24:13.110Z",
+    "verdict": "passed",
+    "at": "2026-10-24T10:10:09.232Z",
     "where": "",
     "target": ""
    }

@@ -47,13 +47,13 @@ Staff sign in with a name and a 4-digit PIN. The page checked the PIN, but the d
 
 TestSprite didn't find this one. I found it by reading the database rules and trying them on a copy of the database running on my own computer. The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on that local copy pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
 
-Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. [See that run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111).
+Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. After the fix went live, all six passed. [Red run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111), [green run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/5e34a933-0590-46a9-8d11-45f18ba5bda8).
 
 Next, I'm turning the six break-in checks into TestSprite server tests that go straight to the database. They haven't been created or run yet.
 
 | What went wrong | Fix | Red | Green |
 |---|---|---|---|
-| A staff session opened with only a staff name, no PIN | after merge | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111) | after merge |
+| A staff session opened with only a staff name, no PIN | [8d3c5f0](https://github.com/Sireadell/pricekeeper-demo/commit/8d3c5f0) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/5e34a933-0590-46a9-8d11-45f18ba5bda8) |
 
 The PIN never sits in the database as typed. It's stored as a one-way fingerprint that can't be turned back into the PIN, and one of the local checks makes sure the fingerprint is never handed out.
 
@@ -111,7 +111,7 @@ Each sale test makes its own item with a new name, so it doesn't depend on what'
 
 ## Testing the database
 
-The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. They live in TestSprite as server tests. Against the live database, before the fix, four passed and two failed. On a copy of the database with the fixed rules, all six pass, along with a seventh that makes sure the right PIN still works.
+The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. They live in TestSprite as server tests. Against the live database, four passed and two failed before the fix, and all six pass now. On a copy of the database, the same six pass, along with a seventh that makes sure the right PIN still works.
 
 | Test | What it tries |
 |---|---|
