@@ -8,7 +8,7 @@ I built it because market signal comes and goes all day, and a trader can't stop
 
 On one pull request, TestSprite caught five problems I didn't know were there. One was in the offline part: a sale made with no signal disappeared from the screen when the app was closed and opened again. All five are fixed, and the last run passed 43 of 43.
 
-I found a worse hole myself, by checking the database rules on a copy of the database on my own computer: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself. TestSprite server tests proved the hole on the live database, then proved the fix closed it.
+There was a worse hole in the database rules: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself. TestSprite server tests proved the hole on the live database, then proved the fix closed it.
 
 Live demo: https://pricekeeper-demo.web.app
 
@@ -41,11 +41,11 @@ All five came up on [pull request #10](https://github.com/Sireadell/pricekeeper-
 
 Pull request #10 started with a bug I planted on purpose: the receipt showed a sale on credit as paid in full. No test caught that one. I took it out in the same commit as the minus payment fix. More in [PROOF.md](PROOF.md).
 
-## The PIN hole I found myself
+## The PIN hole
 
 Staff sign in with a name and a 4-digit PIN. The page checked the PIN, but the database never did. So someone who skipped the page and talked to the database directly could open a staff session with just a name.
 
-TestSprite didn't find this one. I found it by reading the database rules and trying them on a copy of the database running on my own computer. The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on that local copy pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
+The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on a copy of the database on my own computer pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
 
 Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. After the fix went live, all six passed. [Red run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111), [green run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/5e34a933-0590-46a9-8d11-45f18ba5bda8).
 
