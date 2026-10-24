@@ -8,7 +8,7 @@ I built it because market signal comes and goes all day, and a trader can't stop
 
 On one pull request, TestSprite caught five problems I didn't know were there. One was in the offline part: a sale made with no signal disappeared from the screen when the app was closed and opened again. All five are fixed, and the last run passed 43 of 43.
 
-I found a worse hole myself, by checking the database rules on a copy of the database on my own computer: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself, and 7 checks on that local copy pass.
+I found a worse hole myself, by checking the database rules on a copy of the database on my own computer: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself. TestSprite server tests proved the hole on the live database, then proved the fix closed it.
 
 Live demo: https://pricekeeper-demo.web.app
 
@@ -20,7 +20,7 @@ Built for TestSprite Hackathon Season 4, Project Track.
 |---|---|---|
 | Browser tests saved in TestSprite | 43 | [Last run: 43 of 43 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) |
 | Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
-| Break-in checks on the database rules, run on a local copy, all passing | 7 | [Testing the database](#testing-the-database) |
+| Server tests in TestSprite that go straight to the database: 2 failed before the PIN fix, all 6 pass now | 6 | [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
 | Browser tests set to run on the live site every morning, not run yet | 3 | [What runs on its own](#what-runs-on-its-own) |
 | Breaks I made on purpose: 2 caught, 2 missed | 4 | [PROOF.md](PROOF.md) |
@@ -48,8 +48,6 @@ Staff sign in with a name and a 4-digit PIN. The page checked the PIN, but the d
 TestSprite didn't find this one. I found it by reading the database rules and trying them on a copy of the database running on my own computer. The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on that local copy pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
 
 Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. After the fix went live, all six passed. [Red run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111), [green run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/5e34a933-0590-46a9-8d11-45f18ba5bda8).
-
-Next, I'm turning the six break-in checks into TestSprite server tests that go straight to the database. They haven't been created or run yet.
 
 | What went wrong | Fix | Red | Green |
 |---|---|---|---|
@@ -122,7 +120,7 @@ The browser tests see the app the way a cashier does. These checks skip the page
 | No PIN | Open a staff session with a real staff name but no PIN |
 | Fingerprint | Read the stored PIN fingerprint |
 
-The plan from here: on every pull request, a "database rules" check runs the same checks against a copy of the database on GitHub's own machine, so they cost nothing and touch no real data. Once a change is merged, TestSprite runs them as server tests against the live database. The GitHub check is written but hasn't run yet, and the TestSprite server tests haven't been created yet.
+The plan from here: on every pull request, a "database rules" check runs the same checks against a copy of the database on GitHub's own machine, so they cost nothing and touch no real data. Once a change is merged, TestSprite runs them as server tests against the live database. The GitHub check is written but hasn't run yet.
 
 ## What runs on its own
 
@@ -130,7 +128,7 @@ The plan from here: on every pull request, a "database rules" check runs the sam
 |---|---|---|
 | Every pull request | TestSprite runs all 43 browser tests on a preview copy, and the 64 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
 | A test fails | A comment is set up to appear on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Not yet |
-| After every merge | TestSprite is set up to run the six server tests against the live database, once they're created. | Not yet |
+| After every merge | TestSprite is set up to run the six server tests against the live database. | Not after a merge yet. I've run them by hand twice: 4 of 6 before the PIN fix, 6 of 6 after. |
 | Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Not yet |
 | On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Not yet |
 
