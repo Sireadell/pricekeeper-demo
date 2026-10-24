@@ -1,7 +1,8 @@
 import asyncio
 import re
 import random
-NAME = "Offline Sale Item %04d" % random.randint(1000, 9999)
+import time
+NAME = "Offline Sale Item %d" % (int(time.time() * 1000) % 10000000)
 from playwright import async_api
 from playwright.async_api import expect
 
