@@ -1,0 +1,394 @@
+[
+  {
+    "code": "TS01",
+    "id": "1015e25a-b5fa-4a2f-8d9b-177a1411c317",
+    "name": "A banner warns the shop when the connection is lost",
+    "file": "frontend/TS01_a_banner_warns_the_shop_when_the_connection_is_lost.py",
+    "description": "Turns the connection off with the app's test-only offline switch (?offline-switch=1, which stops the database connection) and checks the offline banner shows, then clears when the connection returns.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS02",
+    "id": "5730e0a5-cce8-4c1b-bbd5-f87cd485146d",
+    "name": "A debt can be paid off in full",
+    "file": "frontend/TS02_a_debt_can_be_paid_off_in_full.py",
+    "description": "Validates that a customer can pay back a credit sale in full and the sale then no longer shows as unpaid.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS03",
+    "id": "e93a2045-901d-4709-94eb-fdb4b1cda1a4",
+    "name": "A negative amount received is not accepted",
+    "file": "frontend/TS03_a_negative_amount_received_is_not_accepted.py",
+    "description": "Validates that a negative payment amount cannot be recorded, so a sale never adds money to the customer balance or stock.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS04",
+    "id": "2279a1bf-667f-43c2-bc90-5ab3c90f17ef",
+    "name": "A negative quantity is not allowed in a sale",
+    "file": "frontend/TS04_a_negative_quantity_is_not_allowed_in_a_sale.py",
+    "description": "Validates that a negative quantity is rejected so stock cannot be increased by selling.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS05",
+    "id": "e7a242fc-573b-45b4-8fcf-33572f13889b",
+    "name": "A part payment lowers the debt by the paid amount only",
+    "file": "frontend/TS05_a_part_payment_lowers_the_debt_by_the_paid_amount_only.py",
+    "description": "Validates that when a customer pays part of a sale, only the unpaid part is added to what they owe.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS06",
+    "id": "d08d683c-94d2-4e1f-9ad4-b509c9c75cc6",
+    "name": "A receipt opens after a sale is completed",
+    "file": "frontend/TS06_a_receipt_opens_after_a_sale_is_completed.py",
+    "description": "Validates that completing a cash sale gives a receipt the shop can show to the customer.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS07",
+    "id": "2d474780-c233-40ad-95ca-a675284cd496",
+    "name": "A sale made offline is kept and syncs when back online",
+    "file": "frontend/TS07_a_sale_made_offline_is_kept_and_syncs_when_back_online.py",
+    "description": "Turns the connection off with the app's test-only offline switch, completes a sale, checks it is marked waiting to sync, turns the connection back on and checks the mark clears, meaning the sale reached the database.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS08",
+    "id": "e169e01e-a9d2-49fe-ab4a-419a717e319f",
+    "name": "A sale made offline survives closing and reopening the app",
+    "file": "frontend/TS08_a_sale_made_offline_survives_closing_and_reopening_the_app.py",
+    "description": "Turns the connection off with the app's test-only offline switch, sells 2 pieces, reloads the page while still offline and checks the sale (marked waiting to sync) and the lower stock are still there, then turns the connection back on and checks the sale is sent.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS09",
+    "id": "f7c018ed-0617-4211-9fa7-845fecb4357d",
+    "name": "A sale with zero pieces is not allowed",
+    "file": "frontend/TS09_a_sale_with_zero_pieces_is_not_allowed.py",
+    "description": "Validates that a trade cannot be completed with a quantity of zero.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS10",
+    "id": "d18359c5-1153-4799-a26b-c42af6204a1c",
+    "name": "Add a new inventory item",
+    "file": "frontend/TS10_add_a_new_inventory_item.py",
+    "description": "Validate that a staff user can create a new stock item and see it listed in inventory.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS11",
+    "id": "86e825be-8b04-4e90-8e1a-bd6f0f67c94f",
+    "name": "Add multiple items to a single sale",
+    "file": "frontend/TS11_add_multiple_items_to_a_single_sale.py",
+    "description": "Validates that a staff user can build a cart with multiple items and complete one transaction.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS12",
+    "id": "cb23069e-b35f-4420-aa55-52135d0228fd",
+    "name": "An item cannot be saved without a name",
+    "file": "frontend/TS12_an_item_cannot_be_saved_without_a_name.py",
+    "description": "Validates that the Add Item form needs a name before it saves.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS13",
+    "id": "526db76d-fae8-480d-b737-2f3de42b62ae",
+    "name": "An item name with HTML code shows as plain text on the receipt",
+    "file": "frontend/TS13_an_item_name_with_html_code_shows_as_plain_text_on_the_recei.py",
+    "description": "Validates that special characters in an item name are shown as text and are never run as code.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS14",
+    "id": "89de04a1-b106-4452-8d77-73e0dc50979e",
+    "name": "Complete a sale with one item",
+    "file": "frontend/TS14_complete_a_sale_with_one_item.py",
+    "description": "Validates that a staff user can create a sale, add a product, and complete checkout successfully.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS15",
+    "id": "cfca45d4-c140-44d9-b6a2-383cac0cfa5d",
+    "name": "Dashboard numbers read cleanly",
+    "file": "frontend/TS15_dashboard_numbers_read_cleanly.py",
+    "description": "Validates that no screen shows broken numbers or raw code text, and that every change figure reads like +5%, -5% or 0%.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS16",
+    "id": "e15d5cc8-ed27-4e18-ae03-89745a8631b8",
+    "name": "Dashboard shows money owed and stock alerts",
+    "file": "frontend/TS16_dashboard_shows_money_owed_and_stock_alerts.py",
+    "description": "Validates that the command center shows the money owed and the stock alert areas after signing in.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS17",
+    "id": "d38407b7-f573-4718-b659-a9f80a4f6e4e",
+    "name": "Delete an inventory item",
+    "file": "frontend/TS17_delete_an_inventory_item.py",
+    "description": "Validates that an item can be deleted from the inventory and no longer appears afterwards.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS18",
+    "id": "b74e401c-611e-4753-bb67-a33db2785349",
+    "name": "Edit an inventory item",
+    "file": "frontend/TS18_edit_an_inventory_item.py",
+    "description": "Validate that a staff user can update an existing inventory item and see the edited details reflected afterward.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS19",
+    "id": "eae2d0d5-3fa0-47d0-8fe4-4b19c44a8758",
+    "name": "Find a customer by searching their name",
+    "file": "frontend/TS19_find_a_customer_by_searching_their_name.py",
+    "description": "Validates that the Customers search box finds an existing customer by part of the name and shows nothing for a name that does not exist.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS20",
+    "id": "8ea018ca-c423-4c63-b8e1-e02939529a57",
+    "name": "Find a sale in the trade history by item name",
+    "file": "frontend/TS20_find_a_sale_in_the_trade_history_by_item_name.py",
+    "description": "Validates that a completed sale can be found again in the trade history by searching for the item sold.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS21",
+    "id": "ab3cfc8f-e83f-495a-be8f-59a2727965a8",
+    "name": "Item bought by the row shows the right cost per piece",
+    "file": "frontend/TS21_item_bought_by_the_row_shows_the_right_cost_per_piece.py",
+    "description": "Validates that an item bought by the row saves its cost per piece as the row price divided by the pieces in the row, not the full row price.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS22",
+    "id": "73061dca-1bc5-485c-9420-0d9c9cf8b5c1",
+    "name": "Item shows as low stock after most pieces are sold",
+    "file": "frontend/TS22_item_shows_as_low_stock_after_most_pieces_are_sold.py",
+    "description": "Validates that an item with plenty of stock is not listed as low stock, and appears in the low stock list once almost all pieces are sold.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS23",
+    "id": "49968fd1-6880-47b4-bfa5-e1f1c7e36160",
+    "name": "Letters in the selling price are not accepted",
+    "file": "frontend/TS23_letters_in_the_selling_price_are_not_accepted.py",
+    "description": "Validates that the price field does not accept letters and no item is saved with a broken price.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS24",
+    "id": "c2812a1e-1a47-46f5-a693-9357dccba76e",
+    "name": "Logging out removes access to the app screens",
+    "file": "frontend/TS24_logging_out_removes_access_to_the_app_screens.py",
+    "description": "Validates that after logging out a staff member must sign in again before seeing business data.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS25",
+    "id": "6ae390af-7f7e-452a-bc82-518d7c4c5f3a",
+    "name": "Record a customer debt",
+    "file": "frontend/TS25_record_a_customer_debt.py",
+    "description": "Validates that an admin staff member can record a customer debt by selling to an existing customer on credit with nothing paid.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS26",
+    "id": "23c4ea95-b2ad-4606-9f02-56779637d00e",
+    "name": "Record a customer repayment",
+    "file": "frontend/TS26_record_a_customer_repayment.py",
+    "description": "Validates that an admin staff member can record a repayment against an existing customer balance.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS27",
+    "id": "60250237-cd68-45b7-8ed5-ee858e94c795",
+    "name": "Record a sale and verify stock decreases",
+    "file": "frontend/TS27_record_a_sale_and_verify_stock_decreases.py",
+    "description": "Validates that completing a sale updates inventory levels for the sold item.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS28",
+    "id": "61b04254-53f0-4d28-ad21-b62bdc3f1d95",
+    "name": "Restock an existing item",
+    "file": "frontend/TS28_restock_an_existing_item.py",
+    "description": "Validate that a staff user can add stock to an existing item and return to the inventory view with updated stock reflected.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS29",
+    "id": "87cd7bed-eb17-4f00-acb6-d9f2950294d1",
+    "name": "Search the inventory for an item",
+    "file": "frontend/TS29_search_the_inventory_for_an_item.py",
+    "description": "Validates that the inventory search box finds an item by name and hides items that do not match.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS30",
+    "id": "86a6081b-28cb-4f89-9b76-856599aee4db",
+    "name": "Sell on credit and see the debt on the customer",
+    "file": "frontend/TS30_sell_on_credit_and_see_the_debt_on_the_customer.py",
+    "description": "Validates that a sale with nothing paid is recorded as credit, so the trade history shows it as unpaid.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS31",
+    "id": "0d1404a4-b367-4730-96b8-9f293342e8c9",
+    "name": "Selling more than the stock is blocked",
+    "file": "frontend/TS31_selling_more_than_the_stock_is_blocked.py",
+    "description": "Validates that a customer cannot be sold more pieces than the shop has.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS32",
+    "id": "78093881-0ed6-4fcd-871d-e7e50db147eb",
+    "name": "Selling on credit raises the customer balance",
+    "file": "frontend/TS32_selling_on_credit_raises_the_customer_balance.py",
+    "description": "Validates that a sale put fully on credit raises the amount a customer owes by exactly the sale value.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS33",
+    "id": "d479a05f-cf2c-44ea-a28c-a7df4977706f",
+    "name": "Staff login rejects a wrong PIN",
+    "file": "frontend/TS33_staff_login_rejects_a_wrong_pin.py",
+    "description": "Validates that a staff member cannot sign in with the correct username and a wrong PIN.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS34",
+    "id": "aa71e692-846d-4ef3-a53a-760e34021250",
+    "name": "Staff login rejects an unknown username",
+    "file": "frontend/TS34_staff_login_rejects_an_unknown_username.py",
+    "description": "Validates that a username that does not exist cannot sign in, even with a 4 digit PIN.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS35",
+    "id": "fdf69bd3-3541-49a0-9999-a5cde4f52952",
+    "name": "Switch the report period",
+    "file": "frontend/TS35_switch_the_report_period.py",
+    "description": "The Business Overview can switch between Today, Week and Month, and keeps showing a Revenue figure and a Profit figure each time.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS36",
+    "id": "b8662548-c10a-46c2-abd1-c5ab763d6989",
+    "name": "The customer balance is shown as a number on the Customers page",
+    "file": "frontend/TS36_the_customer_balance_is_shown_as_a_number_on_the_customers_p.py",
+    "description": "Validates that the Customers page shows an amount owed for a customer who has bought on credit.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS37",
+    "id": "017614be-456c-4bec-a540-e5e20150f608",
+    "name": "The receipt shows the items sold and the total",
+    "file": "frontend/TS37_the_receipt_shows_the_items_sold_and_the_total.py",
+    "description": "Validates that the receipt lists the item name, the quantity and the correct total.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS38",
+    "id": "f3c64705-39b4-4a26-831c-d6edda3c7035",
+    "name": "The signed in role is shown for the staff user",
+    "file": "frontend/TS38_the_signed_in_role_is_shown_for_the_staff_user.py",
+    "description": "Validates that after login the app shows who is signed in and with which role.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS39",
+    "id": "ab238283-1b6e-4ccd-bbcf-1818443968e0",
+    "name": "View a customer details",
+    "file": "frontend/TS39_view_a_customer_details.py",
+    "description": "Validates that opening a customer from the Customers page shows their details: the name, a phone number and the amount owed.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS40",
+    "id": "e5d92e31-2f89-473a-a9a8-57b86bc6546c",
+    "name": "View low-stock items from inventory",
+    "file": "frontend/TS40_view_low_stock_items_from_inventory.py",
+    "description": "Validate that a staff user can open the inventory area and review items that are below the restock threshold.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS41",
+    "id": "e6095195-d0f1-413e-8260-4d3538c6b702",
+    "name": "View today performance summary",
+    "file": "frontend/TS41_view_today_performance_summary.py",
+    "description": "Validates that the Insights page shows the current period performance summary and key business totals.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS42",
+    "id": "ded6dd15-3772-4b16-a653-863492486684",
+    "name": "View today's command center summary",
+    "file": "frontend/TS42_view_today_s_command_center_summary.py",
+    "description": "Validates that the dashboard loads the daily business overview with the core summary cards and quick actions available.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS43",
+    "id": "8d6999ad-be9c-4555-83b4-ea2819876829",
+    "name": "Void a sale and verify stock comes back",
+    "file": "frontend/TS43_void_a_sale_and_verify_stock_comes_back.py",
+    "description": "Validates that voiding a sale gives the sold pieces back to stock: an item with 20 pieces drops to 15 after selling 5 and returns to 20 after the sale is voided.",
+    "kind": "browser"
+  },
+  {
+    "code": "B01",
+    "id": "30869fd8-53df-44b3-9cb4-b6e6b2e6e149",
+    "name": "Server: no sign-in cannot read shop data",
+    "file": "backend/B01_no_sign_in_cannot_read_shop_data.py",
+    "description": "A request with no sign-in at all tries to read sales, items and customers, and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B02",
+    "id": "7031dd7d-eb71-469f-b4a8-14bc4adbb4a4",
+    "name": "Server: a stranger without a staff session cannot read shop data",
+    "file": "backend/B02_stranger_without_session_cannot_read_shop_data.py",
+    "description": "A brand-new anonymous visitor, signed in but with no staff session, tries to read the shop and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B03",
+    "id": "67657f30-8a64-46d3-a33c-e299b7987e24",
+    "name": "Server: the staff list and shop codes cannot be listed",
+    "file": "backend/B03_staff_roster_and_shop_codes_cannot_be_listed.py",
+    "description": "A stranger tries to list every staff member and every shop code, and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B04",
+    "id": "3dd420aa-2d61-497f-9853-1520a6bae71f",
+    "name": "Server: a made-up staff session is refused",
+    "file": "backend/B04_made_up_staff_session_is_refused.py",
+    "description": "A stranger writes a session for a staff name that does not exist, and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B05",
+    "id": "73f01dc0-97d4-42c6-8508-3dfae5a28675",
+    "name": "Server: a staff session needs the PIN",
+    "file": "backend/B05_staff_session_needs_the_pin.py",
+    "description": "A stranger who knows a real staff name and role, but not the PIN, tries to become that staff member, and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B06",
+    "id": "0b1c79f0-5bfb-454f-8b01-7ea6088b0cd1",
+    "name": "Server: the PIN fingerprint is not handed out",
+    "file": "backend/B06_pin_hash_is_not_handed_out.py",
+    "description": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",
+    "kind": "server"
+  }
+]

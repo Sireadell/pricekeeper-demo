@@ -1,0 +1,76 @@
+name: Daily live check
+# Every morning, a few TestSprite tests run against the real site, not a
+# preview: the offline banner, a sale made offline that syncs later, the
+# wrong-PIN sign-in, and the server test that a staff session needs the PIN.
+# A failure opens a GitHub issue that explains it; the next green morning
+# closes it. The proof page (checks.html) reads this workflow's latest result
+# from GitHub.
+on:
+  schedule:
+    - cron: '30 7 * * *'   # 08:30 in Lagos, just after the database's daily limit resets
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  statuses: read
+
+concurrency:
+  group: daily-live-check
+  cancel-in-progress: false
+
+env:
+  TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+  TESTSPRITE_PROJECT_ID: 81dc7004-270e-42bb-96d2-a47ea8b1b818
+  GITHUB_TOKEN: ${{ github.token }}
+  LIVE_URL: https://pricekeeper-demo.web.app
+  BROWSER_TESTS: TS01 TS07 TS33
+  SERVER_TESTS: B05
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i -g @testsprite/testsprite-cli@latest
+      - id: ids
+        name: Look up the test ids
+        run: |
+          ids() { node -e 'const t=require("./testsprite_tests/test-ids.json");console.log(process.argv.slice(1).map(c=>t.find(x=>x.code===c)?.id).filter(Boolean).join(" "))' $1; }
+          echo "browser=$(ids "$BROWSER_TESTS")" >> "$GITHUB_OUTPUT"
+          echo "server=$(ids "$SERVER_TESTS")" >> "$GITHUB_OUTPUT"
+          echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+      - name: Browser tests on the live site
+        id: browser
+        continue-on-error: true
+        run: testsprite test run ${{ steps.ids.outputs.browser }} --target-url "$LIVE_URL" --wait --summary-file daily-browser.json --gh-output
+      - name: Server test on the live database
+        id: server
+        if: steps.ids.outputs.server != ''
+        continue-on-error: true
+        run: testsprite test run ${{ steps.ids.outputs.server }} --wait --summary-file daily-server.json --gh-output
+      - name: Open, update or close the issue
+        env:
+          SHA: ${{ github.sha }}
+          SINCE: ${{ steps.ids.outputs.at }}
+          UNTIL: '9999'
+          CODES: ${{ env.BROWSER_TESTS }} ${{ env.SERVER_TESTS }}
+          POST: issue
+          TITLE: Daily live check failed
+          OUT: daily.md
+        run: node scripts/explain-failures.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daily-results
+          path: |
+            daily-*.json
+            daily.md
+          if-no-files-found: ignore
+      - name: Fail the job if a test failed
+        if: steps.browser.outcome == 'failure' || steps.server.outcome == 'failure'
+        run: exit 1

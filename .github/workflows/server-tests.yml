@@ -1,0 +1,101 @@
+name: Server tests
+# The six server tests in testsprite_tests/backend talk straight to the
+# database, the way an attacker would, with no app in between.
+#
+# A pull request cannot have its own copy of the database rules (Firebase has
+# one set per project), so on a pull request the same six files run against a
+# local Firebase emulator loaded with that pull request's firestore.rules.
+# After a merge, the rules go live and TestSprite runs the six files against
+# the real database.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  statuses: read
+
+concurrency:
+  group: server-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rules:
+    name: database rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: pip install requests
+      - name: Six server tests and the right-PIN check, on this branch's rules
+        run: npx -y firebase-tools@15.26.0 emulators:exec --only firestore,auth --project pricekeeper-demo "python scripts/rules-check.py"
+
+  deploy-rules:
+    name: put the rules live
+    needs: rules
+    # Turned on by the repository variable DEPLOY_RULES once the deploy
+    # account is allowed to change database rules.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.DEPLOY_RULES == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy firestore.rules
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRICEKEEPER_DEMO }}
+        run: |
+          printf '%s' "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx -y firebase-tools@15.26.0 deploy --only firestore:rules --project pricekeeper-demo --non-interactive
+
+  testsprite:
+    name: TestSprite server tests on the live database
+    needs: [rules, deploy-rules]
+    if: >-
+      always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' &&
+      needs.rules.result == 'success' &&
+      (needs.deploy-rules.result == 'success' || needs.deploy-rules.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+      TESTSPRITE_PROJECT_ID: c474b925-8e42-47b8-a1fc-7c828dd273bd
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i -g @testsprite/testsprite-cli@latest
+      - id: start
+        run: echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+      - name: Run the six server tests in TestSprite
+        run: testsprite test run --all --filter "Server:" --wait --summary-file server-summary.json --gh-output
+      - name: Explain any failure on the merged pull request
+        if: failure()
+        env:
+          SHA: ${{ github.sha }}
+          KIND: server
+          SINCE: ${{ steps.start.outputs.at }}
+          TITLE: Server tests failed on the live database
+        run: node scripts/explain-failures.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-summary
+          path: server-summary.json
+          if-no-files-found: ignore

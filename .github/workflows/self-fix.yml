@@ -1,0 +1,154 @@
+name: Self-fix
+# Add the "self-fix" label to a pull request whose TestSprite check is red.
+# Claude reads the plain-words explanation of what failed, changes the app to
+# fix it, and runs the unit tests. The change goes to the pull request's
+# preview copy and is pushed to the same pull request, where TestSprite tests
+# it again. Claude may not touch the tests or the workflows, and nothing
+# merges until a person has reviewed the change and every check is green.
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  statuses: read
+  actions: write
+  checks: write
+
+jobs:
+  fix:
+    if: >-
+      github.event.label.name == 'self-fix' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: self-fix-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    env:
+      TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+      GITHUB_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i -g @testsprite/testsprite-cli@latest
+
+      - name: Explain what failed
+        id: explain
+        env:
+          SHA: ${{ github.event.pull_request.head.sha }}
+          POST: none
+          OUT: .self-fix/failures.md
+        run: mkdir -p .self-fix && node scripts/explain-failures.mjs
+
+      - name: Nothing to fix
+        if: steps.explain.outputs.failed == '0'
+        run: |
+          gh pr comment "$PR" --body "Self-fix: TestSprite shows no failed tests on the latest commit, so there is nothing to fix."
+          gh pr edit "$PR" --remove-label self-fix
+
+      - name: Ask Claude for a fix
+        if: steps.explain.outputs.failed != '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: |
+            This repository is PriceKeeper, a point-of-sale and stock app for small
+            shops. TestSprite tested this pull request and some tests failed. The
+            file .self-fix/failures.md says which ones, the step each one
+            stopped on, and what TestSprite saw. The test code is in
+            testsprite_tests/ (read the file named next to each test).
+
+            Fix the app so those tests pass. Rules:
+            - Change only the app: js/, css/, index.html, shop.html, firestore.rules.
+            - Never edit testsprite_tests/, tests/, scripts/ or .github/. Never make a
+              test pass by weakening it.
+            - If a failure is the test's own mistake (for example it checked the
+              wrong item) and the app behaved correctly, change nothing for that
+              test and say so.
+            - Keep the change as small as you can and match the code around it.
+            - Run `npm test` and make sure the unit tests still pass.
+            When done, write a short plain-English note of what you changed and why
+            to .self-fix/fix-note.md. Do not commit; the workflow does that.
+          claude_args: >-
+            --model claude-sonnet-5-5
+            --max-turns 40
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(npm test),Bash(git diff:*),Bash(git status)"
+
+      - name: Check the change
+        id: change
+        if: steps.explain.outputs.failed != '0'
+        run: |
+          mv .self-fix "$RUNNER_TEMP/self-fix"
+          if [ -z "$(git status --porcelain)" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if git status --porcelain | grep -E ' (testsprite_tests|tests|scripts|\.github)/'; then
+            echo "::error::The fix touched the tests or the workflows, so it was thrown away."
+            exit 1
+          fi
+          npm test
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # A push made by this workflow does not start other workflows, so the
+      # preview is updated here, before the push, and TestSprite tests the new
+      # version when the push arrives.
+      - name: Update the preview copy
+        if: steps.change.outputs.changed == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRICEKEEPER_DEMO }}
+          projectId: pricekeeper-demo
+          target: preview
+          channelId: live
+
+      - name: Push the fix and start the other checks
+        if: steps.change.outputs.changed == 'true'
+        env:
+          FAILED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix what the TestSprite run on ${FAILED_SHA::7} found"
+          git push origin "HEAD:$BRANCH"
+          gh workflow run unit-tests.yml --ref "$BRANCH"
+          gh workflow run server-tests.yml --ref "$BRANCH"
+
+      - name: Report on the pull request
+        if: always() && steps.explain.outputs.failed != '0'
+        run: |
+          {
+            if [ "${{ steps.change.outputs.changed }}" = "true" ]; then
+              echo "### Self-fix pushed a change"
+              echo
+              cat "$RUNNER_TEMP/self-fix/fix-note.md" 2>/dev/null || echo "No note was written."
+              echo
+              echo '```'
+              git show --stat --format='%h %s' HEAD
+              echo '```'
+              echo
+              echo "TestSprite will test this commit on the preview. Please review the change before merging."
+            elif [ "${{ steps.change.outcome }}" = "failure" ]; then
+              echo "### Self-fix stopped"
+              echo
+              echo "The suggested change touched the tests or the workflows, or broke the unit tests, so it was not pushed."
+            else
+              echo "### Self-fix made no change"
+              echo
+              cat "$RUNNER_TEMP/self-fix/fix-note.md" 2>/dev/null || echo "Claude found nothing in the app to change for these failures."
+            fi
+          } > "$RUNNER_TEMP/report.md"
+          gh pr comment "$PR" --body-file "$RUNNER_TEMP/report.md"
+          gh pr edit "$PR" --remove-label self-fix

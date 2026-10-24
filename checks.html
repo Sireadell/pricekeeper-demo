@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0c10">
+  <meta name="description" content="Every test PriceKeeper has to pass, every bug the tests found, and the TestSprite run behind each result.">
+  <title>PriceKeeper checks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <script>
+    try { if (localStorage.getItem('pkTheme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--pk-bg-page);
+      color: var(--pk-text-primary);
+      font: 15px/1.55 Inter, system-ui, sans-serif;
+    }
+    a { color: var(--pk-gold-bright); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    main { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .brand { font: 800 18px 'Plus Jakarta Sans', Inter, sans-serif; color: var(--pk-gold); }
+    h1 { font: 800 clamp(26px, 5vw, 38px)/1.15 'Plus Jakarta Sans', Inter, sans-serif; margin: 0 0 12px; }
+    h2 { font: 700 20px 'Plus Jakarta Sans', Inter, sans-serif; margin: 44px 0 6px; }
+    .lead { color: var(--pk-text-secondary); max-width: 680px; margin: 0; }
+    .sub { color: var(--pk-text-muted); margin: 0 0 16px; font-size: 14px; }
+
+    .now { margin-top: 28px; border: 1px solid var(--pk-border-strong); background: var(--pk-bg-card); }
+    .now-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 14px 16px; border-top: 1px solid var(--pk-border-divider); }
+    .now-row:first-child { border-top: 0; }
+    .now-row .what { font-weight: 600; }
+    .now-row .when { color: var(--pk-text-muted); font-size: 13px; grid-column: 1; }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; margin-top: 20px; background: var(--pk-border-light); border: 1px solid var(--pk-border-light); }
+    .stat { background: var(--pk-bg-card); padding: 16px; }
+    .stat b { display: block; font: 800 28px 'Plus Jakarta Sans', Inter, sans-serif; color: var(--pk-text-primary); }
+    .stat span { color: var(--pk-text-muted); font-size: 13px; }
+
+    .mark { display: inline-block; font: 700 11px/1 Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; padding: 5px 7px; border: 1px solid currentColor; white-space: nowrap; }
+    .mark.pass { color: var(--pk-success-fg); }
+    .mark.fail { color: var(--pk-danger-fg); }
+    .mark.wait { color: var(--pk-warning-fg); }
+    .mark.none { color: var(--pk-text-faint); }
+
+    .bug { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; padding: 16px; background: var(--pk-bg-card); border: 1px solid var(--pk-border-light); margin-top: 8px; }
+    .bug p { margin: 0; }
+    .bug .num { color: var(--pk-gold); font-weight: 700; margin-right: 6px; }
+    .bug .links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; grid-column: 1 / -1; }
+    .bug .links .muted { color: var(--pk-text-muted); }
+
+    .group { margin-top: 18px; }
+    .group h3 { font: 600 14px Inter, sans-serif; color: var(--pk-text-muted); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 8px; }
+    details.test { border-top: 1px solid var(--pk-border-divider); }
+    details.test:last-child { border-bottom: 1px solid var(--pk-border-divider); }
+    details.test summary { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 11px 4px; cursor: pointer; list-style: none; }
+    details.test summary::-webkit-details-marker { display: none; }
+    details.test summary:hover { background: var(--pk-bg-hover); }
+    .code { color: var(--pk-text-muted); font: 600 12px ui-monospace, Consolas, monospace; }
+    .body { padding: 0 4px 14px 60px; color: var(--pk-text-secondary); font-size: 14px; }
+    .body p { margin: 0 0 6px; }
+
+    details.pr { border: 1px solid var(--pk-border-light); background: var(--pk-bg-card); margin-top: 8px; }
+    details.pr summary { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
+    details.pr summary .count { color: var(--pk-text-muted); font-size: 13px; white-space: nowrap; }
+    .commits { padding: 0 16px 12px; }
+    .commit { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; padding: 8px 0; border-top: 1px solid var(--pk-border-divider); font-size: 14px; align-items: baseline; }
+    .commit .res { color: var(--pk-text-muted); font-size: 13px; text-align: right; }
+
+    ol.how { padding-left: 20px; color: var(--pk-text-secondary); }
+    ol.how li { margin: 6px 0; }
+    footer { margin-top: 48px; color: var(--pk-text-faint); font-size: 13px; }
+    .empty { color: var(--pk-text-muted); padding: 16px; border: 1px dashed var(--pk-border-strong); }
+
+    @media (max-width: 600px) {
+      .bug { grid-template-columns: 1fr; }
+      details.test summary { grid-template-columns: 40px 1fr; }
+      details.test summary .mark { grid-column: 2; justify-self: start; }
+      .body { padding-left: 4px; }
+      .commit { grid-template-columns: 62px 1fr; }
+      .commit .res { grid-column: 2; text-align: left; }
+      details.pr summary { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="brand" href="/">PriceKeeper</a>
+    <a href="https://github.com/Sireadell/pricekeeper-demo">Code on GitHub</a>
+  </div>
+
+  <h1>What PriceKeeper has to pass</h1>
+  <p class="lead">Every change to this app is tested by TestSprite before it can go live. This page lists every test, every bug the tests found, and every result, with a link to the run behind each one. It is built from the GitHub and TestSprite records, not typed by hand.</p>
+
+  <section class="now" id="now" aria-live="polite">
+    <div class="now-row"><span class="what">Checking the latest results…</span></div>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <h2>Bugs the tests found</h2>
+  <p class="sub">Each one failed a test first, was fixed, and then passed. The red run shows the failure, the green run shows the fix.</p>
+  <div id="bugs"></div>
+
+  <h2>Every test</h2>
+  <p class="sub">Tap a test to see what it checks. The result is from its most recent TestSprite run.</p>
+  <div id="tests"></div>
+
+  <h2>Every change and its result</h2>
+  <p class="sub">Each pull request, each commit on it, and what the TestSprite check said about that commit.</p>
+  <div id="pulls"></div>
+
+  <h2>How the checks run</h2>
+  <ol class="how">
+    <li>Every pull request gets its own preview copy of the app. TestSprite's GitHub App runs all the browser tests on it, and GitHub will not merge the change until they pass.</li>
+    <li>The server tests talk straight to the database, the way an attacker would. On a pull request they run against a local copy of the database with that change's rules. After a merge, TestSprite runs them against the real database.</li>
+    <li>When a run fails, a comment appears on the pull request saying which test failed, the step it stopped on, and what TestSprite saw there.</li>
+    <li>Every morning a few tests run on the live site, including the two that cut the internet. If one fails, an issue opens on GitHub by itself.</li>
+    <li>The money maths has 64 unit tests of its own, run on every push.</li>
+  </ol>
+
+  <footer id="foot"></footer>
+</main>
+
+<script>
+(async function () {
+  const REPO = 'Sireadell/pricekeeper-demo';
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const day = iso => iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  const time = iso => iso ? new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+  const link = (href, text) => href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>` : '';
+  const mark = v => {
+    if (v === 'passed' || v === 'success') return '<span class="mark pass">Passed</span>';
+    if (v === 'failed' || v === 'failure' || v === 'error') return '<span class="mark fail">Failed</span>';
+    if (v === 'blocked') return '<span class="mark fail">Blocked</span>';
+    if (v === 'in_progress' || v === 'queued' || v === 'pending') return '<span class="mark wait">Running</span>';
+    return '<span class="mark none">Not run yet</span>';
+  };
+
+  let data;
+  try {
+    data = await (await fetch('checks.json', { cache: 'no-cache' })).json();
+  } catch (e) {
+    document.getElementById('bugs').innerHTML = '<p class="empty">The results file could not be loaded. Try again in a moment.</p>';
+    return;
+  }
+
+  // Numbers
+  const browser = data.tests.filter(t => t.kind === 'browser');
+  const server = data.tests.filter(t => t.kind === 'server');
+  const stats = [
+    [data.tests.length, `tests (${browser.length} in the browser, ${server.length} on the server)`],
+    [data.bugs.length, 'real bugs found and fixed'],
+    [data.totals.pulls, 'pull requests'],
+    [data.totals.runs, 'TestSprite runs on them'],
+    [data.totals.red, 'came back red'],
+    [data.totals.green, 'came back green'],
+  ];
+  document.getElementById('stats').innerHTML = stats.map(([n, t]) => `<div class="stat"><b>${n}</b><span>${esc(t)}</span></div>`).join('');
+
+  // Bugs
+  const byCode = Object.fromEntries(data.tests.map(t => [t.code, t]));
+  document.getElementById('bugs').innerHTML = data.bugs.map((b, i) => `
+    <div class="bug">
+      <p><span class="num">${i + 1}</span>${esc(b.what)}</p>
+      <span class="code">${esc(b.test)}</span>
+      <div class="links">
+        ${b.red ? link(b.red, 'Red run') : `<span class="muted">${esc(b.redNote || '')}</span>`}
+        ${link(b.fix, 'The fix')}
+        ${link(b.green, 'Green run')}
+        <span class="muted">Test: ${esc(byCode[b.test]?.name || b.test)}</span>
+      </div>
+    </div>`).join('');
+
+  // Tests
+  const testRow = t => `
+    <details class="test">
+      <summary><span class="code">${esc(t.code)}</span><span>${esc(t.name.replace(/^Server: /, ''))}</span>${mark(t.last?.verdict)}</summary>
+      <div class="body">
+        <p>${esc(t.checks)}</p>
+        <p>${t.last ? `Last run ${esc(time(t.last.at))}${t.last.where ? `, on ${esc(t.last.where)}` : ''}.` : 'Runs on every pull request against a local copy of the database. Its first TestSprite run against the live database is next.'}
+        ${link(`https://github.com/${REPO}/blob/main/testsprite_tests/${t.file}`, 'Read the test code')}</p>
+      </div>
+    </details>`;
+  document.getElementById('tests').innerHTML = `
+    <div class="group"><h3>In the browser (${browser.length})</h3>${browser.map(testRow).join('')}</div>
+    <div class="group"><h3>Straight to the database (${server.length})</h3>${server.map(testRow).join('')}</div>`;
+
+  // Pull requests, newest first
+  document.getElementById('pulls').innerHTML = data.pulls.slice().reverse().map(p => {
+    const runs = p.commits.filter(c => c.run);
+    const last = runs[runs.length - 1];
+    return `
+    <details class="pr">
+      <summary><span>#${p.number} ${esc(p.title)}</span><span class="count">${esc(p.state)} · ${runs.length} run${runs.length === 1 ? '' : 's'}${last ? ` · last ${esc(last.result)}` : ''}</span></summary>
+      <div class="commits">
+        ${p.commits.map(c => `<div class="commit"><span class="code">${link(c.url, c.sha)}</span><span>${esc(c.title)}</span><span class="res">${c.run ? link(c.run, c.result) : esc(c.result)}</span></div>`).join('')}
+        <div class="commit"><span></span><span>${link(p.url, 'Open the pull request')}</span><span></span></div>
+      </div>
+    </details>`;
+  }).join('');
+
+  document.getElementById('foot').textContent = `Test results and change history as of ${time(data.generatedAt)}. The box at the top is read live from GitHub.`;
+
+  // Right now: read live from GitHub, so it is current even between deploys.
+  const api = path => fetch(`https://api.github.com/repos/${REPO}${path}`).then(r => r.ok ? r.json() : null).catch(() => null);
+  const [daily, srv, issues] = await Promise.all([
+    api('/actions/workflows/daily-live-check.yml/runs?per_page=1'),
+    api('/actions/workflows/server-tests.yml/runs?branch=main&event=push&per_page=1'),
+    api('/issues?labels=testsprite&state=open&per_page=10'),
+  ]);
+  const runRow = (label, run, never) => {
+    if (!run) return `<div class="now-row"><span class="what">${esc(label)}</span><span class="mark none">Not run yet</span><span class="when">${esc(never)}</span></div>`;
+    const state = run.status === 'completed' ? run.conclusion : run.status;
+    return `<div class="now-row"><span class="what">${link(run.html_url, label)}</span>${mark(state)}<span class="when">${esc(time(run.run_started_at || run.created_at))}</span></div>`;
+  };
+  const open = (issues || []).filter(i => !i.pull_request);
+  document.getElementById('now').innerHTML =
+    runRow('Daily check on the live site', daily?.workflow_runs?.[0], 'Starts the first morning after it goes live.') +
+    runRow('Server tests on the live database', srv?.workflow_runs?.[0], 'Runs after the next merge.') +
+    `<div class="now-row"><span class="what">${open.length ? link(open[0].html_url, `Open problem: ${open[0].title}`) : 'Open problems found by the checks'}</span>${open.length ? '<span class="mark fail">' + open.length + ' open</span>' : '<span class="mark pass">None</span>'}</div>`;
+})();
+</script>
+</body>
+</html>

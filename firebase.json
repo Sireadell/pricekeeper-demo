@@ -19,9 +19,16 @@
         "firestore.rules",
         "firestore.indexes.json",
         "_headers",
-        "_redirects"
+        "_redirects",
+        "testsprite_tests/**",
+        "scripts/**",
+        "*.md"
       ],
       "rewrites": [
+        {
+          "source": "/checks",
+          "destination": "/checks.html"
+        },
         {
           "source": "/shop/**",
           "destination": "/shop.html"
@@ -71,9 +78,16 @@
         "firestore.rules",
         "firestore.indexes.json",
         "_headers",
-        "_redirects"
+        "_redirects",
+        "testsprite_tests/**",
+        "scripts/**",
+        "*.md"
       ],
       "rewrites": [
+        {
+          "source": "/checks",
+          "destination": "/checks.html"
+        },
         {
           "source": "/shop/**",
           "destination": "/shop.html"
@@ -108,5 +122,17 @@
         }
       ]
     }
-  ]
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
 }

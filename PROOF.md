@@ -1,6 +1,6 @@
 # Proof: every red run and every green run
 
-This file has the full trail behind the README. It starts with pull request #10, where TestSprite found five problems I didn't know about. Below that are the two breaks I made on purpose, and the unit tests.
+This file has the full trail behind the README. It starts with pull request #10, where TestSprite found five problems I didn't know about. Below that are the two planted bugs it missed, the two breaks it caught, and the unit tests.
 
 Every TestSprite run below happened against a live preview copy of the app, from a GitHub pull request, unless it says otherwise. Each link opens the full run.
 
@@ -32,9 +32,18 @@ It failed. After the reopen, the sale was gone from a staff member's screen and 
 
 The command-line runs were against a private preview link, so they aren't linked here. The first pull request run with the fix is the 1cefe61 row above.
 
-## Two breaks made on purpose
+## Two planted bugs it missed
 
-To prove the test suite does its job, I broke the app on purpose twice and watched what happened. Both breaks were in stock tracking, and each was a different kind of mistake.
+I planted four bugs on purpose in all. The tests caught two of them (below). These are the two they missed.
+
+| Pull request | What I planted | What the run showed |
+|---|---|---|
+| [#2](https://github.com/Sireadell/pricekeeper-demo/pull/2) | Voiding a sale stopped putting the stock back | [24 of 25 passed, 1 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/f2e4020e-c38a-4257-950b-636edcf31f70). No test failed, so the break went through unnoticed. I closed the pull request without merging it. |
+| [#10](https://github.com/Sireadell/pricekeeper-demo/pull/10) | The receipt showed a sale on credit as paid in full | [36 of 42 passed, 3 failed, 3 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9b97e840-3a06-4cf9-8394-b982d9a816f8). None of the failures was about the receipt. I took the plant out in [5bf2ef6](https://github.com/Sireadell/pricekeeper-demo/commit/5bf2ef6). |
+
+## Two breaks it caught
+
+These are the two planted breaks the tests caught. Both were in stock tracking, and each was a different kind of mistake.
 
 The first time, I removed the one line that takes sold items out of stock. The TestSprite check on the pull request turned red. I put the line back, the check turned green, and only then did the change merge.
 
@@ -110,4 +119,4 @@ Taking stock off the shelf after a sale needs the live database (Firebase), so i
 ## Rules I kept
 
 - The break was on purpose, to show the suite catches it.
-- Nothing merged while the check was red. During the two proofs above I held that rule myself. Since October 21, GitHub enforces it: the `main` branch will not accept a merge until the TestSprite check and the unit tests both pass.
+- Nothing merged while the check was red during the two proofs above. I held that rule myself. GitHub doesn't enforce it: pull request #8 merged while its check was red.

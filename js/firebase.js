@@ -24,7 +24,7 @@ import {
   collection, doc, setDoc, deleteDoc, getDoc, getDocs, addDoc, updateDoc,
   onSnapshot, query, where, orderBy, limit,
   serverTimestamp, writeBatch, runTransaction,
-  Timestamp, increment,
+  Timestamp, increment, deleteField,
   disableNetwork, enableNetwork,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 // ── PASTE YOUR CONFIG HERE ───────────────────────────────────
@@ -65,6 +65,6 @@ export {
   collection, doc, setDoc, deleteDoc, getDoc, getDocs, addDoc, updateDoc,
   onSnapshot, query, where, orderBy, limit,
   serverTimestamp, writeBatch, runTransaction,
-  Timestamp, increment,
+  Timestamp, increment, deleteField,
   disableNetwork, enableNetwork,
 };
