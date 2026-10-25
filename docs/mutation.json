@@ -1,0 +1,50 @@
+{
+  "score": 95.7,
+  "killed": 132,
+  "survived": 6,
+  "total": 138,
+  "survivors": [
+    {
+      "file": "js/inventory-math.js",
+      "line": 84,
+      "from": ">",
+      "to": ">=",
+      "text": "const wacPc = (addPricePerUnit > 0 && oldPcs > 0 && oldBuyPc > 0)"
+    },
+    {
+      "file": "js/ledger.js",
+      "line": 104,
+      "from": "<=",
+      "to": "<",
+      "text": "if (left <= 0) break;"
+    },
+    {
+      "file": "js/ledger.js",
+      "line": 106,
+      "from": "<=",
+      "to": "<",
+      "text": "if (pay <= 0) continue;"
+    },
+    {
+      "file": "js/ledger.js",
+      "line": 136,
+      "from": ">=",
+      "to": ">",
+      "text": "if (!matches && choice === 'business' && Math.abs(diff) >= 0.01) {"
+    },
+    {
+      "file": "js/ledger.js",
+      "line": 140,
+      "from": ">",
+      "to": ">=",
+      "text": "bucket: diff > 0 ? 'noTrade' : 'held',"
+    },
+    {
+      "file": "js/ledger.js",
+      "line": 141,
+      "from": ">",
+      "to": ">=",
+      "text": "name: diff > 0 ? 'Opening balance · no trade' : 'Opening balance · held for them',"
+    }
+  ]
+}

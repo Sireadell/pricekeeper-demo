@@ -31,6 +31,27 @@ if (direct.length) {
   lines.push('');
 }
 
+// Pull requests where a commit went red and a later commit went green.
+const turned = [];
+for (const pr of pulls) {
+  const red = pr.commits.find(c => c.check.state === 'failure' || c.check.state === 'error');
+  if (!red) continue;
+  const after = pr.commits.slice(pr.commits.indexOf(red) + 1);
+  const green = after.find(c => c.check.state === 'success');
+  if (!green) continue;
+  turned.push({ pr, red, green });
+}
+const turnedLines = [];
+if (turned.length) {
+  turnedLines.push('## Red, then green', '',
+    'Pull requests where TestSprite failed a commit and a later commit on the same pull request passed.', '',
+    '| Pull request | Red commit | TestSprite said | Green commit | TestSprite said |', '|---|---|---|---|---|');
+  for (const { pr, red, green } of turned) {
+    turnedLines.push(`| [#${pr.number}](${pr.url}) ${cell(pr.title)} | [${short(red.sha)}](${red.url}) | ${red.check.text} | [${short(green.sha)}](${green.url}) | ${green.check.text} |`);
+  }
+  turnedLines.push('');
+}
+
 const head = [
   '# The test loop, pull request by pull request',
   '',
@@ -40,5 +61,5 @@ const head = [
   `${totals.pulls} pull requests · ${totals.runs} TestSprite runs · ${totals.red} red · ${totals.green} green`,
   '',
 ];
-writeFileSync('LOOP.md', [...head, ...lines].join('\n'));
+writeFileSync('LOOP.md', [...head, ...turnedLines, '## Every pull request', '', ...lines].join('\n'));
 console.log(`LOOP.md: ${totals.pulls} pull requests, ${totals.runs} runs`);
