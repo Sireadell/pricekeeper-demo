@@ -20,9 +20,9 @@ Built for TestSprite Hackathon Season 4, Project Track.
 |---|---|---|
 | Project quality (40) | https://pricekeeper-demo.web.app, sign in as `robot` / `4821` | Turn the network off and make a sale. It goes through, waits with an hourglass, and sends when the signal is back. |
 | Tests that run themselves (40): browser | [PR #12, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #12 passed all 45. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
-| Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. Five pull requests went red, then green: #1, #3, #6, #10 and #12. |
+| Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. 20 pull requests and 58 TestSprite runs so far. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. |
 | Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 12 server tests (B01 to B12) go straight to the live database, skipping the app's screens. They're set to run through the TestSprite command line after a merge. That hasn't happened yet. I've run the first six by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
-| Tests that run themselves (40): maths | `npm test` | 82 unit tests run on every pull request. |
+| Tests that run themselves (40): maths | `npm test` | 85 unit tests run on every pull request. One of them, [`tests/oracle.test.js`](tests/oracle.test.js), works out the money a second, separate way, in whole kobo and exact fractions, and checks the app against it. It walks 4,920 mixes of trade totals and payment lists (payments, refunds, removed payments), 320 average-cost cases and 40 stock-conversion cases. All agree with the app. |
 | How good the tests are | `node scripts/mutation.mjs` | It makes 138 one-change versions of the three money-maths files and checks the tests notice. They catch 132, which is 95.7 percent. The 6 left can't change any result. Saved in [docs/mutation.json](docs/mutation.json). |
 | Innovation (20) | [`tests/offline-model.test.js`](tests/offline-model.test.js) | Thousands of made-up shop days, the same ones every run, checked against a plain hand-written version of the rules: what stays on screen offline, what a sale still owes, where a customer's payment goes, and average cost. |
 | Engagement | [TestSprite CLI issue #630](https://github.com/TestSprite/testsprite-cli/issues/630) | My write-up for other builders on cutting the network inside a TestSprite test. |
@@ -35,9 +35,15 @@ TestSprite's robot can't switch the internet off. So the app has a hidden switch
 
 The reopen test sells offline, closes the app, then opens it again still offline. It went red when I ran it, I fixed the app, and it has passed on every GitHub run since. On PR #10 a test caught a minus 500 payment being saved as ₦1,300 of debt. That's fixed too.
 
-I planted four bugs. Two stock breaks, on PR #3 and PR #6, went red, then green. Two got past the suite: a void that didn't give stock back (PR #2) and a credit receipt that showed paid (PR #10). I wrote TS45 and TS44 for those two. I haven't planted them again yet on a fresh pull request to show those tests go red.
+Early on, two stock breaks I planted, on PR #3 and PR #6, went red, then green. Two got past the suite: a void that didn't give stock back (PR #2) and a credit receipt that showed paid (PR #10). I wrote TS45 and TS44 for those two.
 
-**Built, not run yet:** the morning check on the live site, the plain-words failure note on a pull request, and self-fix.
+Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On clean solo re-runs, the two key ones were caught: the void that gives no stock back, and a minus amount counted as money received. The full account, including what I can't claim, is in [Breaks I made on purpose](#breaks-i-made-on-purpose).
+
+**Has run:** the plain-words failure note on a red pull request. It appeared on all six planted-bug pull requests and on the re-runs.
+
+**Built, has not run yet:** self-fix.
+
+**Morning check on the live site:** built, and it has run, but it does not pass yet. On its last run one browser test passed, two were blocked by out-of-date saved test scripts, and the server test was refused with a quota error. It opened a GitHub issue by itself, which is the part that works. I am not counting it as a working check.
 
 ## Receipts
 
@@ -47,11 +53,12 @@ I planted four bugs. Two stock breaks, on PR #3 and PR #6, went red, then green.
 | Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
 | Server tests in TestSprite that go straight to the database: 2 failed before the PIN fix, all 6 pass now | 6 | [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
-| Browser tests set to run on the live site every morning, not run yet | 3 | [What runs on its own](#what-runs-on-its-own) |
-| Breaks I made on purpose: 2 caught, 2 missed | 4 | [PROOF.md](PROOF.md) |
-| Unit tests on the money maths | 82 | `tests/` folder, the "maths" check |
+| Browser tests set to run on the live site every morning: built, not passing yet | 3 | [What runs on its own](#what-runs-on-its-own) |
+| Bugs planted on throwaway pull requests #15 to #20, and how many a clean solo run caught | 6 planted, 2 caught on a clean run | [Breaks I made on purpose](#breaks-i-made-on-purpose) |
+| Unit tests on the money maths | 85 | `tests/` folder, the "maths" check |
+| Cases where a second, separate way of working out the money agrees with the app | 4,920 payment mixes, 320 average-cost, 40 stock-conversion | [`tests/oracle.test.js`](tests/oracle.test.js) |
 | Changes made on purpose to the money maths, and how many the tests caught | 138 changes, 132 caught (95.7%) | [docs/mutation.json](docs/mutation.json) |
-| Pull requests merged | 7 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
+| Pull requests merged | 11 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
 
 ## Five problems it caught
 
@@ -65,7 +72,7 @@ All five came up on [pull request #10](https://github.com/Sireadell/pricekeeper-
 | Typing 0 pieces and pressing Add quietly put 1 piece in the cart. A 0 or a minus number is now refused with a message. | [9057fee](https://github.com/Sireadell/pricekeeper-demo/commit/9057fee) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/675ed041-288c-4af2-9af9-b746005bc34d) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) |
 | Deleting an item used the browser's own "Are you sure?" pop-up. That froze the page for the test robot, and the delete test failed twice. This one hurt the robot more than a trader. Delete now asks inside the page, like the rest of the app. | [4b50685](https://github.com/Sireadell/pricekeeper-demo/commit/4b50685) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b36fe793-8a2e-43bf-b7ed-26e3fd29df91) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b) |
 
-Pull request #10 started with a bug I planted on purpose: the receipt showed a sale on credit as paid in full. No test caught that one. I took it out in the same commit as the minus payment fix. More in [PROOF.md](PROOF.md).
+Pull request #10 started with a bug I planted on purpose: the receipt showed a sale on credit as paid in full. No test caught that one. I took it out in the same commit as the minus payment fix. Later I wrote TS44 for it and planted it again on PR #16. More in [PROOF.md](PROOF.md).
 
 ## The PIN hole
 
@@ -98,7 +105,7 @@ Please don't reload the page while the network is fully off. The app is built to
 1. Open https://pricekeeper-demo.web.app, sign in as `robot` / `4821`, go offline and make a sale.
 2. Open [LOOP.md](LOOP.md) and read the "Red, then green" table.
 3. Click the [PR #12 run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) to see all 45 browser tests pass, one by one.
-4. In the project folder, run `npm test` (82 tests), then `node scripts/mutation.mjs` (95.7 percent).
+4. In the project folder, run `npm test` (85 tests), then `node scripts/mutation.mjs` (95.7 percent).
 
 The shop, its items and its customers are made up. Other judges use the same shop, and I may reset the data.
 
@@ -153,11 +160,11 @@ The plan from here: on every pull request, a "database rules" check runs the sam
 
 | When | What happens | Has it run yet? |
 |---|---|---|
-| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 82 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
-| A test fails | A comment is set up to appear on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Not yet |
+| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 85 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
+| A test fails | A comment appears on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Yes. It appeared on all six planted-bug pull requests (#15 to #20) and on the re-runs. |
 | After every merge | TestSprite is set up to run the six server tests against the live database. | Not after a merge yet. I've run them by hand twice: 4 of 6 before the PIN fix, 6 of 6 after. |
-| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Not yet |
-| On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Not yet |
+| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Built. It has run three times and failed each time, and the failure opened an issue as designed. Last run: 1 of 3 browser tests passed, 2 blocked by out-of-date saved scripts, and the server test hit a quota error. Not working yet. |
+| On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Built, has not run yet |
 
 ## What it does
 
@@ -177,7 +184,7 @@ It runs in the phone browser and installs like an app. It's plain JavaScript on 
 1. I open a pull request.
 2. GitHub builds a preview copy of the app.
 3. TestSprite runs all 45 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
-4. At the same time, the "maths" check runs 82 unit tests in a few seconds.
+4. At the same time, the "maths" check runs 85 unit tests in a few seconds.
 5. A third check, "database rules", is set up to run the database checks against a copy of the database. It hasn't run on GitHub yet.
 6. I merge once the checks pass. Since 2026-10-25 GitHub won't let me merge without them, admin included: "TestSprite V3" and "maths" are required checks on main.
 
@@ -198,6 +205,19 @@ Before pull request #10, I broke stock tracking on purpose three times to see if
 
 The suite was 24 tests then. It's 45 now. The full trail is in [PROOF.md](PROOF.md).
 
+### Six more, on pull requests #15 to #20
+
+Later I planted six bugs, each on its own throwaway pull request. I started all six at the same time, and they shared one test database, so the runs got in each other's way. I don't trust that shared round on its own. So I re-ran the two key ones alone, one at a time.
+
+| Pull request | What I planted | Result |
+|---|---|---|
+| #15 | Voiding a sale gives no stock back | Caught on a clean solo run. TS43 and TS45 failed, 43 of 45 passed. Stock stayed at 15 instead of going back to 20. |
+| #20 | A minus amount counted as money received | Caught on a clean solo run. TS03 failed: typing -500 wasn't blocked, and ₦1,300 was saved as debt on an ₦800 sale. |
+| #16 | The receipt shows a credit sale as paid | Failed TS44 in the shared run. That looks caught, but it's one run, and not a clean one. |
+| #17, #18, #19 | Three more | The results were unclear, so I claim nothing about them. A clean solo re-run of each would settle it. |
+
+None of these six was merged. They show as red in [LOOP.md](LOOP.md).
+
 ## What this is not
 
 - **Not a full accounting system.** It keeps stock, sales and who owes what.
@@ -206,10 +226,12 @@ The suite was 24 tests then. It's 45 now. The full trail is in [PROOF.md](PROOF.
 - **The offline tests use a switch, not a dead network.** The switch cuts the app's link to the database. When the reopen test reloads the page, the app's own files still come from the internet.
 - **Opening the app with no signal at all isn't tested.** The app keeps a copy of its files on the phone for that, but no test covers it yet.
 - **Not every red run was a bug.** Getting to 43 of 43 took 11 runs on pull request #10. Some red runs were the robot mixing up look-alike test items in the shared demo shop. I cleared out old test data and named test items more clearly.
-- **It missed two of my planted bugs.** On pull request #2, a void that no longer put stock back. On pull request #10, a receipt that showed a credit sale as paid in full. See [PROOF.md](PROOF.md).
+- **Early on, it missed two of my planted bugs.** On pull request #2, a void that no longer put stock back. On pull request #10, a receipt that showed a credit sale as paid in full. I wrote tests for both. The void bug was caught on a clean solo run on #15. The receipt bug has only one shared run on #16, not a clean one. See [PROOF.md](PROOF.md).
+- **Only two of the six later planted bugs have a clean catch.** Three of them (#17, #18, #19) are unclear, and I claim nothing about them.
 - **Stock after a sale needs the live database,** so the unit tests don't cover it. The browser tests do.
 - **The database checks aren't in TestSprite yet.** Today they run on a copy of the database on my own computer. The plan is TestSprite server tests after a merge, not on the pull request, because the database has one set of rules for the whole project, so a pull request can't have its own.
-- **The morning check, the failure notes and self-fix haven't run yet.** They're written and in the repo.
+- **Self-fix hasn't run yet.** It's built and in the repo.
+- **The morning check on the live site:** it does not pass yet, so it is not a safety net. It runs, it fails, and it reports the failure, but I have not got a clean green morning run.
 - **Self-fix proposes, it doesn't decide.** Its change still has to pass every check, and I read it before I merge.
 - **The merge lock is new.** Pull request #8 went in while its check was red, before the lock existed. Since 2026-10-25 a red pull request can't be merged.
 
