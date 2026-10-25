@@ -1214,7 +1214,7 @@ window._pmConfirmExisting = async function(saleId, prevReceived, total) {
     // recording the full newPayment here double-counted the overage in the
     // borrower ledger and made Credit Accounts under-report the debt.
     const owingBefore   = Math.max(0, total - liveReceived);
-    const borrowerWrite = _prepareRepayment(Math.min(newPayment, owingBefore), sale.custId, saleId, today());
+    const borrowerWrite = _prepareRepayment(newPayment, sale.custId, saleId, today());
     if (activeUid) {
       const saleWrite = { op: 'update', collection: 'sales', docId: window._pkSales[idx].id, payload: window._pkSales[idx] };
       await gwWriteLinked(borrowerWrite ? [saleWrite, borrowerWrite] : [saleWrite], { background: true });
