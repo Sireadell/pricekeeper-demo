@@ -390,5 +390,69 @@
     "file": "backend/B06_pin_hash_is_not_handed_out.py",
     "description": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",
     "kind": "server"
+  },
+  {
+    "code": "TS44",
+    "id": "8a3844ea-f869-4a7e-b6ab-39a79bd3909b",
+    "name": "The receipt of a credit sale shows nothing paid",
+    "file": "frontend/TS44_the_receipt_of_a_credit_sale_shows_nothing_paid.py",
+    "description": "Sells 3 pieces on credit with nothing paid, opens that sale's receipt from the trade history, and checks the receipt says Paid 0 and a balance owing of 1,500, not paid in full.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS45",
+    "id": "78021317-e2c3-45d0-8180-7ed8f217fd3e",
+    "name": "Voiding a sale puts the pieces back in stock",
+    "file": "frontend/TS45_voiding_a_sale_puts_the_pieces_back_in_stock.py",
+    "description": "Adds an item with 20 pieces, sells 5 (stock 15), voids that sale with a reason, and checks the stock is back to 20.",
+    "kind": "browser"
+  },
+  {
+    "code": "B07",
+    "id": "6d0ef033-aa20-4a95-a883-f070853a26ee",
+    "name": "Server: a stranger cannot record a sale",
+    "file": "backend/B07_stranger_cannot_record_a_sale.py",
+    "description": "A stranger with no staff session tries to add a sale straight to the database and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B08",
+    "id": "a6cd2c1f-d653-4ed6-a339-81d1b68a31ff",
+    "name": "Server: a stranger cannot change stock",
+    "file": "backend/B08_stranger_cannot_change_stock.py",
+    "description": "A stranger tries to set an item's stock to 999 and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B09",
+    "id": "240a143e-615a-4cc2-9292-31b362460902",
+    "name": "Server: a stranger cannot add themselves as staff",
+    "file": "backend/B09_stranger_cannot_add_themselves_as_staff.py",
+    "description": "A stranger tries to create an admin staff record for themselves and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B10",
+    "id": "36207af7-0e4a-453e-a357-8b96e5553d77",
+    "name": "Server: a stranger cannot take over the shop code",
+    "file": "backend/B10_stranger_cannot_take_over_the_shop_code.py",
+    "description": "A stranger tries to point the shop code at their own account and must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B11",
+    "id": "9e9d5e46-4be1-4ed7-8f0e-c5a687568919",
+    "name": "Server: a stranger cannot read or change debts",
+    "file": "backend/B11_stranger_cannot_read_or_change_debts.py",
+    "description": "A stranger tries to list what customers owe and to set a debt to 0, and both must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B12",
+    "id": "27abce10-fb72-446e-8f0d-869a66492adb",
+    "name": "Server: a made-up PIN fingerprint is refused",
+    "file": "backend/B12_made_up_pin_fingerprint_is_refused.py",
+    "description": "A stranger opens a staff session with a guessed PIN fingerprint, and it must be refused.",
+    "kind": "server"
   }
 ]

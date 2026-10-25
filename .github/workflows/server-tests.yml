@@ -1,11 +1,11 @@
 name: Server tests
-# The six server tests in testsprite_tests/backend talk straight to the
+# The server tests in testsprite_tests/backend talk straight to the
 # database, the way an attacker would, with no app in between.
 #
 # A pull request cannot have its own copy of the database rules (Firebase has
-# one set per project), so on a pull request the same six files run against a
+# one set per project), so on a pull request the same files run against a
 # local Firebase emulator loaded with that pull request's firestore.rules.
-# After a merge, the rules go live and TestSprite runs the six files against
+# After a merge, the rules go live and TestSprite runs the same files against
 # the real database.
 on:
   pull_request:
@@ -41,7 +41,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: pip install requests
-      - name: Six server tests and the right-PIN check, on this branch's rules
+      - name: Server tests and the right-PIN check, on this branch's rules
         run: npx -y firebase-tools@15.26.0 emulators:exec --only firestore,auth --project pricekeeper-demo "python scripts/rules-check.py"
 
   deploy-rules:
@@ -83,7 +83,7 @@ jobs:
       - run: npm i -g @testsprite/testsprite-cli@latest
       - id: start
         run: echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
-      - name: Run the six server tests in TestSprite
+      - name: Run the server tests in TestSprite
         run: testsprite test run --all --filter "Server:" --wait --summary-file server-summary.json --gh-output
       - name: Explain any failure on the merged pull request
         if: failure()

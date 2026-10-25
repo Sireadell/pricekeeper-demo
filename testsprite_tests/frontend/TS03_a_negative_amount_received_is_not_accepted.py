@@ -96,8 +96,8 @@ async def run_test():
         
 
         # A fresh item name each run, so search finds exactly this item
-        import random
-        item_name = f"Neg Pay Item {random.randint(1000, 9999)}"
+        import time
+        item_name = f"Neg Pay Item {int(time.time() * 1000) % 10000000}"
 
         # -> Open Inventory and add the test item: buy 500, sell 800, 10 pieces
         await page.get_by_role("button", name="Inventory").click(timeout=10000)
