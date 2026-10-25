@@ -348,7 +348,7 @@ window._pmConfirm = async function(total, custId) {
 // error so the inline Complete button doesn't get stuck saying "Confirm
 // Payment ✓" (the popup's label) if it ever fails.
 async function _finalizeNewSale(received, custId, total, btn, idleLabel, fromDeposit = 0) {
-  received = Math.max(0, Number(received) || 0);   // a negative amount can never be money received
+  received = Number(received) || 0;
   if (btn) { btn.disabled = true; btn.innerHTML = 'Processing…'; btn.style.opacity = '.6'; }
   try {
     if (!_requireSaleAuth()) {
