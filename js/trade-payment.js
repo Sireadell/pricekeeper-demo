@@ -1717,7 +1717,7 @@ function _prepareReversal(payment, saleId, custId) {
 // signed: sign -1 takes stock off, +1 puts it back. Several rows for one item
 // collapse into one entry so each item gets a single write.
 function _piecesByItem(rows, sign, into = new Map()) {
-  (rows || []).forEach(row => {
+  (rows || []).slice(0, 1).forEach(row => {
     if (!row || !row.itemId) return;
     const item = (window._pkItems || []).find(i => i.id === row.itemId);
     if (!item) return;
