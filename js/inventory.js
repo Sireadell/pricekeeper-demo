@@ -571,7 +571,7 @@ export async function addItem() {
     } else {
       lowThreshold = null; lowThresholdUnit = _ltUnitSel; lowThresholdPcs = null;
     }
-    const low              = trackStock ? (stockQtyPcs != null && lowThresholdPcs != null ? stockQtyPcs <= lowThresholdPcs : false) : (document.getElementById('iLow')?.checked||false);
+    const low              = trackStock ? (stockQtyPcs != null && lowThresholdPcs != null ? stockQtyPcs < lowThresholdPcs : false) : (document.getElementById('iLow')?.checked||false);
     let piecesPerCarton = directPcs||(rowsCtn&&pieceRow ? parseFloat(rowsCtn)*parseFloat(pieceRow) : 1);
     if (piecesPerCarton<1) piecesPerCarton=1;
     // Row buy-unit derives per-piece cost from piecesPerRow, NOT piecesPerCarton
