@@ -77,6 +77,13 @@ test('average cost: free stock keeps the old price, no price history takes the n
   assert.equal(computeWac({ stockQtyPcs: 10, buy: 100 }, 10, 200, 'piece').wacPc, 150);
 });
 
+test('average cost: an empty shelf with nothing added takes the new price, never a broken number', () => {
+  // no stock on either side means there is nothing to blend, so dividing by
+  // the total would be zero over zero
+  assert.deepEqual(computeWac({ stockQtyPcs: 0, buyUnit: 'piece', buyPrice: 100 }, 0, 120, 'piece'),
+    { wacPc: 120, wacBuyUnit: 120 });
+});
+
 test('the low-stock threshold keeps the unit the item is counted in', () => {
   const row = { stockUnit: 'row', piecesPerRow: 6 };
   const a = recalcThreshold(row, 60);
