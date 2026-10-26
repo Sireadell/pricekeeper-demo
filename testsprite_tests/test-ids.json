@@ -513,57 +513,49 @@
   },
   {
     "code": "TS59",
-    "id": "fe243f60-5fca-40ae-bcf2-2aad0e2c818e",
-    "name": "A new expense appears in the expense list",
-    "file": "frontend/TS59_a_new_expense_appears_in_the_expense_list.py",
-    "description": "Records a 1,250 transport expense with a unique description and checks it is listed with its category and amount.",
-    "kind": "browser"
-  },
-  {
-    "code": "TS60",
     "id": "66d23d38-ecdb-4b70-8687-ee79e576dc86",
     "name": "Expenses can be filtered by category",
-    "file": "frontend/TS60_expenses_can_be_filtered_by_category.py",
+    "file": "frontend/TS59_expenses_can_be_filtered_by_category.py",
     "description": "Records a transport expense and checks the category filter hides it under Electricity and shows it under Transport.",
     "kind": "browser"
   },
   {
-    "code": "TS61",
+    "code": "TS60",
     "id": "3da1dbb2-45ae-46ed-8b1f-94f4c9864532",
     "name": "A new supplier appears in the supplier list",
-    "file": "frontend/TS61_a_new_supplier_appears_in_the_supplier_list.py",
+    "file": "frontend/TS60_a_new_supplier_appears_in_the_supplier_list.py",
     "description": "Adds a supplier with a unique name, a location and a phone, and checks the supplier list shows all three.",
     "kind": "browser"
   },
   {
-    "code": "TS62",
+    "code": "TS61",
     "id": "93bbddd5-cd94-4ee4-8b87-331ec85b4640",
     "name": "The app can switch to the light look and back",
-    "file": "frontend/TS62_the_app_can_switch_to_the_light_look_and_back.py",
+    "file": "frontend/TS61_the_app_can_switch_to_the_light_look_and_back.py",
     "description": "Uses the account menu to switch the app to the light look, checks the menu then offers the dark look, and switches back.",
     "kind": "browser"
   },
   {
-    "code": "TS63",
+    "code": "TS62",
     "id": "1561d696-6485-4231-8202-9aad1014ae0a",
     "name": "The privacy switch hides profit and stock value on the dashboard",
-    "file": "frontend/TS63_the_privacy_switch_hides_profit_and_stock_value_on_the_dashb.py",
+    "file": "frontend/TS62_the_privacy_switch_hides_profit_and_stock_value_on_the_dashb.py",
     "description": "Turns on the PRIVACY switch and checks the dashboard hides the PROFIT and STOCK VALUE cards, then turns it off and checks they come back.",
     "kind": "browser"
   },
   {
-    "code": "TS64",
+    "code": "TS63",
     "id": "ec1c1770-90e7-44f3-82fd-c49715f064c2",
     "name": "The trade history status filter separates credit and paid sales",
-    "file": "frontend/TS64_the_trade_history_status_filter_separates_credit_and_paid_sa.py",
+    "file": "frontend/TS63_the_trade_history_status_filter_separates_credit_and_paid_sa.py",
     "description": "Sells one item fully on credit, finds that trade in the trade history and checks it shows under the Credit filter and not under the Paid filter.",
     "kind": "browser"
   },
   {
-    "code": "TS65",
+    "code": "TS64",
     "id": "fa9fd2c2-8d30-411e-b7b5-9b6e16d9e9af",
     "name": "The app can be installed on a phone",
-    "file": "frontend/TS65_the_app_can_be_installed_on_a_phone.py",
+    "file": "frontend/TS64_the_app_can_be_installed_on_a_phone.py",
     "description": "Opens the app's install file and checks it names the app PriceKeeper, opens full screen from the home page and has an icon.",
     "kind": "browser"
   },

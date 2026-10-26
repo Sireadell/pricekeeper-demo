@@ -24,9 +24,9 @@ Pick any row and check it yourself.
 |---|---|---|
 | Open https://pricekeeper-demo.web.app, sign in as `robot` / `4821`, turn the network off, make a sale | 1 min | The sale goes through with no signal. |
 | Run `npm test` (Node 22 or newer) | 5 sec | 187 unit tests pass. |
-| Run `node scripts/mutation.mjs` | 5 min | I break the money maths on purpose 394 ways. The tests catch 380, 96.4 percent. The 14 left give the same answers as the real code, explained in [docs/mutation.json](docs/mutation.json). |
+| Run `node scripts/mutation.mjs` | 9 min | I break the money maths on purpose 394 ways. The tests catch 380, 96.4 percent. The 14 left give the same answers as the real code, explained in [docs/mutation.json](docs/mutation.json). |
 | Open [LOOP.md](LOOP.md), table "Red, then green" | 30 sec | Pull requests that failed, got fixed, then passed. |
-| Open the [last browser run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | 30 sec | 45 browser tests passed on PR #23 and PR #24. 20 server tests that go straight to the database passed after the last merge. |
+| Open the [last browser run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | 30 sec | 45 browser tests passed on PR #23 and PR #24 (the suite has since grown to 64). 20 server tests that go straight to the database passed after the last merge. |
 | Open PR #15 and PR #20 | 1 min | A bug I planted. On a clean solo run the check went red. I only claim these two. |
 
 What this is not: no real money moves, and the shop holds made-up demo data.
@@ -36,7 +36,7 @@ What this is not: no real money moves, and the shop holds made-up demo data.
 | What you score | Open this | What you'll see |
 |---|---|---|
 | Project quality (40) | https://pricekeeper-demo.web.app, sign in as `robot` / `4821` | Turn the network off and make a sale. It goes through, waits with an hourglass, and sends when the signal is back. |
-| Tests that run themselves (40): browser | [PR #23, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #23 passed all 45, and so did PR #24 and [PR #21](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) before it. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
+| Tests that run themselves (40): browser | [PR #23, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | TestSprite runs all 64 browser tests on a preview copy of every pull request. When the suite had 45, PR #23 passed all 45, and so did PR #24 and [PR #21](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) before it. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
 | Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. When it was last built it held 21 pull requests and 60 TestSprite runs. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. Pull request #23 shows as open, because the ledger was built before it merged. |
 | Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 20 server tests (B01 to B20) go straight to the live database, skipping the app's screens. They run through the TestSprite command line after every merge. [After the last merge, 20 of 20 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/2c3a5470-2fbc-4cbc-9750-2d1a3b506646). The same 20 run on a copy of the database on every pull request. The first six were also run by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
 | Tests that run themselves (40): maths | `npm test` | 187 unit tests run on every pull request. One of them, [`tests/oracle.test.js`](tests/oracle.test.js), works out the money a second, separate way, in whole kobo and exact fractions, and checks the app against it. It walks 4,920 mixes of trade totals and payment lists (payments, refunds, removed payments), 320 average-cost cases and 40 stock-conversion cases. All agree with the app. |
@@ -66,7 +66,7 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 
 | What | Count | Where to check |
 |---|---|---|
-| Browser tests saved in TestSprite | 45 | [Last run: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) |
+| Browser tests saved in TestSprite | 64 | Every pull request runs all 64, and its TestSprite check shows the verdict. [Earlier run, when there were 45: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) |
 | Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
 | Server tests in TestSprite that go straight to the database. All 20 passed after the last merge. The first 6: 2 failed before the PIN fix, all 6 passed after it | 20 | [Last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/2c3a5470-2fbc-4cbc-9750-2d1a3b506646), [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
@@ -178,7 +178,7 @@ On every pull request, a "database rules" check runs all 20 server tests, plus t
 
 | When | What happens | Has it run yet? |
 |---|---|---|
-| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 187 unit tests run next to it. A "database rules" check runs the break-in checks on a copy of the database beside them. | Yes for all three. The database rules check has passed on every pull request since #12. |
+| Every pull request | TestSprite runs all 64 browser tests on a preview copy, and the 187 unit tests run next to it. A "database rules" check runs the break-in checks on a copy of the database beside them. | Yes for all three. The database rules check has passed on every pull request since #12. |
 | A test fails | A comment appears on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Yes. It appeared on all six planted-bug pull requests (#15 to #20) and on the re-runs. |
 | After every merge | TestSprite runs all 20 server tests against the live database. | Yes. [After the last merge, 20 of 20 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/2c3a5470-2fbc-4cbc-9750-2d1a3b506646). Three runs on Oct 25 stopped early when a daily limit ran out; see [What this is not](#what-this-is-not). |
 | Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Built. It has run four times and failed each time, and the failures opened issues as designed. Last run, Oct 26: 1 of 3 browser tests passed, 2 were blocked by out-of-date saved scripts, and the server test hit the daily limit. Not working yet. |
@@ -201,7 +201,7 @@ It runs in the phone browser and installs like an app. It's plain JavaScript on 
 
 1. I open a pull request.
 2. GitHub builds a preview copy of the app.
-3. TestSprite runs all 45 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
+3. TestSprite runs all 64 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
 4. At the same time, the "maths" check runs 187 unit tests in a few seconds.
 5. A third check, "database rules", runs the database checks against a copy of the database.
 6. I merge once the checks pass. Since 2026-10-25 GitHub won't let me merge without them, admin included: "TestSprite V3" and "maths" are required checks on main.
@@ -221,7 +221,7 @@ Before pull request #10, I broke stock tracking on purpose three times to see if
 | [#3](https://github.com/Sireadell/pricekeeper-demo/pull/3) | Removed the line that takes sold items out of stock | [5 failed, 3 of them stock tests](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/a66f2860-07a5-4fb1-8241-a8decc0185b5) | [24 of 24 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/7bc6aa85-f9f6-4033-bd2e-d122d8fb5a49) |
 | [#6](https://github.com/Sireadell/pricekeeper-demo/pull/6) | Made every sale take twice the stock | [21 passed, 3 failed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d50ec602-0006-4dca-a698-825e312bef0a) | [24 of 24 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/ddc06f18-ebf9-45f1-ab51-e2b027b35a2a) |
 
-The suite was 24 tests then. It's 45 now. The full trail is in [PROOF.md](PROOF.md).
+The suite was 24 tests then. It's 64 now. The full trail is in [PROOF.md](PROOF.md).
 
 ### Six more, on pull requests #15 to #20
 
