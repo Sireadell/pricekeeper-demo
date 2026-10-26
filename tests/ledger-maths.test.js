@@ -15,7 +15,7 @@ beforeEach(() => {
 const {
   normName, isOneRecord, shopOnOneRecord, newAccountFields, tradesForAccount,
   unpaidTradesForAccount, oneRecordStanding, planAccountPayment, legacyTotal,
-  switchOverCheck, switchAccount,
+  switchOverCheck, switchAccount, bucketTag,
 } = await import('../js/ledger.js');
 
 const account = (extra) => ({ name: 'Ade Stores', oneRecord: { ts: 1 }, transactions: [], ...extra });
@@ -157,4 +157,22 @@ test('new accounts are born switched once the shop has switched', () => {
   window._pkBorrowers = [{ name: 'X', oneRecord: { ts: 1 } }];
   assert.equal(shopOnOneRecord(), true);
   assert.equal(typeof newAccountFields().oneRecord.ts, 'number');
+});
+
+test('a debt or payment written after the switch counts, one written before it does not count twice', () => {
+  const switched = account();
+  assert.deepEqual(bucketTag(switched, 'noTrade'), { bucket: 'noTrade', or: 1 });
+  switched.transactions.push({ type: 'debt', amount: 300, ...bucketTag(switched, 'noTrade') });
+  switched.transactions.push({ type: 'payment', amount: 50, ...bucketTag(switched, 'held') });
+  const st = oneRecordStanding(switched);
+  assert.equal(st.noTrade, 300);
+  assert.equal(st.held, 50);
+  assert.equal(st.balance, 250);
+
+  // written before the switch: it is already inside the old total
+  const old = account({ oneRecord: undefined });
+  assert.deepEqual(bucketTag(old, 'noTrade'), { bucket: 'noTrade' });
+  old.transactions.push({ type: 'debt', amount: 300, ...bucketTag(old, 'noTrade') });
+  old.oneRecord = { ts: 2 };
+  assert.equal(oneRecordStanding(old).noTrade, 0);
 });

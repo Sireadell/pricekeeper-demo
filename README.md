@@ -22,14 +22,14 @@ Built for TestSprite Hackathon Season 4, Project Track.
 | Tests that run themselves (40): browser | [PR #12, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #12 passed all 45. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
 | Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. Five pull requests went red, then green: #1, #3, #6, #10 and #12. |
 | Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 12 server tests (B01 to B12) go straight to the live database, skipping the app's screens. They're set to run through the TestSprite command line after a merge. That hasn't happened yet. I've run the first six by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
-| Tests that run themselves (40): maths | `npm test` | 82 unit tests run on every pull request. |
-| How good the tests are | `node scripts/mutation.mjs` | It makes 138 one-change versions of the three money-maths files and checks the tests notice. They catch 132, which is 95.7 percent. The 6 left can't change any result. Saved in [docs/mutation.json](docs/mutation.json). |
+| Tests that run themselves (40): maths | `npm test` | 87 unit tests run on every pull request. |
+| How good the tests are | `node scripts/mutation.mjs` | It makes 138 one-change versions of the three money-maths files and checks the tests notice. They catch 133, which is 96.4 percent. The 5 left give exactly the same result as the real code for every input, and each one is explained in the file. Saved in [docs/mutation.json](docs/mutation.json). |
 | Innovation (20) | [`tests/offline-model.test.js`](tests/offline-model.test.js) | Thousands of made-up shop days, the same ones every run, checked against a plain hand-written version of the rules: what stays on screen offline, what a sale still owes, where a customer's payment goes, and average cost. |
 | Engagement | [TestSprite CLI issue #630](https://github.com/TestSprite/testsprite-cli/issues/630) | My write-up for other builders on cutting the network inside a TestSprite test. |
 
 ### Why the numbers moved
 
-The mutation score started at 77.5 percent. I went through the 31 changes the tests missed and wrote 11 edge-case tests for them, in [`tests/maths-edges.test.js`](tests/maths-edges.test.js). That's how it got to 95.7.
+The mutation score started at 77.5 percent. I went through the 31 changes the tests missed and wrote 11 edge-case tests for them, in [`tests/maths-edges.test.js`](tests/maths-edges.test.js). That, and one more test after, took it to 96.4.
 
 TestSprite's robot can't switch the internet off. So the app has a hidden switch, `?offline-switch=1`, that cuts its link to the database. The offline tests have passed on every GitHub run since it went in.
 
@@ -49,8 +49,8 @@ I planted four bugs. Two stock breaks, on PR #3 and PR #6, went red, then green.
 | Offline tests | 3 | [Testing offline](#testing-offline) |
 | Browser tests set to run on the live site every morning, not run yet | 3 | [What runs on its own](#what-runs-on-its-own) |
 | Breaks I made on purpose: 2 caught, 2 missed | 4 | [PROOF.md](PROOF.md) |
-| Unit tests on the money maths | 82 | `tests/` folder, the "maths" check |
-| Changes made on purpose to the money maths, and how many the tests caught | 138 changes, 132 caught (95.7%) | [docs/mutation.json](docs/mutation.json) |
+| Unit tests on the money maths | 87 | `tests/` folder, the "maths" check |
+| Changes made on purpose to the money maths, and how many the tests caught | 138 changes, 133 caught (96.4%) | [docs/mutation.json](docs/mutation.json) |
 | Pull requests merged | 7 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
 
 ## Five problems it caught
@@ -98,7 +98,7 @@ Please don't reload the page while the network is fully off. The app is built to
 1. Open https://pricekeeper-demo.web.app, sign in as `robot` / `4821`, go offline and make a sale.
 2. Open [LOOP.md](LOOP.md) and read the "Red, then green" table.
 3. Click the [PR #12 run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) to see all 45 browser tests pass, one by one.
-4. In the project folder, run `npm test` (82 tests), then `node scripts/mutation.mjs` (95.7 percent).
+4. In the project folder, run `npm test` (87 tests), then `node scripts/mutation.mjs` (96.4 percent).
 
 The shop, its items and its customers are made up. Other judges use the same shop, and I may reset the data.
 
@@ -153,7 +153,7 @@ The plan from here: on every pull request, a "database rules" check runs the sam
 
 | When | What happens | Has it run yet? |
 |---|---|---|
-| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 82 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
+| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 87 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
 | A test fails | A comment is set up to appear on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Not yet |
 | After every merge | TestSprite is set up to run the six server tests against the live database. | Not after a merge yet. I've run them by hand twice: 4 of 6 before the PIN fix, 6 of 6 after. |
 | Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Not yet |
@@ -177,7 +177,7 @@ It runs in the phone browser and installs like an app. It's plain JavaScript on 
 1. I open a pull request.
 2. GitHub builds a preview copy of the app.
 3. TestSprite runs all 45 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
-4. At the same time, the "maths" check runs 82 unit tests in a few seconds.
+4. At the same time, the "maths" check runs 87 unit tests in a few seconds.
 5. A third check, "database rules", is set up to run the database checks against a copy of the database. It hasn't run on GitHub yet.
 6. I merge once the checks pass. Since 2026-10-25 GitHub won't let me merge without them, admin included: "TestSprite V3" and "maths" are required checks on main.
 
