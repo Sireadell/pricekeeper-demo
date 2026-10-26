@@ -1,10 +1,10 @@
 {
   "score": 96.4,
-  "killed": 133,
-  "survived": 5,
-  "total": 138,
-  "sameResult": 5,
-  "canBeCaught": 133,
+  "killed": 380,
+  "survived": 14,
+  "total": 394,
+  "sameResult": 14,
+  "canBeCaught": 380,
   "scoreOfCatchable": 100,
   "survivors": [
     {
@@ -51,6 +51,87 @@
       "to": ">=",
       "text": "name: diff > 0 ? 'Opening balance · no trade' : 'Opening balance · held for them',",
       "sameResult": "The gap is never 0 here (it is at least one naira), so both versions pick the same name."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 124,
+      "col": 32,
+      "from": ">",
+      "to": ">=",
+      "text": "const margin   = revenue > 0 ? (profit / revenue) * 100 : (profit < 0 ? -100 : 0);",
+      "sameResult": "The margin is only looked at when the revenue is above 0 (the thin-margin check needs that), so what it is worked out as for a revenue of exactly 0 is never used."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 124,
+      "col": 73,
+      "from": "<",
+      "to": "<=",
+      "text": "const margin   = revenue > 0 ? (profit / revenue) * 100 : (profit < 0 ? -100 : 0);",
+      "sameResult": "This branch is for a revenue of 0 or less, where the margin is never looked at (the thin-margin check needs revenue above 0), so the figure picked here is never used."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 216,
+      "col": 16,
+      "from": ">",
+      "to": ">=",
+      "text": "return ppc > 1 ? parseFloat(item.cartonBuy) / ppc : parseFloat(item.cartonBuy);",
+      "sameResult": "With one piece in a carton, dividing the carton price by 1 gives the carton price, the same as the other side."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 220,
+      "col": 42,
+      "from": ">",
+      "to": ">=",
+      "text": "if (item.buyUnit === 'carton' && ppc > 1) return parseFloat(item.buyPrice) / ppc;",
+      "sameResult": "With one piece in a carton, dividing by 1 gives the buy price, and skipping the line also ends on the buy price (the row line below does not apply to a carton)."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 221,
+      "col": 44,
+      "from": ">",
+      "to": ">=",
+      "text": "if (item.buyUnit === 'row') return ppr > 0 ? parseFloat(item.buyPrice) / ppr : parseFloat(",
+      "sameResult": "The pieces in a row is never exactly 0 here (a 0 or missing figure is turned into 1 earlier), so the two checks agree for every value."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 231,
+      "col": 32,
+      "from": ">",
+      "to": ">=",
+      "text": "if (parseFloat(item.rowSell) > 0 && ppr > 1)    return parseFloat(item.rowSell) / ppr;",
+      "sameResult": "A row price of exactly 0 gives 0 divided by the row size, which is 0, the same as carrying on to the final 0."
+    },
+    {
+      "file": "js/insights-engine.js",
+      "line": 299,
+      "col": 49,
+      "from": ">",
+      "to": ">=",
+      "text": "if (lastSale.get(ln.itemId) == null || ts > lastSale.get(ln.itemId)) lastSale.set(ln.itemI",
+      "sameResult": "When a sale has exactly the same time as the one already kept, saving it again stores the same time."
+    },
+    {
+      "file": "js/pending-overlay.js",
+      "line": 98,
+      "col": 71,
+      "from": "&&",
+      "to": "||",
+      "text": "(writes || []).forEach(w => _add(_byCol, { ...w, payload: w.payload && typeof w.payload ==",
+      "sameResult": "The two sides only differ for a payload that is empty or not an object, and the next step stores a copy of whatever it gets, which comes out the same either way."
+    },
+    {
+      "file": "js/pending-overlay.js",
+      "line": 98,
+      "col": 91,
+      "from": "===",
+      "to": "!==",
+      "text": "(writes || []).forEach(w => _add(_byCol, { ...w, payload: w.payload && typeof w.payload ==",
+      "sameResult": "The next step (_add) copies the payload again before storing it, so whether this line passes on a copy or the original object, the stored record is the same."
     }
   ]
 }
