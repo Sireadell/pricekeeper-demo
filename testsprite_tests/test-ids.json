@@ -408,6 +408,166 @@
     "kind": "browser"
   },
   {
+    "code": "TS46",
+    "id": "9d89161c-f999-45bd-87cd-79c62540760f",
+    "name": "Inventory can be filtered by category",
+    "file": "frontend/TS46_inventory_can_be_filtered_by_category.py",
+    "description": "Adds an item in the Electronics category and checks the Category filter shows it under Electronics and hides it under Beverages.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS47",
+    "id": "aea81f9f-04f7-4937-8658-eefda4ac84d8",
+    "name": "A new selling price is used in the next sale",
+    "file": "frontend/TS47_a_new_selling_price_is_used_in_the_next_sale.py",
+    "description": "Changes an item's selling price from 500 to 750 and checks a new trade charges 750 for one piece, not 500.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS48",
+    "id": "39ac6af8-893b-4f28-a4cf-1360fd796c26",
+    "name": "The receipt shows a line discount and the lower total",
+    "file": "frontend/TS48_the_receipt_shows_a_line_discount_and_the_lower_total.py",
+    "description": "Sells one piece priced 750 with a discount of 100 and checks the receipt shows the subtotal 750, the discount 100 and a total of 650.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS49",
+    "id": "0a0956cd-1fcf-4a24-a3cd-e47f4ea3f2a6",
+    "name": "Paying more than the total shows the change to give",
+    "file": "frontend/TS49_paying_more_than_the_total_shows_the_change_to_give.py",
+    "description": "Starts a 650 sale, types 1,000 as the amount received and checks the payment box shows 350 as the change to give.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS50",
+    "id": "cc4d9e3b-1fe5-412a-92ef-7ef8638973fe",
+    "name": "An item with no pieces left is listed as out of stock",
+    "file": "frontend/TS50_an_item_with_no_pieces_left_is_listed_as_out_of_stock.py",
+    "description": "Adds an item with 0 pieces and checks it is marked Out, shows under the Out chip and is hidden under the In stock chip.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS51",
+    "id": "68b05b3b-a59c-43fb-b5e3-d816b3ae1aa8",
+    "name": "A sale of 1,200 pieces lowers the stock by exactly 1,200",
+    "file": "frontend/TS51_a_sale_of_1_200_pieces_lowers_the_stock_by_exactly_1_200.py",
+    "description": "Adds an item with 5,000 pieces, sells 1,200 in one trade and checks the stock is then 3,800.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS52",
+    "id": "82b3e585-c191-4e0d-a573-e31c23db4346",
+    "name": "Adding an item name that already exists updates it instead of making a copy",
+    "file": "frontend/TS52_adding_an_item_name_that_already_exists_updates_it_instead_o.py",
+    "description": "Adds the same item name twice, first at 500 then at 650, and checks only one item with that name is listed, now at 650.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS53",
+    "id": "cacfdb59-b892-400c-a0af-e7028b2c8c8f",
+    "name": "An item cannot be saved with a buy price of 0",
+    "file": "frontend/TS53_an_item_cannot_be_saved_with_a_buy_price_of_0.py",
+    "description": "Tries to add an item with a buy price of 0 and checks the form refuses it and no item is saved.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS54",
+    "id": "b9f0edfb-61e5-4e48-a288-3556d275931f",
+    "name": "A second customer with the same name is refused",
+    "file": "frontend/TS54_a_second_customer_with_the_same_name_is_refused.py",
+    "description": "Adds a customer, then tries to add another customer with exactly the same name, and checks the second one is refused.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS55",
+    "id": "0577c7fb-a254-489f-a8c6-109a4e5ed5eb",
+    "name": "A customer name longer than 60 characters is refused",
+    "file": "frontend/TS55_a_customer_name_longer_than_60_characters_is_refused.py",
+    "description": "Tries to add a customer with a 76 character name and checks it is refused and not saved.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS56",
+    "id": "3195fb1d-bc63-4e48-89dc-566f72e29d40",
+    "name": "A customer's phone number can be changed",
+    "file": "frontend/TS56_a_customer_s_phone_number_can_be_changed.py",
+    "description": "Adds a customer with one phone number, edits it to another and checks the list shows the new number.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS57",
+    "id": "742df8f3-4c0d-4bb3-b96a-d5c21122589b",
+    "name": "A new customer shows no trades and no credit yet",
+    "file": "frontend/TS57_a_new_customer_shows_no_trades_and_no_credit_yet.py",
+    "description": "Adds a brand new customer, opens them and checks the page says they have no trades and no credit activity.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS58",
+    "id": "d59bad14-9384-4ca2-b8b9-7bb14170b639",
+    "name": "Customers can be found by their phone number",
+    "file": "frontend/TS58_customers_can_be_found_by_their_phone_number.py",
+    "description": "Adds a customer with a unique phone number, finds them by typing that number in the search box, and checks a number nobody has finds no one.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS59",
+    "id": "fe243f60-5fca-40ae-bcf2-2aad0e2c818e",
+    "name": "A new expense appears in the expense list",
+    "file": "frontend/TS59_a_new_expense_appears_in_the_expense_list.py",
+    "description": "Records a 1,250 transport expense with a unique description and checks it is listed with its category and amount.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS60",
+    "id": "66d23d38-ecdb-4b70-8687-ee79e576dc86",
+    "name": "Expenses can be filtered by category",
+    "file": "frontend/TS60_expenses_can_be_filtered_by_category.py",
+    "description": "Records a transport expense and checks the category filter hides it under Electricity and shows it under Transport.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS61",
+    "id": "3da1dbb2-45ae-46ed-8b1f-94f4c9864532",
+    "name": "A new supplier appears in the supplier list",
+    "file": "frontend/TS61_a_new_supplier_appears_in_the_supplier_list.py",
+    "description": "Adds a supplier with a unique name, a location and a phone, and checks the supplier list shows all three.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS62",
+    "id": "93bbddd5-cd94-4ee4-8b87-331ec85b4640",
+    "name": "The app can switch to the light look and back",
+    "file": "frontend/TS62_the_app_can_switch_to_the_light_look_and_back.py",
+    "description": "Uses the account menu to switch the app to the light look, checks the menu then offers the dark look, and switches back.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS63",
+    "id": "1561d696-6485-4231-8202-9aad1014ae0a",
+    "name": "The privacy switch hides profit and stock value on the dashboard",
+    "file": "frontend/TS63_the_privacy_switch_hides_profit_and_stock_value_on_the_dashb.py",
+    "description": "Turns on the PRIVACY switch and checks the dashboard hides the PROFIT and STOCK VALUE cards, then turns it off and checks they come back.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS64",
+    "id": "ec1c1770-90e7-44f3-82fd-c49715f064c2",
+    "name": "The trade history status filter separates credit and paid sales",
+    "file": "frontend/TS64_the_trade_history_status_filter_separates_credit_and_paid_sa.py",
+    "description": "Sells one item fully on credit, finds that trade in the trade history and checks it shows under the Credit filter and not under the Paid filter.",
+    "kind": "browser"
+  },
+  {
+    "code": "TS65",
+    "id": "fa9fd2c2-8d30-411e-b7b5-9b6e16d9e9af",
+    "name": "The app can be installed on a phone",
+    "file": "frontend/TS65_the_app_can_be_installed_on_a_phone.py",
+    "description": "Opens the app's install file and checks it names the app PriceKeeper, opens full screen from the home page and has an icon.",
+    "kind": "browser"
+  },
+  {
     "code": "B07",
     "id": "6d0ef033-aa20-4a95-a883-f070853a26ee",
     "name": "Server: a stranger cannot record a sale",
