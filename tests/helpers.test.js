@@ -13,7 +13,7 @@ globalThis.localStorage = {
 beforeEach(() => store.clear());
 
 const {
-  csvCell, escapeHtml, unitShort, daysAgo, isoDate, fmt, safe, getAppSetting, setAppSetting,
+  csvCell, escapeHtml, unitShort, daysAgo, isoDate, fmt, safe, getAppSetting, setAppSetting, itemNeedsStock,
 } = await import('../js/utils.js');
 
 test('spreadsheet cells are quoted and cannot run as formulas', () => {
@@ -76,4 +76,16 @@ test('saved settings: default, round trip, and damaged data falls back', () => {
   assert.equal(getAppSetting('other', 7), 7);
   localStorage.setItem('pkSettings', '{broken');
   assert.equal(getAppSetting('theme', 'light'), 'light');
+});
+
+test('an item needs its stock set up only when it is tracked and has no count yet', () => {
+  assert.equal(itemNeedsStock(null), false);
+  assert.equal(itemNeedsStock(undefined), false);
+  assert.equal(itemNeedsStock({ trackStock: true }), true);
+  assert.equal(itemNeedsStock({ trackStock: true, stockQty: null }), true);
+  assert.equal(itemNeedsStock({ trackStock: true, stockQty: 0 }), false);
+  assert.equal(itemNeedsStock({ trackStock: true, stockQty: 5 }), false);
+  assert.equal(itemNeedsStock({ trackStock: false, stockQty: null }), false);
+  assert.equal(itemNeedsStock({ trackStock: 'yes' }), false);
+  assert.equal(itemNeedsStock({ stockQty: null }), false);
 });

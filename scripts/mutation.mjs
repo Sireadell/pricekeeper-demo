@@ -5,14 +5,36 @@
 // means a test is missing, unless it is listed in SAME_RESULT below: a change
 // shown to give exactly the same answer for every input, so no test can
 // catch it. Those still count as survived, marked with the reason.
-// Run: node scripts/mutation.mjs [file ...]   (default: the three maths files)
+// Run: node scripts/mutation.mjs [file ...]   (default: every file listed below)
 // No packages needed. The original file is always put back.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
 const FILES = process.argv.slice(2).length
   ? process.argv.slice(2)
-  : ['js/sale-derive.js', 'js/inventory-math.js', 'js/ledger.js'];
+  : ['js/sale-derive.js', 'js/inventory-math.js', 'js/ledger.js', 'js/insights-engine.js', 'js/utils.js', 'js/pending-overlay.js'];
+
+// Some files mix maths with screen code (pop-ups, buttons) that no unit test
+// reaches. For those, only the listed stretches are changed: each pair is the
+// text that starts a stretch and the text that ends it (the end is not
+// included). A file not listed here is changed everywhere.
+const SCOPE = {
+  'js/utils.js': [
+    ['export const fmt =', 'export function askConfirm'],
+    ['export const today =', 'export function openModal'],
+    ['export function findBorrowerByName', 'export function safe'],
+    ['export const lowStockPct', 'export function getAppSetting'],
+    ['export function daysAgo', 'export const CSV_BOM'],
+  ],
+  // The waiting-saves list and how it is laid over the database copy. Not the
+  // parts that read the phone's store or touch the page (refreshPending,
+  // _clearSentFlags): no unit test reaches those.
+  'js/pending-overlay.js': [
+    ['function _add', 'async function _activeUid'],
+    ['export function hasPending', "window.addEventListener('pkOfflineWrite'"],
+    ['export function notePending', null],
+  ],
+};
 
 const SWAPS = [
   ['>=', '>'], ['<=', '<'], ['>', '>='], ['<', '<='],
@@ -37,10 +59,28 @@ const SAME_RESULT = [
     why: 'The gap is never 0 here (it is at least one naira), so both versions pick the same side.' },
   { file: 'js/ledger.js', from: '>', to: '>=', text: "name: diff > 0 ? 'Opening balance · no trade' : 'Opening balance · held for them',",
     why: 'The gap is never 0 here (it is at least one naira), so both versions pick the same name.' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: 'const margin   = revenue > 0 ? (profit / revenue) * 100 : (profit < 0 ? -100 : 0);',
+    why: 'The margin is only looked at when the revenue is above 0 (the thin-margin check needs that), so what it is worked out as for a revenue of exactly 0 is never used.' },
+  { file: 'js/insights-engine.js', from: '<', to: '<=', text: 'const margin   = revenue > 0 ? (profit / revenue) * 100 : (profit < 0 ? -100 : 0);',
+    why: 'This branch is for a revenue of 0 or less, where the margin is never looked at (the thin-margin check needs revenue above 0), so the figure picked here is never used.' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: 'return ppc > 1 ? parseFloat(item.cartonBuy) / ppc : parseFloat(item.cartonBuy);',
+    why: 'With one piece in a carton, dividing the carton price by 1 gives the carton price, the same as the other side.' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: "if (item.buyUnit === 'carton' && ppc > 1) return parseFloat(item.buyPrice) / ppc;",
+    why: 'With one piece in a carton, dividing by 1 gives the buy price, and skipping the line also ends on the buy price (the row line below does not apply to a carton).' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: "if (item.buyUnit === 'row') return ppr > 0 ? parseFloat(item.buyPrice) / ppr : parseFloat(item.buyPrice);",
+    why: 'The pieces in a row is never exactly 0 here (a 0 or missing figure is turned into 1 earlier), so the two checks agree for every value.' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: 'if (parseFloat(item.rowSell) > 0 && ppr > 1)    return parseFloat(item.rowSell) / ppr;',
+    why: 'A row price of exactly 0 gives 0 divided by the row size, which is 0, the same as carrying on to the final 0.' },
+  { file: 'js/insights-engine.js', from: '>', to: '>=', text: 'if (lastSale.get(ln.itemId) == null || ts > lastSale.get(ln.itemId)) lastSale.set(ln.itemId, ts);',
+    why: 'When a sale has exactly the same time as the one already kept, saving it again stores the same time.' },
+  { file: 'js/pending-overlay.js', from: '&&', to: '||', text: "(writes || []).forEach(w => _add(_byCol, { ...w, payload: w.payload && typeof w.payload === 'object' ? { ...w.payload } : w.payload }));",
+    why: 'The two sides only differ for a payload that is empty or not an object, and the next step stores a copy of whatever it gets, which comes out the same either way.' },
+  { file: 'js/pending-overlay.js', from: '===', to: '!==', text: "(writes || []).forEach(w => _add(_byCol, { ...w, payload: w.payload && typeof w.payload === 'object' ? { ...w.payload } : w.payload }));",
+    why: 'The next step (_add) copies the payload again before storing it, so whether this line passes on a copy or the original object, the stored record is the same.' },
 ];
 
 // Find every place a swap can be made, skipping comments and strings.
-function sites(src) {
+function sites(src, ranges) {
   const out = [];
   let i = 0, line = 1;
   while (i < src.length) {
@@ -54,6 +94,7 @@ function sites(src) {
       while (i < src.length && src[i] !== q) { if (src[i] === '\\') i++; if (src[i] === '\n') line++; i++; }
       i++; continue;
     }
+    if (ranges && !ranges.some(([a, b]) => i >= a && i < b)) { i++; continue; }
     for (const [from, to] of SWAPS) {
       if (!src.startsWith(from, i)) continue;
       const before = src[i - 1] || ' ', after = src[i + from.length] || ' ';
@@ -83,7 +124,12 @@ const report = [];
 let killed = 0, survived = 0;
 for (const file of FILES) {
   const original = readFileSync(file, 'utf8');
-  const list = sites(original);
+  const ranges = SCOPE[file] && SCOPE[file].map(([a, b]) => {
+    const from = original.indexOf(a), to = b ? original.indexOf(b, from) : -1;
+    if (from < 0) throw new Error(`SCOPE start not found in ${file}: ${a}`);
+    return [from, to < 0 ? original.length : to];
+  });
+  const list = sites(original, ranges);
   let k = 0, s = 0;
   console.log(`${file}: ${list.length} changes to try`);
   try {
@@ -114,4 +160,4 @@ const scoreOfCatchable = canBeCaught ? Math.round((killed / canBeCaught) * 1000)
 console.log(`\nMutation score: ${score}% (${killed} killed of ${total})`);
 console.log(`Of the ${canBeCaught} changes that alter a result, ${killed} are caught (${scoreOfCatchable}%). ${sameResult} give the same result for every input.`);
 mkdirSync('docs', { recursive: true });
-writeFileSync('docs/mutation.json', JSON.stringify({ score, killed, survived, total, sameResult, canBeCaught, scoreOfCatchable, survivors: report }, null, 2) + '\n');
+writeFileSync(process.env.MUTATION_OUT || 'docs/mutation.json', JSON.stringify({ score, killed, survived, total, sameResult, canBeCaught, scoreOfCatchable, survivors: report }, null, 2) + '\n');
