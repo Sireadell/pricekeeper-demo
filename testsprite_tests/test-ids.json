@@ -68,7 +68,7 @@
     "id": "f7c018ed-0617-4211-9fa7-845fecb4357d",
     "name": "A sale with zero pieces is not allowed",
     "file": "frontend/TS09_a_sale_with_zero_pieces_is_not_allowed.py",
-    "description": "Validates that a trade cannot be completed with a quantity of zero.",
+    "description": "Validates that a trade cannot be completed with a quantity of zero. Add a new item with 10 pieces, put it in a new trade and try to make the quantity 0, by typing 0 or pressing the minus button. The app is correct if ANY of these happens: a message refuses 0, the quantity stays at 1 and will not go below 1, or the item is removed from the cart. In every case no sale for 0 pieces is saved and the item still shows 10 pcs in Inventory. Seeing the quantity stuck at 1 and the item still at 10 pcs is a PASS, not a failure. Do not complete a sale of 1 piece.",
     "kind": "browser"
   },
   {
