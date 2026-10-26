@@ -47,12 +47,25 @@ jobs:
       - name: Browser tests on the live site
         id: browser
         continue-on-error: true
-        run: testsprite test run ${{ steps.ids.outputs.browser }} --target-url "$LIVE_URL" --wait --summary-file daily-browser.json --gh-output
+        # TestSprite takes one test per command here, so loop over them.
+        run: |
+          failed=0
+          n=0
+          for id in ${{ steps.ids.outputs.browser }}; do
+            n=$((n+1))
+            testsprite test run "$id" --target-url "$LIVE_URL" --wait --summary-file "daily-browser-$n.json" --gh-output || failed=1
+          done
+          exit $failed
       - name: Server test on the live database
         id: server
         if: steps.ids.outputs.server != ''
         continue-on-error: true
-        run: testsprite test run ${{ steps.ids.outputs.server }} --wait --summary-file daily-server.json --gh-output
+        # One retry after a pause, in case the first try hits a rate limit.
+        run: |
+          testsprite test run ${{ steps.ids.outputs.server }} --wait --summary-file daily-server.json --gh-output || {
+            sleep 90
+            testsprite test run ${{ steps.ids.outputs.server }} --wait --summary-file daily-server.json --gh-output
+          }
       - name: Open, update or close the issue
         env:
           SHA: ${{ github.sha }}
