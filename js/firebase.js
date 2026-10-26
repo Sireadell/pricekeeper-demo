@@ -30,12 +30,12 @@ import {
 // ── PASTE YOUR CONFIG HERE ───────────────────────────────────
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCAQa_uqAfUbhE6pDtIGOqBeEoc6fDfXdU",
-  authDomain: "pricekeeper-demo.firebaseapp.com",
-  projectId: "pricekeeper-demo",
-  storageBucket: "pricekeeper-demo.firebasestorage.app",
-  messagingSenderId: "4655239573",
-  appId: "1:4655239573:web:e906b916c21e922333269c"
+  apiKey: "AIzaSyA9TNeVrXMwP7irTeR1UkqvLQcFXmmabag",
+  authDomain: "pricekeeper-demo-2.firebaseapp.com",
+  projectId: "pricekeeper-demo-2",
+  storageBucket: "pricekeeper-demo-2.firebasestorage.app",
+  messagingSenderId: "1078259047859",
+  appId: "1:1078259047859:web:4ff251940cc9ab97c5ffc6"
 };
 // ─────────────────────────────────────────────────────────────
 

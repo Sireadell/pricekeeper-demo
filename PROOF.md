@@ -109,7 +109,7 @@ This was the first time the void test caught a real fault.
 
 ## Unit tests: the money maths, checked on every push
 
-Next to the 45 TestSprite browser tests, there are now 85 small unit tests in the `tests/` folder. There were 64 when I did the open break below. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
+Next to the 45 TestSprite browser tests, there are now 90 small unit tests in the `tests/` folder. There were 64 when I did the open break below. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
 
 They run on Node's built-in test runner, with no packages to install. A GitHub Action called "Unit tests" runs them on every push and pull request and finishes in seconds. They cost nothing to run, and they pass in four time zones: UTC, Lagos, Los Angeles and Auckland.
 
@@ -135,7 +135,7 @@ Average cost is what every price and profit figure in the app starts from, so th
 | Average cost | 320 | All agree with the app |
 | Stock conversion | 40 | All agree with the app |
 
-The unit tests are now 85, up from 82. The mutation score didn't change: 138 changes, 132 caught, 95.7 percent.
+The unit tests are now 90. The mutation score is 138 changes, 133 caught, 96.4 percent.
 
 ## What the unit tests do not cover
 

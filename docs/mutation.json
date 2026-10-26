@@ -1,50 +1,56 @@
 {
-  "score": 95.7,
-  "killed": 132,
-  "survived": 6,
+  "score": 96.4,
+  "killed": 133,
+  "survived": 5,
   "total": 138,
+  "sameResult": 5,
+  "canBeCaught": 133,
+  "scoreOfCatchable": 100,
   "survivors": [
-    {
-      "file": "js/inventory-math.js",
-      "line": 84,
-      "from": ">",
-      "to": ">=",
-      "text": "const wacPc = (addPricePerUnit > 0 && oldPcs > 0 && oldBuyPc > 0)"
-    },
     {
       "file": "js/ledger.js",
       "line": 104,
+      "col": 14,
       "from": "<=",
       "to": "<",
-      "text": "if (left <= 0) break;"
+      "text": "if (left <= 0) break;",
+      "sameResult": "When exactly 0 is left the loop goes on, but every later payment is then 0 and the next line skips it, so nothing is paid differently."
     },
     {
       "file": "js/ledger.js",
       "line": 106,
+      "col": 13,
       "from": "<=",
       "to": "<",
-      "text": "if (pay <= 0) continue;"
+      "text": "if (pay <= 0) continue;",
+      "sameResult": "A payment can only be 0 when nothing is left, and the line above has already stopped the loop by then. Every trade in the list owes at least 0.01."
     },
     {
       "file": "js/ledger.js",
       "line": 136,
+      "col": 59,
       "from": ">=",
       "to": ">",
-      "text": "if (!matches && choice === 'business' && Math.abs(diff) >= 0.01) {"
+      "text": "if (!matches && choice === 'business' && Math.abs(diff) >= 0.01) {",
+      "sameResult": "This only runs when the two totals do not match, which means the gap is at least one naira, so the 0.01 check passes either way."
     },
     {
       "file": "js/ledger.js",
       "line": 140,
+      "col": 20,
       "from": ">",
       "to": ">=",
-      "text": "bucket: diff > 0 ? 'noTrade' : 'held',"
+      "text": "bucket: diff > 0 ? 'noTrade' : 'held',",
+      "sameResult": "The gap is never 0 here (it is at least one naira), so both versions pick the same side."
     },
     {
       "file": "js/ledger.js",
       "line": 141,
+      "col": 18,
       "from": ">",
       "to": ">=",
-      "text": "name: diff > 0 ? 'Opening balance · no trade' : 'Opening balance · held for them',"
+      "text": "name: diff > 0 ? 'Opening balance · no trade' : 'Opening balance · held for them',",
+      "sameResult": "The gap is never 0 here (it is at least one naira), so both versions pick the same name."
     }
   ]
 }

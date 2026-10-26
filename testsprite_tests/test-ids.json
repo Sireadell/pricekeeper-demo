@@ -116,7 +116,7 @@
     "id": "cfca45d4-c140-44d9-b6a2-383cac0cfa5d",
     "name": "Dashboard numbers read cleanly",
     "file": "frontend/TS15_dashboard_numbers_read_cleanly.py",
-    "description": "Validates that no screen shows broken numbers or raw code text, and that every change figure reads like +5%, -5% or 0%.",
+    "description": "Validates that no screen shows broken numbers or raw code text. Every change figure shows a real number, either a percentage like +5%, -5% or 0%, or a count like +3 this month. Both formats are correct.",
     "kind": "browser"
   },
   {
@@ -204,7 +204,7 @@
     "id": "23c4ea95-b2ad-4606-9f02-56779637d00e",
     "name": "Record a customer repayment",
     "file": "frontend/TS26_record_a_customer_repayment.py",
-    "description": "Validates that an admin staff member can record a repayment against an existing customer balance.",
+    "description": "Validates that an admin staff member can record a repayment against an existing customer balance. Ada must owe at least 200 before the payment is saved; if her balance did not rise by 200 after the credit sale, the sale was not completed and must be completed first. The repayment must never be more than she owes.",
     "kind": "browser"
   },
   {
