@@ -12,7 +12,7 @@
     "id": "5730e0a5-cce8-4c1b-bbd5-f87cd485146d",
     "name": "A debt can be paid off in full",
     "file": "frontend/TS02_a_debt_can_be_paid_off_in_full.py",
-    "description": "Validates that a customer can pay back a credit sale in full and the sale then no longer shows as unpaid.",
+    "description": "Validates that a customer can pay back a credit sale in full and the sale then no longer shows as unpaid. Add a new item, sell it on credit with Amount received 0, and note the sale number on the receipt. Then record a payment equal to that sale on the customer's page. The app shows that the amount was applied and the sale is fully cleared, and the customer's owed amount drops by that amount. That message plus the lower owed amount is the proof. If you also open Trade history, type the sale number into its search box first, because the full list is long and the sale may not be in the first rows.",
     "kind": "browser"
   },
   {
@@ -100,7 +100,7 @@
     "id": "526db76d-fae8-480d-b737-2f3de42b62ae",
     "name": "An item name with HTML code shows as plain text on the receipt",
     "file": "frontend/TS13_an_item_name_with_html_code_shows_as_plain_text_on_the_recei.py",
-    "description": "Validates that special characters in an item name are shown as text and are never run as code.",
+    "description": "Validates that special characters in an item name are shown as text and are never run as code. Sign in with the saved staff login and type the four PIN digits one at a time, each into its own box. If the message Wrong PIN shows, wait 5 seconds, clear the boxes, type the digits again and press Log in once more before doing anything else.",
     "kind": "browser"
   },
   {
@@ -404,7 +404,7 @@
     "id": "78021317-e2c3-45d0-8180-7ed8f217fd3e",
     "name": "Voiding a sale puts the pieces back in stock",
     "file": "frontend/TS45_voiding_a_sale_puts_the_pieces_back_in_stock.py",
-    "description": "Adds an item with 20 pieces, sells 5 (stock 15), voids that sale with a reason, and checks the stock is back to 20. The item name is made up once, when the item is added: Void Check Item plus eight digits. Every later step types that same name, digit for digit. Never make up new digits after the item is added, or the search finds a different item.",
+    "description": "Adds an item with 20 pieces, sells 5, voids that sale with a reason, and checks the stock is back to 20. The item name is made up once, when the item is added: Void Check Item plus eight digits. Every later step types that same name, digit for digit. Never make up new digits after the item is added, or the search finds a different item. After the sale completes and before the void, open Inventory, type the item name in the search box and read the row: it must show 15 pcs. Say out loud that you saw 15 pcs. Then void the sale with a reason, open Inventory again and check the row shows 20 pcs.",
     "kind": "browser"
   },
   {
