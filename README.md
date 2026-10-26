@@ -6,9 +6,9 @@ PriceKeeper is a stock and sales app for market traders in Nigeria that keeps wo
 
 I built it because market signal comes and goes all day, and a trader can't stop selling and wait for it.
 
-On one pull request, TestSprite caught five problems I didn't know were there. One was in the offline part: a sale made with no signal disappeared from the screen when the app was closed and opened again. All five are fixed, and the last run passed 43 of 43.
+On one pull request, TestSprite caught five problems I didn't know were there. One was in the offline part: a sale made with no signal disappeared from the screen when the app was closed and opened again. All five are fixed, and the last run on that pull request passed 43 of 43.
 
-There was a worse hole in the database rules: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself. I wrote six break-in checks and ran them against the live database: two failed before the fix, and all six pass now.
+There was a worse hole in the database rules: anyone who knew a staff name could get into the shop without the PIN. The database now checks the PIN itself. I wrote six break-in checks and ran them against the live database: two failed before the fix, and all six passed after it.
 
 Live demo: https://pricekeeper-demo.web.app
 
@@ -22,7 +22,7 @@ Built for TestSprite Hackathon Season 4, Project Track.
 |---|---|---|
 | Project quality (40) | https://pricekeeper-demo.web.app, sign in as `robot` / `4821` | Turn the network off and make a sale. It goes through, waits with an hourglass, and sends when the signal is back. |
 | Tests that run themselves (40): browser | [PR #21, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #21 passed all 45. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
-| Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. 20 pull requests and 58 TestSprite runs so far. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. |
+| Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. When it was last built it held 21 pull requests and 60 TestSprite runs. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. Pull request #23 shows as open, because the ledger was built before it merged. |
 | Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 12 server tests (B01 to B12) go straight to the live database, skipping the app's screens. They run through the TestSprite command line after a merge. On Oct 24 that run passed 12 of 12. The three runs on Oct 25 passed 1 of 12 and each stopped within seconds. Each of those stopped on a 429 from the database: the free plan's daily read limit had run out after a day of test runs. The first six were also run by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
 | Tests that run themselves (40): maths | `npm test` | 85 unit tests run on every pull request. One of them, [`tests/oracle.test.js`](tests/oracle.test.js), works out the money a second, separate way, in whole kobo and exact fractions, and checks the app against it. It walks 4,920 mixes of trade totals and payment lists (payments, refunds, removed payments), 320 average-cost cases and 40 stock-conversion cases. All agree with the app. |
 | How good the tests are | `node scripts/mutation.mjs` | It makes 138 one-change versions of the three money-maths files and checks the tests notice. They catch 132, which is 95.7 percent. The 6 left can't change any result. Saved in [docs/mutation.json](docs/mutation.json). |
@@ -45,7 +45,7 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 
 **Built, has not run yet:** self-fix.
 
-**Morning check on the live site:** built, and it has run, but it does not pass yet. On its last run one browser test passed, two were blocked by out-of-date saved test scripts, and the server test was refused with a quota error. It opened a GitHub issue by itself, which is the part that works. I am not counting it as a working check.
+**Morning check on the live site:** built, and it has run three times, but it hasn't passed yet. On its last run one browser test passed, two were blocked by out-of-date saved test scripts, and the server test hit the database's daily read limit. Each failure opened a GitHub issue, as designed. I am not counting it as a working check.
 
 ## Receipts
 
@@ -53,7 +53,7 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 |---|---|---|
 | Browser tests saved in TestSprite | 45 | [Last run: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) |
 | Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
-| Server tests in TestSprite that go straight to the database: 2 failed before the PIN fix, all 6 pass now | 6 | [Testing the database](#testing-the-database) |
+| Server tests in TestSprite that go straight to the database: 2 failed before the PIN fix, all 6 passed after it | 6 | [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
 | Browser tests set to run on the live site every morning: built, not passing yet | 3 | [What runs on its own](#what-runs-on-its-own) |
 | Bugs planted on throwaway pull requests #15 to #20, and how many a clean solo run caught | 6 planted, 2 caught on a clean run | [Breaks I made on purpose](#breaks-i-made-on-purpose) |
@@ -80,7 +80,7 @@ Pull request #10 started with a bug I planted on purpose: the receipt showed a s
 
 Staff sign in with a name and a 4-digit PIN. The page checked the PIN, but the database never did. So someone who skipped the page and talked to the database directly could open a staff session with just a name.
 
-The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on a copy of the database on my own computer pass. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
+The fix is in `firestore.rules`: the database itself now turns away a session unless it comes with the right PIN. Seven checks on a copy of the database pass, on my own computer and on every pull request. Six try to break in, and one makes sure the right PIN still opens a session and a wrong one doesn't.
 
 Then I saved the six break-in checks as TestSprite server tests and ran them against the live database, before the fix went live. Four passed and two failed: a stranger with only the name `robot` became staff, and the staff record handed out the stored PIN fingerprint. After the fix went live, all six passed. [Red run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/4f8055ac-db58-4b59-a9a4-d639438b6111), [green run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/5e34a933-0590-46a9-8d11-45f18ba5bda8).
 
@@ -145,7 +145,7 @@ Each sale test makes its own item with a new name, so it doesn't depend on what'
 
 ## Testing the database
 
-The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. They live in TestSprite as server tests. Against the live database, four passed and two failed before the fix, and all six pass now. On a copy of the database, the same six pass, along with a seventh that makes sure the right PIN still works.
+The browser tests see the app the way a cashier does. These checks skip the page and send requests straight to the database, the way someone trying to break in would. They live in TestSprite as server tests. Against the live database, four passed and two failed before the fix, and all six passed after it. On a copy of the database, the same six pass, along with a seventh that makes sure the right PIN still works.
 
 | Test | What it tries |
 |---|---|
@@ -156,16 +156,16 @@ The browser tests see the app the way a cashier does. These checks skip the page
 | No PIN | Open a staff session with a real staff name but no PIN |
 | Fingerprint | Read the stored PIN fingerprint |
 
-The plan from here: on every pull request, a "database rules" check runs the same checks against a copy of the database on GitHub's own machine, so they cost nothing and touch no real data. Once a change is merged, TestSprite runs them as server tests against the live database. The GitHub check runs on every pull request.
+On every pull request, a "database rules" check runs the same six checks, plus the right-PIN check, against a copy of the database on GitHub's own machine. That costs nothing and touches no real data. A pull request can't have its own live rules, because the database has one set for the whole project. So once a change is merged, TestSprite runs the server tests against the live database.
 
 ## What runs on its own
 
 | When | What happens | Has it run yet? |
 |---|---|---|
-| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 85 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for all three. The database rules check has passed on every pull request since #12. |
+| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 85 unit tests run next to it. A "database rules" check runs the break-in checks on a copy of the database beside them. | Yes for all three. The database rules check has passed on every pull request since #12. |
 | A test fails | A comment appears on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Yes. It appeared on all six planted-bug pull requests (#15 to #20) and on the re-runs. |
-| After every merge | TestSprite is set up to run the twelve server tests against the live database. | Ran after a merge on Oct 24: 12 of 12 passed (all twelve server tests, not just the first six). The three Oct 25 runs passed 1 of 12 and stopped within seconds, because the database's free daily read limit had run out. |
-| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Built. It has run three times and failed each time, and the failure opened an issue as designed. Last run: 1 of 3 browser tests passed, 2 blocked by out-of-date saved scripts, and the server test hit a quota error. Not working yet. |
+| After every merge | TestSprite runs the twelve server tests against the live database. | Ran after a merge on Oct 24: 12 of 12 passed (all twelve server tests, not just the first six). The three Oct 25 runs passed 1 of 12 and stopped within seconds, because the database's free daily read limit had run out. |
+| Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Built. It has run three times and failed each time, and the failure opened an issue as designed. Last run: 1 of 3 browser tests passed, 2 blocked by out-of-date saved scripts, and the server test hit the database's daily read limit. Not working yet. |
 | On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Built, has not run yet |
 
 ## What it does
@@ -187,7 +187,7 @@ It runs in the phone browser and installs like an app. It's plain JavaScript on 
 2. GitHub builds a preview copy of the app.
 3. TestSprite runs all 45 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
 4. At the same time, the "maths" check runs 85 unit tests in a few seconds.
-5. A third check, "database rules", is set up to run the database checks against a copy of the database. It runs on every pull request.
+5. A third check, "database rules", runs the database checks against a copy of the database.
 6. I merge once the checks pass. Since 2026-10-25 GitHub won't let me merge without them, admin included: "TestSprite V3" and "maths" are required checks on main.
 
 The browser tests click through the app like a cashier would: selling, selling on credit, part payments, voids, receipts, stock alerts, staff login, wrong PINs and the three offline tests.
@@ -231,7 +231,7 @@ None of these six was merged. They show as red in [LOOP.md](LOOP.md).
 - **Early on, it missed two of my planted bugs.** On pull request #2, a void that no longer put stock back. On pull request #10, a receipt that showed a credit sale as paid in full. I wrote tests for both. The void bug was caught on a clean solo run on #15. The receipt bug has only one shared run on #16, not a clean one. See [PROOF.md](PROOF.md).
 - **Only two of the six later planted bugs have a clean catch.** Three of them (#17, #18, #19) are unclear, and I claim nothing about them.
 - **Stock after a sale needs the live database,** so the unit tests don't cover it. The browser tests do.
-- **The database checks aren't in TestSprite yet.** Today they run on a copy of the database on my own computer. The plan is TestSprite server tests after a merge, not on the pull request, because the database has one set of rules for the whole project, so a pull request can't have its own.
+- **The database is on a free plan with a daily read limit.** On Oct 25 it ran out after a day of test runs, and three server test runs stopped at 1 of 12. The run on Oct 24 passed 12 of 12.
 - **Self-fix hasn't run yet.** It's built and in the repo.
 - **The morning check on the live site:** it does not pass yet, so it is not a safety net. It runs, it fails, and it reports the failure, but I have not got a clean green morning run.
 - **Self-fix proposes, it doesn't decide.** Its change still has to pass every check, and I read it before I merge.
