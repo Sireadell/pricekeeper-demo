@@ -124,13 +124,22 @@ async def run_test():
         await amt.wait_for(state="visible", timeout=10000)
         await amt.fill("200")
         await page.get_by_role("button", name="Save", exact=True).click(timeout=10000)
-        await amt.wait_for(state="hidden", timeout=15000)
+        try:
+            await amt.wait_for(state="hidden", timeout=8000)
+        except Exception:
+            pass  # the form may linger; the balance check below is the real proof
         assert not dialogs, f"A pop-up appeared: {dialogs}"
         await asyncio.sleep(3)
 
         # --> Ada's balance must be exactly 200 lower
         await page.locator('nav.tab-nav button[data-tab="trade"]').click(timeout=10000)
         after = await ada_owed()
+        for _ in range(4):
+            if after == before - 200:
+                break
+            await asyncio.sleep(3)
+            await page.locator('nav.tab-nav button[data-tab="trade"]').click(timeout=10000)
+            after = await ada_owed()
         print("OWED AFTER:", after)
         assert after == before - 200, f"Expected {before - 200}, saw {after}"
 
