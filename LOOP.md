@@ -3,7 +3,7 @@
 Every pull request, every commit on it, and the result the TestSprite V3 check posted for that commit.
 Generated from the GitHub API by `scripts/loop-ledger.mjs`, so nothing here is typed by hand.
 
-20 pull requests · 58 TestSprite runs · 49 red · 9 green
+21 pull requests · 60 TestSprite runs · 51 red · 9 green
 
 ## Red, then green
 
@@ -179,7 +179,7 @@ merged 2026-10-25 · [pull request](https://github.com/Sireadell/pricekeeper-dem
 
 ### #15 Planted bug: voiding a sale no longer puts the stock back
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/15)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/15)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -188,7 +188,7 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/15)
 
 ### #16 Planted bug: receipt shows a credit sale as paid in full
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/16)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/16)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -196,7 +196,7 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/16)
 
 ### #17 Planted bug: a sale with several items only takes stock for the first
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/17)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/17)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -204,7 +204,7 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/17)
 
 ### #18 Planted bug: an item at exactly its low-stock level is not flagged low
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/18)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/18)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -212,7 +212,7 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/18)
 
 ### #19 Planted bug: a repayment bigger than the debt is counted in full
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/19)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/19)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -220,7 +220,7 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/19)
 
 ### #20 Planted bug: a minus amount received counts as money received
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/20)
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/20)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -234,6 +234,15 @@ merged 2026-10-25 · [pull request](https://github.com/Sireadell/pricekeeper-dem
 | Commit | TestSprite V3 | Run |
 |---|---|---|
 | [4f238b0](https://github.com/Sireadell/pricekeeper-demo/commit/4f238b0db757a834a9694d89dd194a26c9c9c119) Fix the morning check: run browser tests one at a time and retry the server test once | All 45 tests passed | [d6eab849](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) |
+
+### #23 Independent check of the money maths, and an honest account of the planted-bug study
+
+open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/23)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [b3807d4](https://github.com/Sireadell/pricekeeper-demo/commit/b3807d4fb8cb1786bc577bda24d4622fc2677a93) Add an independent check of the money maths and update the proof pages | 43/45 passed · 1 failed · 1 blocked | [fbb211fd](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/fbb211fd-95dc-4832-973f-9939742cdb61) |
+| [52818a4](https://github.com/Sireadell/pricekeeper-demo/commit/52818a4453e55ab5c11fbc0b52267bd4b7956948) Run the browser checks again | 44/45 passed · 1 blocked | [0f85ad28](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/0f85ad28-d350-4915-864e-21c123af4584) |
 
 ### Pushed to main without a pull request
 
