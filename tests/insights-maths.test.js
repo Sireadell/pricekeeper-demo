@@ -197,6 +197,38 @@ test('dead stock: the biggest pile of trapped money comes first', () => {
   assert.deepEqual(deadStock([], items, { now: NOW }).map(r => r.itemId), ['big', 'small']);
 });
 
+test('dead stock: an item priced only per carton or per row gets a per-piece clearance price', () => {
+  const [carton] = deadStock([], [tracked({ sell: 0, cartonSell: 1800, piecesPerCarton: 12 })], { now: NOW });
+  assert.equal(carton.currentSell, 150);
+  assert.equal(carton.suggestedSell, 120);
+  const [row] = deadStock([], [tracked({ sell: 0, rowSell: 900, piecesPerRow: 6 })], { now: NOW });
+  assert.equal(row.currentSell, 150);
+  assert.equal(row.suggestedSell, 120);
+});
+
+test('dead stock: an old item with no stock unit and a carton price is counted in cartons', () => {
+  const item = tracked({
+    stockUnit: undefined, buyUnit: undefined, stockQty: 2,
+    sell: 0, cartonSell: 2400, piecesPerCarton: 24, buyPrice: 50,
+  });
+  const [r] = deadStock([], [item], { now: NOW });
+  assert.equal(r.buyUnit, 'carton');
+  assert.equal(r.moneyTrapped, 2 * 24 * 50);
+  assert.equal(r.currentSell, 100);
+  assert.equal(r.suggestedSell, 80);
+});
+
+test('dead stock: the date an item was added sets how long it has been idle', () => {
+  const fresh = tracked({ id: 'fresh', createdTs: undefined, addedDate: '2026-07-22' });
+  const old = tracked({ id: 'old', createdTs: undefined, addedDate: '2026-04-23' });
+  const unreadable = tracked({ id: 'unreadable', createdTs: undefined, addedDate: 'not a date' });
+  const out = deadStock([], [fresh, old, unreadable], { now: NOW });
+  assert.deepEqual(out.map(r => r.itemId).sort(), ['old', 'unreadable']);
+  assert.equal(out.find(r => r.itemId === 'old').daysIdle, 100);
+  // no usable date: still listed, with no idle-day count shown
+  assert.equal(out.find(r => r.itemId === 'unreadable').daysIdle, null);
+});
+
 test('best supplier: newest price per supplier, compared per piece', () => {
   const item = { id: 'i1', name: 'Rice', piecesPerCarton: 24 };
   const suppliers = [
