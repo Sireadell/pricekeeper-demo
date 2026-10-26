@@ -3,7 +3,7 @@
 Every pull request, every commit on it, and the result the TestSprite V3 check posted for that commit.
 Generated from the GitHub API by `scripts/loop-ledger.mjs`, so nothing here is typed by hand.
 
-12 pull requests · 47 TestSprite runs · 40 red · 7 green
+21 pull requests · 60 TestSprite runs · 51 red · 9 green
 
 ## Red, then green
 
@@ -16,6 +16,7 @@ Pull requests where TestSprite failed a commit and a later commit on the same pu
 | [#6](https://github.com/Sireadell/pricekeeper-demo/pull/6) Count each sale's stock twice | [faf7639](https://github.com/Sireadell/pricekeeper-demo/commit/faf763910dd2e44e8fa0b2cfabbd53b5a518ad42) | 21/24 passed · 3 failed | [536c1bf](https://github.com/Sireadell/pricekeeper-demo/commit/536c1bfb9e855c0ee8d86aed59583d5102f33184) | All 24 tests passed |
 | [#10](https://github.com/Sireadell/pricekeeper-demo/pull/10) Planted bug: receipt shows a credit sale as paid in full | [9fd0e3a](https://github.com/Sireadell/pricekeeper-demo/commit/9fd0e3a41f802481637deb58c62ad1e9bb2330d6) | 36/42 passed · 3 failed · 3 blocked | [9057fee](https://github.com/Sireadell/pricekeeper-demo/commit/9057fee173c9204a5222027c9cbf757c972b5598) | All 43 tests passed |
 | [#12](https://github.com/Sireadell/pricekeeper-demo/pull/12) More database tests, and tests for voiding a sale and the credit receipt | [48c4023](https://github.com/Sireadell/pricekeeper-demo/commit/48c4023ce129fc64a2fa92936694f687e645ee46) | 44/45 passed · 1 failed | [995f260](https://github.com/Sireadell/pricekeeper-demo/commit/995f2600a720a875b32c49e56fe95db2796fffd6) | All 45 tests passed |
+| [#13](https://github.com/Sireadell/pricekeeper-demo/pull/13) Judging guide, random-day model test and a mutation score for the money maths | [2d35d32](https://github.com/Sireadell/pricekeeper-demo/commit/2d35d32f83385ce14c40920df42f22ab484423a3) | 44/45 passed · 1 failed | [bf037eb](https://github.com/Sireadell/pricekeeper-demo/commit/bf037ebe2f8077c6ca0ffa066e407d7eeb6825a2) | All 45 tests passed |
 
 ## Every pull request
 
@@ -155,7 +156,7 @@ merged 2026-10-24 · [pull request](https://github.com/Sireadell/pricekeeper-dem
 
 ### #12 More database tests, and tests for voiding a sale and the credit receipt
 
-open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/12)
+merged 2026-10-25 · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/12)
 
 | Commit | TestSprite V3 | Run |
 |---|---|---|
@@ -165,6 +166,83 @@ open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/12)
 | [2430d09](https://github.com/Sireadell/pricekeeper-demo/commit/2430d09add367940c0586311f8bdd29428769122) Make the trade search, credit sale and low stock tests steady | 44/45 passed · 1 failed | [4cf1951b](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4cf1951b-60b0-4b9a-b6e6-105408bb304c) |
 | [0ac8976](https://github.com/Sireadell/pricekeeper-demo/commit/0ac8976aa2c745440c743951badcd7a2f6d750b4) Give each test item a name that never repeats across runs | 41/45 passed · 4 failed | [3e1531ea](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/3e1531ea-621f-44cd-adce-d8bed6022f1b) |
 | [995f260](https://github.com/Sireadell/pricekeeper-demo/commit/995f2600a720a875b32c49e56fe95db2796fffd6) Run the browser checks again | All 45 tests passed | [06e07921](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) |
+
+### #13 Judging guide, random-day model test and a mutation score for the money maths
+
+merged 2026-10-25 · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/13)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [3edb252](https://github.com/Sireadell/pricekeeper-demo/commit/3edb252726dae6f435e18a0a5cffa78770c47a4b) Add a random-day model test, edge-case tests and a mutation score for the money maths | not run |  |
+| [2d35d32](https://github.com/Sireadell/pricekeeper-demo/commit/2d35d32f83385ce14c40920df42f22ab484423a3) Add a judging guide, update test counts and the merge lock note in the README | 44/45 passed · 1 failed | [2538d9a3](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/2538d9a3-e75f-48ee-974c-4bb471a244a6) |
+| [bf037eb](https://github.com/Sireadell/pricekeeper-demo/commit/bf037ebe2f8077c6ca0ffa066e407d7eeb6825a2) Run the browser checks again | All 45 tests passed | [23543208](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/23543208-01af-4e3b-88f8-1f01dd692ff4) |
+
+### #15 Planted bug: voiding a sale no longer puts the stock back
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/15)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [eac0a6e](https://github.com/Sireadell/pricekeeper-demo/commit/eac0a6ef64cf7bf148a0d4f1a0de8785930306e1) Planted bug: voiding a sale no longer puts the stock back | 41/45 passed · 3 failed · 1 blocked | [5e7f63a1](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/5e7f63a1-af32-4cb8-bc5a-9e562f000df7) |
+| [213c3d3](https://github.com/Sireadell/pricekeeper-demo/commit/213c3d32c90e4d930b65e94cf8c2d3b52b9c024b) Run the browser checks again | 43/45 passed · 2 failed | [41e6fd5a](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/41e6fd5a-57a3-4421-a639-86c4c3527f8e) |
+
+### #16 Planted bug: receipt shows a credit sale as paid in full
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/16)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [ed96192](https://github.com/Sireadell/pricekeeper-demo/commit/ed96192309652019e33dffde9e624881f21ebcd6) Planted bug: receipt shows a credit sale as paid in full | 37/45 passed · 6 failed · 2 blocked | [0ecacdeb](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/0ecacdeb-b2b7-452c-b37c-bbc499e309a3) |
+
+### #17 Planted bug: a sale with several items only takes stock for the first
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/17)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [b8baa4f](https://github.com/Sireadell/pricekeeper-demo/commit/b8baa4fd38399bced08c1025e6b2cf14befb298d) Planted bug: a sale with several items only takes stock for the first | 39/45 passed · 3 failed · 3 blocked | [e022701f](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/e022701f-d051-4a77-a1bd-07f73c91f051) |
+
+### #18 Planted bug: an item at exactly its low-stock level is not flagged low
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/18)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [f51f6a1](https://github.com/Sireadell/pricekeeper-demo/commit/f51f6a1ab8eadc5b3bf265c1577093209083afa7) Planted bug: an item at exactly its low-stock level is not flagged low | 33/45 passed · 10 failed · 2 blocked | [9d9e2362](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9d9e2362-99c2-4d3f-9aa8-a447cee555f3) |
+
+### #19 Planted bug: a repayment bigger than the debt is counted in full
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/19)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [88c2cba](https://github.com/Sireadell/pricekeeper-demo/commit/88c2cba45b460eadf2d7d6e3b87c74a79c10c7d2) Planted bug: a repayment bigger than the debt is counted in full | 36/45 passed · 6 failed · 3 blocked | [fb5a9275](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/fb5a9275-a36a-4718-b817-ac4750943227) |
+
+### #20 Planted bug: a minus amount received counts as money received
+
+closed · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/20)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [6d14a26](https://github.com/Sireadell/pricekeeper-demo/commit/6d14a26f3257ca87e2494b9858b6fc200abd0a57) Planted bug: a minus amount received counts as money received | 36/45 passed · 5 failed · 4 blocked | [49065fe2](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/49065fe2-b375-4001-9142-451a636baf26) |
+| [caff8b0](https://github.com/Sireadell/pricekeeper-demo/commit/caff8b0a979e13c16b3d92682e6824d0d7dd7dba) Run the browser checks again | 43/45 passed · 2 failed | [20f7cec3](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/20f7cec3-a067-435d-bdbc-b6015a58d217) |
+
+### #21 Fix the morning check
+
+merged 2026-10-25 · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/21)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [4f238b0](https://github.com/Sireadell/pricekeeper-demo/commit/4f238b0db757a834a9694d89dd194a26c9c9c119) Fix the morning check: run browser tests one at a time and retry the server test once | All 45 tests passed | [d6eab849](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) |
+
+### #23 Independent check of the money maths, and an honest account of the planted-bug study
+
+open · [pull request](https://github.com/Sireadell/pricekeeper-demo/pull/23)
+
+| Commit | TestSprite V3 | Run |
+|---|---|---|
+| [b3807d4](https://github.com/Sireadell/pricekeeper-demo/commit/b3807d4fb8cb1786bc577bda24d4622fc2677a93) Add an independent check of the money maths and update the proof pages | 43/45 passed · 1 failed · 1 blocked | [fbb211fd](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/fbb211fd-95dc-4832-973f-9939742cdb61) |
+| [52818a4](https://github.com/Sireadell/pricekeeper-demo/commit/52818a4453e55ab5c11fbc0b52267bd4b7956948) Run the browser checks again | 44/45 passed · 1 blocked | [0f85ad28](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/0f85ad28-d350-4915-864e-21c123af4584) |
 
 ### Pushed to main without a pull request
 

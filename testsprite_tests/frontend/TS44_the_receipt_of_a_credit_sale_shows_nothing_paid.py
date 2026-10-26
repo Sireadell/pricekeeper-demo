@@ -67,7 +67,15 @@ async def run_test():
         await page.get_by_text("Mama Nkechi · owes ₦").first.click(timeout=10000)
         await page.get_by_role("textbox", name="Type item name… or 'indomie 2").fill(NAME)
         row = page.locator(".nt2-result").filter(has_text=NAME).first
-        await row.wait_for(state="visible", timeout=10000)
+        try:
+            await row.wait_for(state="visible", timeout=30000)
+        except Exception:
+            # The new item can take a moment to reach the list: clear the box and type the name once more.
+            search_box = page.get_by_role("textbox", name="Type item name… or 'indomie 2")
+            await search_box.fill("")
+            await asyncio.sleep(2)
+            await search_box.fill(NAME)
+            await row.wait_for(state="visible", timeout=30000)
         await row.locator("input[id^='nt2-resqty-']").fill("3")
         await row.locator("button.nt2-add-btn", has_text="Add").click(timeout=10000)
         await page.get_by_role("button", name="💳 Pay now, on this page ▼").click(timeout=10000)

@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-24T12:32:19.822Z",
+ "generatedAt": "2026-10-26T11:57:18.878Z",
  "project": "81dc7004-270e-42bb-96d2-a47ea8b1b818",
  "totals": {
-  "pulls": 11,
-  "runs": 42,
-  "red": 36,
-  "green": 6
+  "pulls": 21,
+  "runs": 60,
+  "red": 51,
+  "green": 9
  },
  "tests": [
   {
@@ -16,8 +16,8 @@
    "file": "frontend/TS01_a_banner_warns_the_shop_when_the_connection_is_lost.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:26.667Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:57.807Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -29,8 +29,8 @@
    "file": "frontend/TS02_a_debt_can_be_paid_off_in_full.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:40.355Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:01:08.235Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -42,8 +42,8 @@
    "file": "frontend/TS03_a_negative_amount_received_is_not_accepted.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:49:31.013Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:02:27.389Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -55,8 +55,8 @@
    "file": "frontend/TS04_a_negative_quantity_is_not_allowed_in_a_sale.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:09.938Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:59:38.204Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -68,8 +68,8 @@
    "file": "frontend/TS05_a_part_payment_lowers_the_debt_by_the_paid_amount_only.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:13.800Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:33.910Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -81,8 +81,8 @@
    "file": "frontend/TS06_a_receipt_opens_after_a_sale_is_completed.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:23.268Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:29.649Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -94,9 +94,9 @@
    "file": "frontend/TS07_a_sale_made_offline_is_kept_and_syncs_when_back_online.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T11:53:13.976Z",
-    "where": "default",
-    "target": "https://pricekeeper-demo.web.app"
+    "at": "2026-10-25T17:02:11.097Z",
+    "where": "github-pr-23",
+    "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
   {
@@ -107,8 +107,8 @@
    "file": "frontend/TS08_a_sale_made_offline_survives_closing_and_reopening_the_app.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:51:05.258Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:02:46.641Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -120,8 +120,8 @@
    "file": "frontend/TS09_a_sale_with_zero_pieces_is_not_allowed.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:47:57.064Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:20.903Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -133,8 +133,8 @@
    "file": "frontend/TS10_add_a_new_inventory_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:51.207Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:27.904Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -146,8 +146,8 @@
    "file": "frontend/TS11_add_multiple_items_to_a_single_sale.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:47:07.044Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:59:08.225Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -159,8 +159,8 @@
    "file": "frontend/TS12_an_item_cannot_be_saved_without_a_name.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:34.954Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:17.853Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -172,8 +172,8 @@
    "file": "frontend/TS13_an_item_name_with_html_code_shows_as_plain_text_on_the_recei.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:24.383Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:38.199Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -185,8 +185,8 @@
    "file": "frontend/TS14_complete_a_sale_with_one_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:37.792Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:26.728Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -198,8 +198,8 @@
    "file": "frontend/TS15_dashboard_numbers_read_cleanly.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:20.585Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:03.657Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -211,8 +211,8 @@
    "file": "frontend/TS16_dashboard_shows_money_owed_and_stock_alerts.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:46.273Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:20.514Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -224,8 +224,8 @@
    "file": "frontend/TS17_delete_an_inventory_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:59.572Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:41.630Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -237,8 +237,8 @@
    "file": "frontend/TS18_edit_an_inventory_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:47:01.441Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:13.217Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -250,8 +250,8 @@
    "file": "frontend/TS19_find_a_customer_by_searching_their_name.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:31.546Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:07.902Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -263,8 +263,8 @@
    "file": "frontend/TS20_find_a_sale_in_the_trade_history_by_item_name.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:44.169Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:49.973Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -276,8 +276,8 @@
    "file": "frontend/TS21_item_bought_by_the_row_shows_the_right_cost_per_piece.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:49:21.346Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:59:57.239Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -289,8 +289,8 @@
    "file": "frontend/TS22_item_shows_as_low_stock_after_most_pieces_are_sold.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:49:12.711Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:01:16.560Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -302,8 +302,8 @@
    "file": "frontend/TS23_letters_in_the_selling_price_are_not_accepted.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:50.498Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:20.361Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -315,8 +315,8 @@
    "file": "frontend/TS24_logging_out_removes_access_to_the_app_screens.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:16.631Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:50.174Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -328,8 +328,8 @@
    "file": "frontend/TS25_record_a_customer_debt.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:47:14.472Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:59:50.738Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -341,8 +341,8 @@
    "file": "frontend/TS26_record_a_customer_repayment.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:47:15.846Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:59:27.443Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -354,8 +354,8 @@
    "file": "frontend/TS27_record_a_sale_and_verify_stock_decreases.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:55.365Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:43.697Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -367,8 +367,8 @@
    "file": "frontend/TS28_restock_an_existing_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:25.921Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:51.665Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -380,8 +380,8 @@
    "file": "frontend/TS29_search_the_inventory_for_an_item.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:55.463Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:58:24.114Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -393,8 +393,8 @@
    "file": "frontend/TS30_sell_on_credit_and_see_the_debt_on_the_customer.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:36.004Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:45.504Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -406,8 +406,8 @@
    "file": "frontend/TS31_selling_more_than_the_stock_is_blocked.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:07.824Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:08.162Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -419,8 +419,8 @@
    "file": "frontend/TS32_selling_on_credit_raises_the_customer_balance.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:49:31.543Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:02:00.080Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -432,8 +432,8 @@
    "file": "frontend/TS33_staff_login_rejects_a_wrong_pin.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:30.370Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:11.083Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -445,8 +445,8 @@
    "file": "frontend/TS34_staff_login_rejects_an_unknown_username.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:35.715Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:12.539Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -458,8 +458,8 @@
    "file": "frontend/TS35_switch_the_report_period.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:35.088Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:43.710Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -471,8 +471,8 @@
    "file": "frontend/TS36_the_customer_balance_is_shown_as_a_number_on_the_customers_p.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:11.334Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:37.426Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -484,8 +484,8 @@
    "file": "frontend/TS37_the_receipt_shows_the_items_sold_and_the_total.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:48:35.316Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T17:00:39.447Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -497,8 +497,8 @@
    "file": "frontend/TS38_the_signed_in_role_is_shown_for_the_staff_user.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:40.501Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:11.216Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -510,8 +510,8 @@
    "file": "frontend/TS39_view_a_customer_details.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:18.300Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:59.369Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -523,8 +523,8 @@
    "file": "frontend/TS40_view_low_stock_items_from_inventory.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:57.258Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:25.146Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -536,8 +536,8 @@
    "file": "frontend/TS41_view_today_performance_summary.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:46:12.470Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:36.207Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -549,8 +549,8 @@
    "file": "frontend/TS42_view_today_s_command_center_summary.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T10:45:35.641Z",
-    "where": "github-pr-11",
+    "at": "2026-10-25T16:57:23.283Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -561,9 +561,9 @@
    "checks": "Validates that voiding a sale gives the sold pieces back to stock: an item with 20 pieces drops to 15 after selling 5 and returns to 20 after the sale is voided.",
    "file": "frontend/TS43_void_a_sale_and_verify_stock_comes_back.py",
    "last": {
-    "verdict": "failed",
-    "at": "2026-10-24T12:01:45.224Z",
-    "where": "pricekeeper-demo-preview-2",
+    "verdict": "passed",
+    "at": "2026-10-25T17:06:35.041Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -574,8 +574,8 @@
    "checks": "A request with no sign-in at all tries to read sales, items and customers, and must be refused.",
    "file": "backend/B01_no_sign_in_cannot_read_shop_data.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.566Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.064Z",
     "where": "",
     "target": ""
    }
@@ -587,8 +587,8 @@
    "checks": "A brand-new anonymous visitor, signed in but with no staff session, tries to read the shop and must be refused.",
    "file": "backend/B02_stranger_without_session_cannot_read_shop_data.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.561Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:11.363Z",
     "where": "",
     "target": ""
    }
@@ -600,8 +600,8 @@
    "checks": "A stranger tries to list every staff member and every shop code, and must be refused.",
    "file": "backend/B03_staff_roster_and_shop_codes_cannot_be_listed.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.257Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:08.931Z",
     "where": "",
     "target": ""
    }
@@ -613,8 +613,8 @@
    "checks": "A stranger writes a session for a staff name that does not exist, and must be refused.",
    "file": "backend/B04_made_up_staff_session_is_refused.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.726Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:11.980Z",
     "where": "",
     "target": ""
    }
@@ -626,8 +626,8 @@
    "checks": "A stranger who knows a real staff name and role, but not the PIN, tries to become that staff member, and must be refused.",
    "file": "backend/B05_staff_session_needs_the_pin.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.673Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:41:13.644Z",
     "where": "",
     "target": ""
    }
@@ -639,8 +639,8 @@
    "checks": "A stranger reads a staff record, and it must not contain anything a PIN could be guessed from offline.",
    "file": "backend/B06_pin_hash_is_not_handed_out.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.181Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.816Z",
     "where": "",
     "target": ""
    }
@@ -652,9 +652,9 @@
    "checks": "Sells 3 pieces on credit with nothing paid, opens that sale's receipt from the trade history, and checks the receipt says Paid 0 and a balance owing of 1,500, not paid in full.",
    "file": "frontend/TS44_the_receipt_of_a_credit_sale_shows_nothing_paid.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T12:30:53.271Z",
-    "where": "pricekeeper-demo-preview",
+    "verdict": "blocked",
+    "at": "2026-10-25T17:01:36.633Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -666,8 +666,8 @@
    "file": "frontend/TS45_voiding_a_sale_puts_the_pieces_back_in_stock.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T12:29:25.181Z",
-    "where": "pricekeeper-demo-preview",
+    "at": "2026-10-25T17:01:33.121Z",
+    "where": "github-pr-23",
     "target": "https://pricekeeper-demo-preview.web.app"
    }
   },
@@ -678,8 +678,8 @@
    "checks": "A stranger with no staff session tries to add a sale straight to the database and must be refused.",
    "file": "backend/B07_stranger_cannot_record_a_sale.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.028Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.300Z",
     "where": "",
     "target": ""
    }
@@ -691,8 +691,8 @@
    "checks": "A stranger tries to set an item's stock to 999 and must be refused.",
    "file": "backend/B08_stranger_cannot_change_stock.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.172Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.256Z",
     "where": "",
     "target": ""
    }
@@ -704,8 +704,8 @@
    "checks": "A stranger tries to create an admin staff record for themselves and must be refused.",
    "file": "backend/B09_stranger_cannot_add_themselves_as_staff.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.210Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:11.587Z",
     "where": "",
     "target": ""
    }
@@ -718,7 +718,7 @@
    "file": "backend/B10_stranger_cannot_take_over_the_shop_code.py",
    "last": {
     "verdict": "passed",
-    "at": "2026-10-24T11:56:35.179Z",
+    "at": "2026-10-25T16:39:07.854Z",
     "where": "",
     "target": ""
    }
@@ -730,8 +730,8 @@
    "checks": "A stranger tries to list what customers owe and to set a debt to 0, and both must be refused.",
    "file": "backend/B11_stranger_cannot_read_or_change_debts.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.230Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.431Z",
     "where": "",
     "target": ""
    }
@@ -743,8 +743,8 @@
    "checks": "A stranger opens a staff session with a guessed PIN fingerprint, and it must be refused.",
    "file": "backend/B12_made_up_pin_fingerprint_is_refused.py",
    "last": {
-    "verdict": "passed",
-    "at": "2026-10-24T11:56:35.615Z",
+    "verdict": "failed",
+    "at": "2026-10-25T16:39:09.285Z",
     "where": "",
     "target": ""
    }
@@ -1233,7 +1233,7 @@
    "number": 11,
    "title": "Server tests, database PIN check and test tooling",
    "url": "https://github.com/Sireadell/pricekeeper-demo/pull/11",
-   "state": "open",
+   "state": "merged",
    "commits": [
     {
      "sha": "4b28cd0",
@@ -1330,6 +1330,246 @@
      "result": "All 43 tests passed",
      "state": "success",
      "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/026fb53f-089f-4367-a802-b79746b5954f"
+    }
+   ]
+  },
+  {
+   "number": 12,
+   "title": "More database tests, and tests for voiding a sale and the credit receipt",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/12",
+   "state": "merged",
+   "commits": [
+    {
+     "sha": "03cbc8b",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/03cbc8b7cf962ec8946b22f35e7358a97b310078",
+     "title": "Add server tests for writes: sales, stock, staff, shop code, debts, guessed PIN",
+     "result": "not run",
+     "state": "",
+     "run": ""
+    },
+    {
+     "sha": "48c4023",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/48c4023ce129fc64a2fa92936694f687e645ee46",
+     "title": "Add tests for voiding a sale and for the receipt of a credit sale",
+     "result": "44/45 passed · 1 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/13d79f7a-38cd-466b-a80a-42be4bd814ac"
+    },
+    {
+     "sha": "64d7439",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/64d7439252a1d8d2e1cd39243315299e89f02120",
+     "title": "Run the browser checks again",
+     "result": "42/45 passed · 2 failed · 1 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/1fedad4b-2a45-41f0-b7de-6a171d406a71"
+    },
+    {
+     "sha": "2430d09",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/2430d09add367940c0586311f8bdd29428769122",
+     "title": "Make the trade search, credit sale and low stock tests steady",
+     "result": "44/45 passed · 1 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4cf1951b-60b0-4b9a-b6e6-105408bb304c"
+    },
+    {
+     "sha": "0ac8976",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/0ac8976aa2c745440c743951badcd7a2f6d750b4",
+     "title": "Give each test item a name that never repeats across runs",
+     "result": "41/45 passed · 4 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/3e1531ea-621f-44cd-adce-d8bed6022f1b"
+    },
+    {
+     "sha": "995f260",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/995f2600a720a875b32c49e56fe95db2796fffd6",
+     "title": "Run the browser checks again",
+     "result": "All 45 tests passed",
+     "state": "success",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71"
+    }
+   ]
+  },
+  {
+   "number": 13,
+   "title": "Judging guide, random-day model test and a mutation score for the money maths",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/13",
+   "state": "merged",
+   "commits": [
+    {
+     "sha": "3edb252",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/3edb252726dae6f435e18a0a5cffa78770c47a4b",
+     "title": "Add a random-day model test, edge-case tests and a mutation score for the money maths",
+     "result": "not run",
+     "state": "",
+     "run": ""
+    },
+    {
+     "sha": "2d35d32",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/2d35d32f83385ce14c40920df42f22ab484423a3",
+     "title": "Add a judging guide, update test counts and the merge lock note in the README",
+     "result": "44/45 passed · 1 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/2538d9a3-e75f-48ee-974c-4bb471a244a6"
+    },
+    {
+     "sha": "bf037eb",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/bf037ebe2f8077c6ca0ffa066e407d7eeb6825a2",
+     "title": "Run the browser checks again",
+     "result": "All 45 tests passed",
+     "state": "success",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/23543208-01af-4e3b-88f8-1f01dd692ff4"
+    }
+   ]
+  },
+  {
+   "number": 15,
+   "title": "Planted bug: voiding a sale no longer puts the stock back",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/15",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "eac0a6e",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/eac0a6ef64cf7bf148a0d4f1a0de8785930306e1",
+     "title": "Planted bug: voiding a sale no longer puts the stock back",
+     "result": "41/45 passed · 3 failed · 1 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/5e7f63a1-af32-4cb8-bc5a-9e562f000df7"
+    },
+    {
+     "sha": "213c3d3",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/213c3d32c90e4d930b65e94cf8c2d3b52b9c024b",
+     "title": "Run the browser checks again",
+     "result": "43/45 passed · 2 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/41e6fd5a-57a3-4421-a639-86c4c3527f8e"
+    }
+   ]
+  },
+  {
+   "number": 16,
+   "title": "Planted bug: receipt shows a credit sale as paid in full",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/16",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "ed96192",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/ed96192309652019e33dffde9e624881f21ebcd6",
+     "title": "Planted bug: receipt shows a credit sale as paid in full",
+     "result": "37/45 passed · 6 failed · 2 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/0ecacdeb-b2b7-452c-b37c-bbc499e309a3"
+    }
+   ]
+  },
+  {
+   "number": 17,
+   "title": "Planted bug: a sale with several items only takes stock for the first",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/17",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "b8baa4f",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/b8baa4fd38399bced08c1025e6b2cf14befb298d",
+     "title": "Planted bug: a sale with several items only takes stock for the first",
+     "result": "39/45 passed · 3 failed · 3 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/e022701f-d051-4a77-a1bd-07f73c91f051"
+    }
+   ]
+  },
+  {
+   "number": 18,
+   "title": "Planted bug: an item at exactly its low-stock level is not flagged low",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/18",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "f51f6a1",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/f51f6a1ab8eadc5b3bf265c1577093209083afa7",
+     "title": "Planted bug: an item at exactly its low-stock level is not flagged low",
+     "result": "33/45 passed · 10 failed · 2 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9d9e2362-99c2-4d3f-9aa8-a447cee555f3"
+    }
+   ]
+  },
+  {
+   "number": 19,
+   "title": "Planted bug: a repayment bigger than the debt is counted in full",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/19",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "88c2cba",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/88c2cba45b460eadf2d7d6e3b87c74a79c10c7d2",
+     "title": "Planted bug: a repayment bigger than the debt is counted in full",
+     "result": "36/45 passed · 6 failed · 3 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/fb5a9275-a36a-4718-b817-ac4750943227"
+    }
+   ]
+  },
+  {
+   "number": 20,
+   "title": "Planted bug: a minus amount received counts as money received",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/20",
+   "state": "closed",
+   "commits": [
+    {
+     "sha": "6d14a26",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/6d14a26f3257ca87e2494b9858b6fc200abd0a57",
+     "title": "Planted bug: a minus amount received counts as money received",
+     "result": "36/45 passed · 5 failed · 4 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/49065fe2-b375-4001-9142-451a636baf26"
+    },
+    {
+     "sha": "caff8b0",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/caff8b0a979e13c16b3d92682e6824d0d7dd7dba",
+     "title": "Run the browser checks again",
+     "result": "43/45 passed · 2 failed",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/20f7cec3-a067-435d-bdbc-b6015a58d217"
+    }
+   ]
+  },
+  {
+   "number": 21,
+   "title": "Fix the morning check",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/21",
+   "state": "merged",
+   "commits": [
+    {
+     "sha": "4f238b0",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/4f238b0db757a834a9694d89dd194a26c9c9c119",
+     "title": "Fix the morning check: run browser tests one at a time and retry the server test once",
+     "result": "All 45 tests passed",
+     "state": "success",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6"
+    }
+   ]
+  },
+  {
+   "number": 23,
+   "title": "Independent check of the money maths, and an honest account of the planted-bug study",
+   "url": "https://github.com/Sireadell/pricekeeper-demo/pull/23",
+   "state": "open",
+   "commits": [
+    {
+     "sha": "b3807d4",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/b3807d4fb8cb1786bc577bda24d4622fc2677a93",
+     "title": "Add an independent check of the money maths and update the proof pages",
+     "result": "43/45 passed · 1 failed · 1 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/fbb211fd-95dc-4832-973f-9939742cdb61"
+    },
+    {
+     "sha": "52818a4",
+     "url": "https://github.com/Sireadell/pricekeeper-demo/commit/52818a4453e55ab5c11fbc0b52267bd4b7956948",
+     "title": "Run the browser checks again",
+     "result": "44/45 passed · 1 blocked",
+     "state": "failure",
+     "run": "https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/0f85ad28-d350-4915-864e-21c123af4584"
     }
    ]
   }

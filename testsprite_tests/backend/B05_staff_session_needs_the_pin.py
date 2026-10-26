@@ -4,8 +4,8 @@
 import os
 import requests
 
-API_KEY = "AIzaSyA9TNeVrXMwP7irTeR1UkqvLQcFXmmabag"  # public web key, same as the app
-PROJECT = "pricekeeper-demo-2"
+API_KEY = "AIzaSyB1beGLasHA2ektxlDW62LNyYjVg0mBsDA"  # public web key of the test database
+PROJECT = "pricekeeper-demo-4"  # test database; the live site uses pricekeeper-demo-3
 # PK_EMULATOR=1 points the same tests at a local Firebase emulator (scripts/rules-check.py).
 _LOCAL = os.environ.get("PK_EMULATOR")
 DB = (f"http://127.0.0.1:8080/v1/projects/{PROJECT}/databases/(default)/documents" if _LOCAL

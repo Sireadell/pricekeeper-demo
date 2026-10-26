@@ -1,6 +1,6 @@
 # Proof: every red run and every green run
 
-This file has the full trail behind the README. It starts with pull request #10, where TestSprite found five problems I didn't know about. Below that are the two planted bugs it missed, the two breaks it caught, and the unit tests.
+This file has the full trail behind the README. It starts with pull request #10, where TestSprite found five problems I didn't know about. Below that are the two early planted bugs it missed, the six I planted later on pull requests #15 to #20, the two early breaks it caught, the unit tests, and a second, separate check of the money maths.
 
 Every TestSprite run below happened against a live preview copy of the app, from a GitHub pull request, unless it says otherwise. Each link opens the full run.
 
@@ -28,22 +28,35 @@ These are all 11 runs on that pull request, in order.
 
 This one was found from the TestSprite command line, not on the pull request. I wrote a new test: add an item with 10 pieces, go offline, sell 2, then close and reopen the app while still offline. It should still show the sale, marked as waiting to be sent, and 8 pieces left.
 
-It failed. After the reopen, the sale was gone from a staff member's screen and the stock was back at 10. The sale was waiting to be sent, but the staff screens didn't show sales that were still waiting. I fixed that in [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61), the command-line run passed, and the test has passed in every pull request run since.
+It failed. After the reopen, the sale was gone from a staff member's screen and the stock was back at 10. The sale was waiting to be sent, but the staff screens didn't show sales that were still waiting. I fixed that in [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61), the command-line run passed, and the test passed on the pull request runs after it.
 
 The command-line runs were against a private preview link, so they aren't linked here. The first pull request run with the fix is the 1cefe61 row above.
 
-## Two planted bugs it missed
+## Two early planted bugs it missed
 
-I planted four bugs on purpose in all. The tests caught two of them (below). These are the two they missed.
+These two got past the suite early on. The two early breaks it caught are further down. I later wrote TS45 for the void bug and TS44 for the receipt bug, then planted both again. See the next section.
 
 | Pull request | What I planted | What the run showed |
 |---|---|---|
 | [#2](https://github.com/Sireadell/pricekeeper-demo/pull/2) | Voiding a sale stopped putting the stock back | [24 of 25 passed, 1 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/f2e4020e-c38a-4257-950b-636edcf31f70). No test failed, so the break went through unnoticed. I closed the pull request without merging it. |
 | [#10](https://github.com/Sireadell/pricekeeper-demo/pull/10) | The receipt showed a sale on credit as paid in full | [36 of 42 passed, 3 failed, 3 blocked](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/9b97e840-3a06-4cf9-8394-b982d9a816f8). None of the failures was about the receipt. I took the plant out in [5bf2ef6](https://github.com/Sireadell/pricekeeper-demo/commit/5bf2ef6). |
 
-## Two breaks it caught
+## Six planted bugs, pull requests #15 to #20
 
-These are the two planted breaks the tests caught. Both were in stock tracking, and each was a different kind of mistake.
+I planted six bugs, each on its own throwaway pull request. I started all six at the same time, and they shared one test database, so the runs got in each other's way. A shared round like that can't be trusted on its own. So I re-ran the two key ones alone, one at a time.
+
+| Pull request | What I planted | What the run showed |
+|---|---|---|
+| #15 | Voiding a sale gives no stock back | Caught on a clean solo run. TS43 and TS45 failed, 43 of 45 passed. Stock stayed at 15 instead of going back to 20. |
+| #20 | A minus amount counted as money received | Caught on a clean solo run. TS03 failed: typing -500 wasn't blocked, and ₦1,300 was saved as debt on an ₦800 sale. |
+| #16 | The receipt shows a credit sale as paid | Failed TS44 in the shared run. That looks caught, but it's one run, and not a clean one. |
+| #17, #18, #19 | Three more | The results were unclear, so I claim nothing about them. A clean solo re-run of each would settle it. |
+
+None of the six was merged. They show as red in [LOOP.md](LOOP.md). The plain-words failure note appeared on all six pull requests and on the re-runs.
+
+## Two early breaks it caught
+
+These are the two early planted breaks the tests caught. Both were in stock tracking, and each was a different kind of mistake.
 
 The first time, I removed the one line that takes sold items out of stock. The TestSprite check on the pull request turned red. I put the line back, the check turned green, and only then did the change merge.
 
@@ -96,7 +109,7 @@ This was the first time the void test caught a real fault.
 
 ## Unit tests: the money maths, checked on every push
 
-Next to the 43 TestSprite browser tests, there are 64 small unit tests in five files in the `tests/` folder. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
+Next to the 45 TestSprite browser tests, there are now 90 small unit tests in the `tests/` folder. There were 64 when I did the open break below. They check the sums behind the screens: average cost, price and margin, stock units, week and month keys, dead-stock and profit-leak warnings, the customer debt book and how a payment is shared across debts, plus a few small helpers. The browser tests only see these numbers through the page, so a wrong figure can hide behind a screen that looks fine.
 
 They run on Node's built-in test runner, with no packages to install. A GitHub Action called "Unit tests" runs them on every push and pull request and finishes in seconds. They cost nothing to run, and they pass in four time zones: UTC, Lagos, Los Angeles and Auckland.
 
@@ -112,6 +125,18 @@ Then I did one break in the open, on a throwaway branch (`proof/break-average-co
 
 Average cost is what every price and profit figure in the app starts from, so this is a break that would quietly spread to every screen.
 
+## A second, separate way of working out the money
+
+[`tests/oracle.test.js`](tests/oracle.test.js) works out the money a second time, its own way, in whole kobo and exact fractions. Then it checks the app's answer against it.
+
+| What it walks through | Cases | Result |
+|---|---|---|
+| Trade totals with payment lists (payments, refunds, removed payments) | 4,920 | All agree with the app |
+| Average cost | 320 | All agree with the app |
+| Stock conversion | 40 | All agree with the app |
+
+The unit tests are now 90. The mutation score is 138 changes, 133 caught, 96.4 percent.
+
 ## What the unit tests do not cover
 
 Taking stock off the shelf after a sale needs the live database (Firebase), so it cannot run offline. That part is covered only by the TestSprite tests above.
@@ -119,4 +144,4 @@ Taking stock off the shelf after a sale needs the live database (Firebase), so i
 ## Rules I kept
 
 - The break was on purpose, to show the suite catches it.
-- Nothing merged while the check was red during the two proofs above. I held that rule myself. GitHub doesn't enforce it: pull request #8 merged while its check was red.
+- Nothing merged while the check was red during the two proofs above. I held that rule myself at the time, and pull request #8 merged while its check was red. Since 2026-10-25 GitHub enforces it, admin included.

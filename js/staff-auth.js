@@ -409,7 +409,7 @@ export async function staffLogin(businessCode, username, pin) {
       pinProof,
     };
     try {
-      await setDoc(doc(db, 'sessions', anonUid), sessionPayload);
+      await _writeSession(anonUid, sessionPayload);
     } catch (err) {
       if (err?.code === 'permission-denied') {
         // The rules found no fingerprint for this PIN: wrong PIN.
@@ -479,6 +479,41 @@ export async function staffLogin(businessCode, username, pin) {
     _staffLoginInProgress = false;
     return { ok: false, error: 'Login failed. Check your connection.' };
   }
+}
+
+// Write /sessions/{anonUid} for a login. A refusal does not always mean a
+// wrong PIN:
+//   - a second Log in in the same tab reuses the same anonymous user, whose
+//     session doc already exists, so the write counts as an update and the
+//     rules refuse it. If that doc already names this shop, staff member and
+//     PIN fingerprint, the login is already done and we accept it.
+//   - right after signing in, the database can briefly see the request
+//     before the new sign-in, so one retry after a short wait is allowed.
+// A genuinely wrong PIN is refused both times and still counts as a failed
+// attempt (backend test B05).
+async function _writeSession(anonUid, sessionPayload) {
+  const ref = doc(db, 'sessions', anonUid);
+  try {
+    await setDoc(ref, sessionPayload);
+    return;
+  } catch (err) {
+    if (err?.code !== 'permission-denied') throw err;
+  }
+
+  try {
+    const existing = await getDoc(ref);
+    if (existing.exists()) {
+      const s = existing.data();
+      if (s.ownerUid === sessionPayload.ownerUid
+          && s.staffUsername === sessionPayload.staffUsername
+          && s.pinProof === sessionPayload.pinProof) {
+        return;
+      }
+    }
+  } catch (_) { /* fall through to the retry */ }
+
+  await new Promise(r => setTimeout(r, 1200));
+  await setDoc(ref, sessionPayload);
 }
 
 // Sign out the anonymous user that was created for an aborted login.
@@ -1132,7 +1167,21 @@ window.slChangeShop = function() {
   setTimeout(() => document.getElementById('slBusinessCode')?.focus(), 50);
 };
 
+// Pressing Enter in a PIN box and clicking Log in can both fire. Only one
+// login runs at a time; the extra press is ignored.
+let _loginClickBusy = false;
+
 window.staffLogin = async function() {
+  if (_loginClickBusy) return;
+  _loginClickBusy = true;
+  try {
+    await _staffLoginFromForm();
+  } finally {
+    _loginClickBusy = false;
+  }
+};
+
+async function _staffLoginFromForm() {
   const remembered = getRememberedBizCode();
   const codeFieldHidden = document.getElementById('slBizCodeField')?.style.display === 'none';
   const code  = (codeFieldHidden && remembered)
@@ -1168,7 +1217,7 @@ window.staffLogin = async function() {
   window._pkSignedIn = true;
   localStorage.removeItem('pkWasSignedOut');
   window.syncEngine?.refreshBanner?.();
-};
+}
 
 window.staffUpdateName = async function() {
   const input   = document.getElementById('staffNameInput');

@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test \"tests/*.test.js\""
+    "test": "node --test \"tests/*.test.js\"",
+    "mutation": "node scripts/mutation.mjs",
+    "ledger": "node scripts/loop-ledger.mjs",
+    "oracle": "node --test tests/oracle.test.js",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=\"js/**\" \"tests/*.test.js\""
   }
 }
