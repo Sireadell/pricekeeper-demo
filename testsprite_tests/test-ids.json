@@ -404,7 +404,7 @@
     "id": "78021317-e2c3-45d0-8180-7ed8f217fd3e",
     "name": "Voiding a sale puts the pieces back in stock",
     "file": "frontend/TS45_voiding_a_sale_puts_the_pieces_back_in_stock.py",
-    "description": "Adds an item with 20 pieces, sells 5 (stock 15), voids that sale with a reason, and checks the stock is back to 20.",
+    "description": "Adds an item with 20 pieces, sells 5 (stock 15), voids that sale with a reason, and checks the stock is back to 20. The item name is made up once, when the item is added: Void Check Item plus eight digits. Every later step types that same name, digit for digit. Never make up new digits after the item is added, or the search finds a different item.",
     "kind": "browser"
   },
   {
@@ -453,6 +453,70 @@
     "name": "Server: a made-up PIN fingerprint is refused",
     "file": "backend/B12_made_up_pin_fingerprint_is_refused.py",
     "description": "A stranger opens a staff session with a guessed PIN fingerprint, and it must be refused.",
+    "kind": "server"
+  },
+  {
+    "code": "B13",
+    "id": "aeaef198-478d-478e-b44e-a507ac45d6ff",
+    "name": "Server: a stranger cannot see logs, suppliers or settings",
+    "file": "backend/B13_stranger_cannot_see_logs_suppliers_or_settings.py",
+    "description": "A stranger cannot see logs, suppliers or settings. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B14",
+    "id": "96ec841a-edc0-43b7-bd01-3be8f5d5afa3",
+    "name": "Server: a stranger cannot delete stock or sales",
+    "file": "backend/B14_stranger_cannot_delete_stock_or_sales.py",
+    "description": "A stranger cannot delete stock or sales. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B15",
+    "id": "ac3e2730-c219-4a35-866d-ee06a5af68b7",
+    "name": "Server: a stranger cannot write a fake activity log entry",
+    "file": "backend/B15_stranger_cannot_write_a_fake_activity_log_entry.py",
+    "description": "A stranger cannot write a fake activity log entry. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B16",
+    "id": "57cb3044-a91a-4a77-83dc-a0dc39aed09c",
+    "name": "Server: a stranger cannot change staff permissions",
+    "file": "backend/B16_stranger_cannot_change_staff_permissions.py",
+    "description": "A stranger cannot change staff permissions. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B17",
+    "id": "a49a1a6c-6ad5-45a2-909e-6c2c35ff75b8",
+    "name": "Server: a guest cannot claim a shop code or shop link",
+    "file": "backend/B17_guest_cannot_claim_a_shop_code_or_shop_link.py",
+    "description": "A guest cannot claim a shop code or shop link. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B18",
+    "id": "7a5ed8f4-53c8-4f02-80a2-699eb8f0d87d",
+    "name": "Server: a stranger cannot see staff sessions or owner data",
+    "file": "backend/B18_stranger_cannot_see_staff_sessions_or_owner_data.py",
+    "description": "A stranger cannot see staff sessions or owner data. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B19",
+    "id": "be830fea-570d-4343-91f5-360029500c63",
+    "name": "Server: a stranger cannot promote a staff member",
+    "file": "backend/B19_stranger_cannot_promote_a_staff_member.py",
+    "description": "A stranger cannot promote a staff member. Checks the database rules answer a stranger with a refusal.",
+    "kind": "server"
+  },
+  {
+    "code": "B20",
+    "id": "6a295109-149e-4a38-ae09-1f97690819db",
+    "name": "Server: a stranger cannot publish or read the public shop page",
+    "file": "backend/B20_stranger_cannot_publish_or_read_the_public_shop_page.py",
+    "description": "A stranger cannot publish or read the public shop page. Checks the database rules answer a stranger with a refusal.",
     "kind": "server"
   }
 ]
