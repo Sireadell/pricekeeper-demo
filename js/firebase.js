@@ -29,14 +29,29 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 // ── PASTE YOUR CONFIG HERE ───────────────────────────────────
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA9TNeVrXMwP7irTeR1UkqvLQcFXmmabag",
-  authDomain: "pricekeeper-demo-2.firebaseapp.com",
-  projectId: "pricekeeper-demo-2",
-  storageBucket: "pricekeeper-demo-2.firebasestorage.app",
-  messagingSenderId: "1078259047859",
-  appId: "1:1078259047859:web:4ff251940cc9ab97c5ffc6"
+// Two databases. The live site uses the shop database. Every other address
+// (the preview site that test runs use, pull request previews, localhost)
+// uses a separate test database, so test runs never touch the live shop.
+// shop.html holds the same switch.
+const LIVE_HOSTS = ["pricekeeper-demo.web.app", "pricekeeper-demo.firebaseapp.com"];
+const LIVE_CONFIG = {
+  apiKey: "AIzaSyBvTKbkPYdhOKKHEOIjMWg2BQ3Ouu2KjQs",
+  authDomain: "pricekeeper-demo-3.firebaseapp.com",
+  projectId: "pricekeeper-demo-3",
+  storageBucket: "pricekeeper-demo-3.firebasestorage.app",
+  messagingSenderId: "849318202665",
+  appId: "1:849318202665:web:d2bae843cbfa8495123b38"
 };
+const TEST_CONFIG = {
+  apiKey: "AIzaSyB1beGLasHA2ektxlDW62LNyYjVg0mBsDA",
+  authDomain: "pricekeeper-demo-4.firebaseapp.com",
+  projectId: "pricekeeper-demo-4",
+  storageBucket: "pricekeeper-demo-4.firebasestorage.app",
+  messagingSenderId: "697862791230",
+  appId: "1:697862791230:web:c23cf40d859e1622c6316f"
+};
+const firebaseConfig =
+  LIVE_HOSTS.includes(globalThis.location?.hostname) ? LIVE_CONFIG : TEST_CONFIG;
 // ─────────────────────────────────────────────────────────────
 
 const app = initializeApp(firebaseConfig);
