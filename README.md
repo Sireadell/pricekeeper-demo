@@ -12,6 +12,8 @@ There was a worse hole in the database rules: anyone who knew a staff name could
 
 Live demo: https://pricekeeper-demo.web.app
 
+Demo video (under 3 minutes): https://youtu.be/1wRCmbF73bI
+
 Built for TestSprite Hackathon Season 4, Project Track.
 
 ## How this fits the judging
@@ -19,9 +21,9 @@ Built for TestSprite Hackathon Season 4, Project Track.
 | What you score | Open this | What you'll see |
 |---|---|---|
 | Project quality (40) | https://pricekeeper-demo.web.app, sign in as `robot` / `4821` | Turn the network off and make a sale. It goes through, waits with an hourglass, and sends when the signal is back. |
-| Tests that run themselves (40): browser | [PR #12, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #12 passed all 45. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
+| Tests that run themselves (40): browser | [PR #21, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) | TestSprite runs 45 browser tests on a preview copy of every pull request. PR #21 passed all 45. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
 | Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. 20 pull requests and 58 TestSprite runs so far. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. |
-| Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 12 server tests (B01 to B12) go straight to the live database, skipping the app's screens. They run through the TestSprite command line after a merge. On Oct 24 that run passed 12 of 12. The three runs on Oct 25 passed 1 of 12 and each stopped within seconds. I believe my TestSprite credits ran out, but I have not confirmed it. The first six were also run by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
+| Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 12 server tests (B01 to B12) go straight to the live database, skipping the app's screens. They run through the TestSprite command line after a merge. On Oct 24 that run passed 12 of 12. The three runs on Oct 25 passed 1 of 12 and each stopped within seconds. Each of those stopped on a 429 from the database: the free plan's daily read limit had run out after a day of test runs. The first six were also run by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
 | Tests that run themselves (40): maths | `npm test` | 85 unit tests run on every pull request. One of them, [`tests/oracle.test.js`](tests/oracle.test.js), works out the money a second, separate way, in whole kobo and exact fractions, and checks the app against it. It walks 4,920 mixes of trade totals and payment lists (payments, refunds, removed payments), 320 average-cost cases and 40 stock-conversion cases. All agree with the app. |
 | How good the tests are | `node scripts/mutation.mjs` | It makes 138 one-change versions of the three money-maths files and checks the tests notice. They catch 132, which is 95.7 percent. The 6 left can't change any result. Saved in [docs/mutation.json](docs/mutation.json). |
 | Innovation (20) | [`tests/offline-model.test.js`](tests/offline-model.test.js) | Thousands of made-up shop days, the same ones every run, checked against a plain hand-written version of the rules: what stays on screen offline, what a sale still owes, where a customer's payment goes, and average cost. |
@@ -31,9 +33,9 @@ Built for TestSprite Hackathon Season 4, Project Track.
 
 The mutation score started at 77.5 percent. I went through the 31 changes the tests missed and wrote 11 edge-case tests for them, in [`tests/maths-edges.test.js`](tests/maths-edges.test.js). That's how it got to 95.7.
 
-TestSprite's robot can't switch the internet off. So the app has a hidden switch, `?offline-switch=1`, that cuts its link to the database. The offline tests have passed on every GitHub run since it went in.
+TestSprite's robot can't switch the internet off. So the app has a hidden switch, `?offline-switch=1`, that cuts its link to the database. The offline tests run on every pull request.
 
-The reopen test sells offline, closes the app, then opens it again still offline. It went red when I ran it, I fixed the app, and it has passed on every GitHub run since. On PR #10 a test caught a minus 500 payment being saved as ₦1,300 of debt. That's fixed too.
+The reopen test sells offline, closes the app, then opens it again still offline. It went red when I ran it, I fixed the app, and it passed on the pull request runs after the fix. On PR #10 a test caught a minus 500 payment being saved as ₦1,300 of debt. That's fixed too.
 
 Early on, two stock breaks I planted, on PR #3 and PR #6, went red, then green. Two got past the suite: a void that didn't give stock back (PR #2) and a credit receipt that showed paid (PR #10). I wrote TS45 and TS44 for those two.
 
@@ -49,7 +51,7 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 
 | What | Count | Where to check |
 |---|---|---|
-| Browser tests saved in TestSprite | 45 | [Last run: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) |
+| Browser tests saved in TestSprite | 45 | [Last run: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) |
 | Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
 | Server tests in TestSprite that go straight to the database: 2 failed before the PIN fix, all 6 pass now | 6 | [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
@@ -104,7 +106,7 @@ Please don't reload the page while the network is fully off. The app is built to
 
 1. Open https://pricekeeper-demo.web.app, sign in as `robot` / `4821`, go offline and make a sale.
 2. Open [LOOP.md](LOOP.md) and read the "Red, then green" table.
-3. Click the [PR #12 run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/06e07921-e958-4c1e-b99c-f12fc1180b71) to see all 45 browser tests pass, one by one.
+3. Click the [PR #21 run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) to see all 45 browser tests pass, one by one.
 4. In the project folder, run `npm test` (85 tests), then `node scripts/mutation.mjs` (95.7 percent).
 
 The shop, its items and its customers are made up. Other judges use the same shop, and I may reset the data.
@@ -137,7 +139,7 @@ Three tests use it, and all three passed in the last run:
 | Offline sale | Adds a new item, goes offline, sells 2 pieces to a customer, comes back | The sale is in Trade history, and its hourglass clears once it's sent |
 | Offline reopen | Adds an item with 10 pieces, goes offline, sells 2, then closes and reopens the app while still offline | The sale is still in Trade history, marked as waiting, and the item still shows 8 pieces. Once back online, the waiting mark clears |
 
-The reopen test is the one that found the offline bug above. I wrote it, ran it from the command line, and it failed. After the fix it passed, and it has passed in every pull request run since.
+The reopen test is the one that found the offline bug above. I wrote it, ran it from the command line, and it failed. After the fix it passed, and it passed on the pull request runs after the fix.
 
 Each sale test makes its own item with a new name, so it doesn't depend on what's already in the shop.
 
@@ -154,15 +156,15 @@ The browser tests see the app the way a cashier does. These checks skip the page
 | No PIN | Open a staff session with a real staff name but no PIN |
 | Fingerprint | Read the stored PIN fingerprint |
 
-The plan from here: on every pull request, a "database rules" check runs the same checks against a copy of the database on GitHub's own machine, so they cost nothing and touch no real data. Once a change is merged, TestSprite runs them as server tests against the live database. The GitHub check is written but hasn't run yet.
+The plan from here: on every pull request, a "database rules" check runs the same checks against a copy of the database on GitHub's own machine, so they cost nothing and touch no real data. Once a change is merged, TestSprite runs them as server tests against the live database. The GitHub check runs on every pull request.
 
 ## What runs on its own
 
 | When | What happens | Has it run yet? |
 |---|---|---|
-| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 85 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for TestSprite and the unit tests. Not yet for the database rules check. |
+| Every pull request | TestSprite runs all 45 browser tests on a preview copy, and the 85 unit tests run next to it. A "database rules" check is set up to run beside them. | Yes for all three. The database rules check has passed on every pull request since #12. |
 | A test fails | A comment appears on the pull request saying which test failed, the step it stopped on and what TestSprite saw, in plain words, with a link to the recording. It's meant to turn green by itself once the next run passes. | Yes. It appeared on all six planted-bug pull requests (#15 to #20) and on the re-runs. |
-| After every merge | TestSprite is set up to run the twelve server tests against the live database. | Ran after a merge on Oct 24: 12 of 12 passed (all twelve server tests, not just the first six). The three Oct 25 runs passed 1 of 12 and stopped within seconds, most likely out of credits, not confirmed. |
+| After every merge | TestSprite is set up to run the twelve server tests against the live database. | Ran after a merge on Oct 24: 12 of 12 passed (all twelve server tests, not just the first six). The three Oct 25 runs passed 1 of 12 and stopped within seconds, because the database's free daily read limit had run out. |
 | Every morning, 8:30 am Lagos time | Three browser tests are set to run on the live site: the offline banner, the offline sale and the wrong PIN. The no-PIN server test runs with them. If one fails, an issue opens on GitHub by itself. | Built. It has run three times and failed each time, and the failure opened an issue as designed. Last run: 1 of 3 browser tests passed, 2 blocked by out-of-date saved scripts, and the server test hit a quota error. Not working yet. |
 | On a red pull request, if I ask | I add the label `self-fix`. Claude Code reads the failure notes and changes the app to fix it. It isn't allowed to touch the tests or the workflows. The change goes back on the same pull request, TestSprite tests it again, and I read it before I merge. | Built, has not run yet |
 
@@ -185,7 +187,7 @@ It runs in the phone browser and installs like an app. It's plain JavaScript on 
 2. GitHub builds a preview copy of the app.
 3. TestSprite runs all 45 saved browser tests against that preview and posts the result on the pull request as "TestSprite V3".
 4. At the same time, the "maths" check runs 85 unit tests in a few seconds.
-5. A third check, "database rules", is set up to run the database checks against a copy of the database. It hasn't run on GitHub yet.
+5. A third check, "database rules", is set up to run the database checks against a copy of the database. It runs on every pull request.
 6. I merge once the checks pass. Since 2026-10-25 GitHub won't let me merge without them, admin included: "TestSprite V3" and "maths" are required checks on main.
 
 The browser tests click through the app like a cashier would: selling, selling on credit, part payments, voids, receipts, stock alerts, staff login, wrong PINs and the three offline tests.
@@ -237,7 +239,7 @@ None of these six was merged. They show as red in [LOOP.md](LOOP.md).
 
 ## Links
 
-- Demo video: VIDEO_LINK
+- Demo video: https://youtu.be/1wRCmbF73bI
 - Pull request #10, the five fixes: https://github.com/Sireadell/pricekeeper-demo/pull/10
 - Offline testing recipe: [TestSprite CLI issue #630](https://github.com/TestSprite/testsprite-cli/issues/630)
 - Every red and green run: [PROOF.md](PROOF.md)

@@ -28,7 +28,7 @@ These are all 11 runs on that pull request, in order.
 
 This one was found from the TestSprite command line, not on the pull request. I wrote a new test: add an item with 10 pieces, go offline, sell 2, then close and reopen the app while still offline. It should still show the sale, marked as waiting to be sent, and 8 pieces left.
 
-It failed. After the reopen, the sale was gone from a staff member's screen and the stock was back at 10. The sale was waiting to be sent, but the staff screens didn't show sales that were still waiting. I fixed that in [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61), the command-line run passed, and the test has passed in every pull request run since.
+It failed. After the reopen, the sale was gone from a staff member's screen and the stock was back at 10. The sale was waiting to be sent, but the staff screens didn't show sales that were still waiting. I fixed that in [1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61), the command-line run passed, and the test passed on the pull request runs after it.
 
 The command-line runs were against a private preview link, so they aren't linked here. The first pull request run with the fix is the 1cefe61 row above.
 
