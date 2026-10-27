@@ -481,7 +481,7 @@
   },
   {
     "code": "TS55",
-    "id": "0577c7fb-a254-489f-a8c6-109a4e5ed5eb",
+    "id": "d2504a89-1673-4d6f-9a33-559b74699f25",
     "name": "A customer name longer than 60 characters is refused",
     "file": "frontend/TS55_a_customer_name_longer_than_60_characters_is_refused.py",
     "description": "Tries to add a customer with a 76 character name and checks it is refused and not saved.",
@@ -489,7 +489,7 @@
   },
   {
     "code": "TS56",
-    "id": "3195fb1d-bc63-4e48-89dc-566f72e29d40",
+    "id": "a2914794-24d7-4f07-8931-fc9617e2f776",
     "name": "A customer's phone number can be changed",
     "file": "frontend/TS56_a_customer_s_phone_number_can_be_changed.py",
     "description": "Adds a customer with one phone number, edits it to another and checks the list shows the new number.",
@@ -505,7 +505,7 @@
   },
   {
     "code": "TS58",
-    "id": "d59bad14-9384-4ca2-b8b9-7bb14170b639",
+    "id": "bd78f63f-f2dd-481d-b201-89ae63b638d2",
     "name": "Customers can be found by their phone number",
     "file": "frontend/TS58_customers_can_be_found_by_their_phone_number.py",
     "description": "Adds a customer with a unique phone number, finds them by typing that number in the search box, and checks a number nobody has finds no one.",
