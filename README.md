@@ -12,6 +12,16 @@ There was a worse hole in the database rules: anyone who knew a staff name could
 
 Live demo: https://pricekeeper-demo.web.app
 
+## Red, then green, in three steps
+
+| Step | What happened | Open it |
+|---|---|---|
+| 1. Red | A sale made with no signal vanished from the screen after closing and reopening the app, and the item's stock jumped back up. The reopen test failed. | [Testing offline](#testing-offline) |
+| 2. Fix | Sales waiting to be sent now show on staff screens after a reopen. | [commit 1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61) |
+| 3. Green | The same test passed, and has passed on every GitHub run since. | [passing run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/351e133d-e129-4688-a5e9-3d6681005ef6) |
+
+Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Every one is listed with its red and green runs in [LOOP.md](LOOP.md), pulled from the GitHub API, not typed by hand. The full list of problems TestSprite caught is under [Problems it caught](#problems-it-caught).
+
 Demo video (under 3 minutes): https://youtu.be/1wRCmbF73bI
 
 Built for TestSprite Hackathon Season 4, Project Track.
@@ -26,7 +36,7 @@ Pick any row and check it yourself.
 | Run `npm test` (Node 22 or newer) | 5 sec | 187 unit tests pass. |
 | Run `node scripts/mutation.mjs` | 9 min | I break the money maths on purpose 394 ways. The tests catch 380, 96.4 percent. The 14 left give the same answers as the real code, explained in [docs/mutation.json](docs/mutation.json). |
 | Open [LOOP.md](LOOP.md), table "Red, then green" | 30 sec | Pull requests that failed, got fixed, then passed. |
-| Open the [last browser run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | 30 sec | 45 browser tests passed on PR #23 and PR #24 (the suite has since grown to 64). 20 server tests that go straight to the database passed after the last merge. |
+| Open the [last browser run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/6f793cb7-7499-4d2e-8734-ae6e6b4e56b0) | 30 sec | All 64 browser tests passed on PR #26 (earlier, with 45 tests, PR #23 and PR #24 passed all 45). 20 server tests that go straight to the database passed after the last merge. |
 | Open PR #15 and PR #20 | 1 min | A bug I planted. On a clean solo run the check went red. I only claim these two. |
 
 What this is not: no real money moves, and the shop holds made-up demo data.
@@ -36,7 +46,7 @@ What this is not: no real money moves, and the shop holds made-up demo data.
 | What you score | Open this | What you'll see |
 |---|---|---|
 | Project quality (40) | https://pricekeeper-demo.web.app, sign in as `robot` / `4821` | Turn the network off and make a sale. It goes through, waits with an hourglass, and sends when the signal is back. |
-| Tests that run themselves (40): browser | [PR #23, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) | TestSprite runs all 64 browser tests on a preview copy of every pull request. When the suite had 45, PR #23 passed all 45, and so did PR #24 and [PR #21](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) before it. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
+| Tests that run themselves (40): browser | [PR #26, last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/6f793cb7-7499-4d2e-8734-ae6e6b4e56b0) | TestSprite runs all 64 browser tests on a preview copy of every pull request. PR #26 passed all 64. When the suite had 45, PR #23 passed all 45, and so did PR #24 and [PR #21](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/d6eab849-b2dd-451d-9b05-a85b13bc9bb6) before it. Since 2026-10-25 it's a required check on main, and the block applies to me as admin too, so a red pull request can't go in. |
 | Tests that run themselves (40): the trail | [LOOP.md](LOOP.md), table "Red, then green" | Every pull request, every commit and TestSprite's verdict, pulled from the GitHub API by `scripts/loop-ledger.mjs`. Nobody types it. When it was last built it held 21 pull requests and 60 TestSprite runs. Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Pull requests #15 to #20 show as red in the ledger. They were throwaway planted-bug branches and were never merged. Pull request #23 shows as open, because the ledger was built before it merged. |
 | Tests that run themselves (40): database | [`.github/workflows/server-tests.yml`](.github/workflows/server-tests.yml) | 20 server tests (B01 to B20) go straight to the live database, skipping the app's screens. They run through the TestSprite command line after every merge. [After the last merge, 20 of 20 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/2c3a5470-2fbc-4cbc-9750-2d1a3b506646). The same 20 run on a copy of the database on every pull request. The first six were also run by hand: 4 passed and 2 failed before the PIN fix, and all 6 passed after. |
 | Tests that run themselves (40): maths | `npm test` | 187 unit tests run on every pull request. One of them, [`tests/oracle.test.js`](tests/oracle.test.js), works out the money a second, separate way, in whole kobo and exact fractions, and checks the app against it. It walks 4,920 mixes of trade totals and payment lists (payments, refunds, removed payments), 320 average-cost cases and 40 stock-conversion cases. All agree with the app. |
@@ -66,8 +76,8 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 
 | What | Count | Where to check |
 |---|---|---|
-| Browser tests saved in TestSprite | 64 | Every pull request runs all 64, and its TestSprite check shows the verdict. [Earlier run, when there were 45: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) |
-| Problems TestSprite caught on one pull request, all fixed | 5 | [Five problems it caught](#five-problems-it-caught) |
+| Browser tests saved in TestSprite | 64 | Every pull request runs all 64, and its TestSprite check shows the verdict. [Last run, PR #26: 64 of 64 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/6f793cb7-7499-4d2e-8734-ae6e6b4e56b0). [Earlier run, when there were 45: 45 of 45 passed](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) |
+| Problems TestSprite caught on one pull request, all fixed | 5 | [Problems it caught](#problems-it-caught) |
 | Server tests in TestSprite that go straight to the database. All 20 passed after the last merge. The first 6: 2 failed before the PIN fix, all 6 passed after it | 20 | [Last run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/c474b925-8e42-47b8-a1fc-7c828dd273bd/execution/2c3a5470-2fbc-4cbc-9750-2d1a3b506646), [Testing the database](#testing-the-database) |
 | Offline tests | 3 | [Testing offline](#testing-offline) |
 | Browser tests set to run on the live site every morning: built, not passing yet | 3 | [What runs on its own](#what-runs-on-its-own) |
@@ -75,11 +85,11 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 | Unit tests on the money maths | 187 | `tests/` folder, the "maths" check |
 | Cases where a second, separate way of working out the money agrees with the app | 4,920 payment mixes, 320 average-cost, 40 stock-conversion | [`tests/oracle.test.js`](tests/oracle.test.js) |
 | Changes made on purpose to the money maths, and how many the tests caught | 394 changes, 380 caught (96.4%) | [docs/mutation.json](docs/mutation.json) |
-| Pull requests merged | 12 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
+| Pull requests merged | 15 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
 
-## Five problems it caught
+## Problems it caught
 
-The first five came up on [pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10). The last row came up later, on [pull request #23](https://github.com/Sireadell/pricekeeper-demo/pull/23). Each row links the run that went red and the first run where the same test passed after the fix.
+The first five came up on [pull request #10](https://github.com/Sireadell/pricekeeper-demo/pull/10). The next came up on [pull request #23](https://github.com/Sireadell/pricekeeper-demo/pull/23) and the last on [pull request #26](https://github.com/Sireadell/pricekeeper-demo/pull/26). Each row links the run that went red and the first run where the same test passed after the fix.
 
 | What went wrong | Fix | Red | Green |
 |---|---|---|---|
@@ -89,6 +99,7 @@ The first five came up on [pull request #10](https://github.com/Sireadell/pricek
 | Typing 0 pieces and pressing Add quietly put 1 piece in the cart. A 0 or a minus number is now refused with a message. | [9057fee](https://github.com/Sireadell/pricekeeper-demo/commit/9057fee) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/675ed041-288c-4af2-9af9-b746005bc34d) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/4561c122-f5fc-4c6e-8166-ca302e829c0a) |
 | Deleting an item used the browser's own "Are you sure?" pop-up. That froze the page for the test robot, and the delete test failed twice. This one hurt the robot more than a trader. Delete now asks inside the page, like the rest of the app. | [4b50685](https://github.com/Sireadell/pricekeeper-demo/commit/4b50685) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/b36fe793-8a2e-43bf-b7ed-26e3fd29df91) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/070003b3-7503-4d2c-b3fd-67f79b03990b) |
 | Pressing Log in a second time in the same tab showed Wrong PIN, even with the right PIN. The receipt test was turned away at sign-in. A repeated Log in now goes through, and a second press while one is running is ignored. | [4a866e9](https://github.com/Sireadell/pricekeeper-demo/commit/4a866e9), [PR #23](https://github.com/Sireadell/pricekeeper-demo/pull/23) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/7eff0e69-cf06-4e14-867b-bf8ccfc81b01) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/90aeea3d-3b06-4f22-aee2-28b6ec1709d0) |
+| The pop-up forms for a new customer and a new supplier were only faded out when closed, so their boxes still sat on top of the open form. The test robot could not reach the fields, and the same few tests were blocked on three runs in a row (61, 61 and 59 of 64). Closed forms are now fully hidden, and each form is marked as a dialog with its labels linked to its fields. | [28fdeb2](https://github.com/Sireadell/pricekeeper-demo/commit/28fdeb2), [PR #26](https://github.com/Sireadell/pricekeeper-demo/pull/26) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/484f9b35-b0d3-4669-a9c1-098ada4ccf9d) | [run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/6f793cb7-7499-4d2e-8734-ae6e6b4e56b0) |
 
 Pull request #10 started with a bug I planted on purpose: the receipt showed a sale on credit as paid in full. No test caught that one. I took it out in the same commit as the minus payment fix. Later I wrote TS44 for it and planted it again on PR #16. More in [PROOF.md](PROOF.md).
 
