@@ -137,10 +137,10 @@
   },
   {
     "code": "TS18",
-    "id": "b74e401c-611e-4753-bb67-a33db2785349",
+    "id": "d5201ebd-0500-4fce-8395-22202df9e7a7",
     "name": "Edit an inventory item",
     "file": "frontend/TS18_edit_an_inventory_item.py",
-    "description": "Validate that a staff user can update an existing inventory item and see the edited details reflected afterward.",
+    "description": "Adds its own item at 500, edits that item's selling price to 510 and checks the same card then shows 510, not 500.",
     "kind": "browser"
   },
   {
