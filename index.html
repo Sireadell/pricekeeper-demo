@@ -1083,23 +1083,23 @@
 
 <!-- ── D.9.1 Supplier-add modal ─────────────────────────────── -->
 <div class="overlay" id="supplierOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="supModalTitle">
     <div class="modal-title" id="supModalTitle">★ New Supplier</div>
     <input type="hidden" id="supEditId">
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Supplier Name *</label>
+      <label class="lbl" for="supName">Supplier Name *</label>
       <input type="text" id="supName" placeholder="e.g. Modibbo Wholesale">
     </div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Location</label>
+      <label class="lbl" for="supLocation">Location</label>
       <input type="text" id="supLocation" placeholder="e.g. Saminaka Market">
     </div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Contact</label>
+      <label class="lbl" for="supContact">Contact</label>
       <input type="text" id="supContact" placeholder="e.g. 08012345678">
     </div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Notes (optional)</label>
+      <label class="lbl" for="supNotes">Notes (optional)</label>
       <textarea id="supNotes" placeholder="e.g. Best prices on sugar & rice."></textarea>
     </div>
     <div id="supError" style="display:none;color:var(--red);font-size:.78rem;margin-bottom:10px;"></div>
@@ -1111,15 +1111,15 @@
 </div>
 
 <div class="overlay" id="custOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="custModalTitle">
     <div class="modal-title" id="custModalTitle">➕ New Customer</div>
     <input type="hidden" id="custId">
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Customer Name *</label>
+      <label class="lbl" for="custName">Customer Name *</label>
       <input type="text" id="custName" placeholder="e.g. Alhaji Musa">
     </div>
     <div class="field" style="margin-bottom:14px;">
-      <label class="lbl">Phone / Contact</label>
+      <label class="lbl" for="custContact">Phone / Contact</label>
       <input type="text" id="custContact" placeholder="e.g. 08012345678">
     </div>
     <div class="modal-btns">
@@ -1130,19 +1130,19 @@
 </div>
 
 <div class="overlay" id="borrowerOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bModalTitle">
     <div class="modal-title" id="bModalTitle">➕ New Borrower</div>
     <input type="hidden" id="bId">
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Name *</label>
+      <label class="lbl" for="bName">Name *</label>
       <input type="text" id="bName" placeholder="e.g. Emeka Okafor">
     </div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Phone</label>
+      <label class="lbl" for="bPhone">Phone</label>
       <input type="text" id="bPhone" placeholder="e.g. 08098765432">
     </div>
     <div class="field" style="margin-bottom:14px;">
-      <label class="lbl">Note (optional)</label>
+      <label class="lbl" for="bNote">Note (optional)</label>
       <textarea id="bNote" placeholder="e.g. Regular customer, pays end of month"></textarea>
     </div>
     <div class="modal-btns">
@@ -1153,7 +1153,7 @@
 </div>
 
 <div class="overlay" id="txOverlay">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="txModalTitle">
     <div class="modal-title" id="txModalTitle">➕ Add Transaction</div>
     <input type="hidden" id="txBorrowerId">
     <input type="hidden" id="txType">
@@ -1164,7 +1164,7 @@
       </div>
     </div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Item / Description *</label>
+      <label class="lbl" for="txName">Item / Description *</label>
       <input type="text" id="txName" placeholder="e.g. 2 bags of rice">
     </div>
     <div class="field" style="margin-bottom:10px;">
@@ -1173,11 +1173,11 @@
     </div>
     <div id="txPlan"></div>
     <div class="field" style="margin-bottom:10px;">
-      <label class="lbl">Date</label>
+      <label class="lbl" for="txDate">Date</label>
       <input type="date" id="txDate">
     </div>
     <div class="field" style="margin-bottom:14px;">
-      <label class="lbl">Note (optional)</label>
+      <label class="lbl" for="txNote">Note (optional)</label>
       <textarea id="txNote" placeholder="Any extra info..."></textarea>
     </div>
     <div class="modal-btns">

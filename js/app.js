@@ -239,9 +239,13 @@ document.addEventListener('keydown', e => {
   }
 });
 
-document.querySelectorAll('.overlay').forEach(ov =>
-  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); })
-);
+// Close an open modal when its dark backdrop is clicked. One listener on the
+// document, not one per overlay, so the overlay box itself is not a click
+// target and its fields stay separate controls for screen readers and test robots.
+document.addEventListener('click', e => {
+  const ov = e.target;
+  if (ov instanceof Element && ov.classList.contains('overlay')) ov.classList.remove('open');
+});
 
 function _showSplash() {
   if (document.getElementById('pkSplash')) return;
