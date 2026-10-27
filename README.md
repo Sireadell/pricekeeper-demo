@@ -12,6 +12,16 @@ There was a worse hole in the database rules: anyone who knew a staff name could
 
 Live demo: https://pricekeeper-demo.web.app
 
+## Red, then green, in three steps
+
+| Step | What happened | Open it |
+|---|---|---|
+| 1. Red | A sale made with no signal vanished from the screen after closing and reopening the app, and the item's stock jumped back up. The reopen test failed. | [Testing offline](#testing-offline) |
+| 2. Fix | Sales waiting to be sent now show on staff screens after a reopen. | [commit 1cefe61](https://github.com/Sireadell/pricekeeper-demo/commit/1cefe61) |
+| 3. Green | The same test passed, and has passed on every GitHub run since. | [passing run](https://www.testsprite.com/dashboard-v3/o/72d2167f-323a-581a-9306-129f59967c74/projects/81dc7004-270e-42bb-96d2-a47ea8b1b818/execution/351e133d-e129-4688-a5e9-3d6681005ef6) |
+
+Six pull requests went red, then green: #1, #3, #6, #10, #12 and #13. Every one is listed with its red and green runs in [LOOP.md](LOOP.md), pulled from the GitHub API, not typed by hand. The full list of problems TestSprite caught is under [Problems it caught](#problems-it-caught).
+
 Demo video (under 3 minutes): https://youtu.be/1wRCmbF73bI
 
 Built for TestSprite Hackathon Season 4, Project Track.
@@ -75,7 +85,7 @@ Then I planted six bugs, each on its own throwaway pull request, #15 to #20. On 
 | Unit tests on the money maths | 187 | `tests/` folder, the "maths" check |
 | Cases where a second, separate way of working out the money agrees with the app | 4,920 payment mixes, 320 average-cost, 40 stock-conversion | [`tests/oracle.test.js`](tests/oracle.test.js) |
 | Changes made on purpose to the money maths, and how many the tests caught | 394 changes, 380 caught (96.4%) | [docs/mutation.json](docs/mutation.json) |
-| Pull requests merged | 12 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
+| Pull requests merged | 15 | [Merged pull requests](https://github.com/Sireadell/pricekeeper-demo/pulls?q=is%3Apr+is%3Amerged) |
 
 ## Problems it caught
 
