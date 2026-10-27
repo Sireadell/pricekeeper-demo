@@ -473,6 +473,11 @@ label.lbl {
   transition: opacity .2s;
 }
 .overlay.open { opacity: 1; pointer-events: all; }
+/* A closed pop-up is removed from the layout, not just made see-through.
+   Its dark box would otherwise still sit on top of the open one in paint
+   order, and tools that read the page (test robots, screen readers) treat
+   the open form's fields as covered. */
+.overlay:not(.open) { display: none; }
 
 .modal {
   background: var(--s1);

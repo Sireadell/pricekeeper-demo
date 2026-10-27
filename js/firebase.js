@@ -43,12 +43,12 @@ const LIVE_CONFIG = {
   appId: "1:849318202665:web:d2bae843cbfa8495123b38"
 };
 const TEST_CONFIG = {
-  apiKey: "AIzaSyB1beGLasHA2ektxlDW62LNyYjVg0mBsDA",
-  authDomain: "pricekeeper-demo-4.firebaseapp.com",
-  projectId: "pricekeeper-demo-4",
-  storageBucket: "pricekeeper-demo-4.firebasestorage.app",
-  messagingSenderId: "697862791230",
-  appId: "1:697862791230:web:c23cf40d859e1622c6316f"
+  apiKey: "AIzaSyDlVKVy7ddQo8Xl88QlMWbZj92KWGffG2Y",
+  authDomain: "pricekeeper-demo-6.firebaseapp.com",
+  projectId: "pricekeeper-demo-6",
+  storageBucket: "pricekeeper-demo-6.firebasestorage.app",
+  messagingSenderId: "222949724153",
+  appId: "1:222949724153:web:a6a2bfcd2b48d004f2b728"
 };
 const firebaseConfig =
   LIVE_HOSTS.includes(globalThis.location?.hostname) ? LIVE_CONFIG : TEST_CONFIG;
